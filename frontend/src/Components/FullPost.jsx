@@ -63,13 +63,13 @@ const FullPost = ({
 			.post("/postdetails", { postId })
 			.then((res) => {
 				const { post: post, userData } = res.data.response;
-				console.log(userData)
+				console.log(userData);
 				// Match user data for each post based on user IDs
 				const commentWithUserData = post.comments.map((comment) => {
 					const userDetail = userData.find((user) => {
 						return user?.username.toLowerCase() == comment?.username.toLowerCase();
 					});
-					console.log(userDetail)
+					console.log(userDetail);
 					return { ...comment, ...userDetail };
 				});
 				setComment(commentWithUserData);
@@ -202,7 +202,7 @@ const FullPost = ({
 		return formattedDate;
 	};
 	const handleClick = (coId) => {
-		console.log(coId)
+		console.log(coId);
 		onAlertOpen();
 		setCommentId(coId);
 	};

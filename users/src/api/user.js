@@ -34,7 +34,7 @@ export const user = (app, channel) => {
 			const { id } = req.params;
 			const getUsers = await service.FetchFollowersorFollowing(id);
 			return res.json(getUsers);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	app.post("/verifyOtp", async (req, res, next) => {
@@ -75,39 +75,34 @@ export const user = (app, channel) => {
 		}
 	});
 
-	app.post('/sendemail', async (req, res, next) => {
-		console.log(req.body)
-		const { email } = req.body
+	app.post("/sendemail", async (req, res, next) => {
+		console.log(req.body);
+		const { email } = req.body;
 		try {
-			const user = await service.repositary.FindUser(email)
-			const generateResetToken = await service.repositary.generateResetToken(user._id)
-			const sendEmail = await service.sendEmail(user.email, generateResetToken)
-			return res.json({ status: true, message: 'Reset Link has been send to your email', sendEmail })
-
+			const user = await service.repositary.FindUser(email);
+			const generateResetToken = await service.repositary.generateResetToken(user._id);
+			const sendEmail = await service.sendEmail(user.email, generateResetToken);
+			return res.json({ status: true, message: "Reset Link has been send to your email", sendEmail });
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 		}
-	})
+	});
 
-	app.get('/validatetoken/:token', async (req, res) => {
+	app.get("/validatetoken/:token", async (req, res) => {
 		try {
-			const { token } = req.params
-			const validate = await service.repositary.validateResetToken(token)
-			return res.json(validate)
-		} catch (error) {
+			const { token } = req.params;
+			const validate = await service.repositary.validateResetToken(token);
+			return res.json(validate);
+		} catch (error) {}
+	});
 
-		}
-	})
-
-	app.post('/changepassword', async (req, res) => {
+	app.post("/changepassword", async (req, res) => {
 		try {
-			const { userId, password } = req.body
-			const response = await service.ChangePassword(userId, password)
-			return res.json(response)
-		} catch (error) {
-
-		}
-	})
+			const { userId, password } = req.body;
+			const response = await service.ChangePassword(userId, password);
+			return res.json(response);
+		} catch (error) {}
+	});
 
 	app.post("/logout", async (req, res, next) => {
 		try {
@@ -127,7 +122,7 @@ export const user = (app, channel) => {
 			const user = await service.ResendOtp(id);
 			const otpResponse = await sendOTP(user.email, user.Otp);
 			res.json(otpResponse);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	app.get("/profile/:username", async (req, res, next) => {
@@ -165,13 +160,13 @@ export const user = (app, channel) => {
 	app.put("/editprofile/:id", async (req, res, next) => {
 		try {
 			const { id } = req.params;
-			console.log(req.params)
-console.log(req.body)
+			console.log(req.params);
+			console.log(req.body);
 			const { name, bio, location, day, month, year } = req.body.updatedUser;
 
 			const editedUser = await service.EditUser({ id, name, bio, location, day, month, year });
 			return res.json(editedUser);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	app.get("/fetchfollowers/:id", async (req, res, next) => {
@@ -179,7 +174,7 @@ console.log(req.body)
 			const { id } = req.params;
 			const fetchfollowers = await service.FetchFollowers({ id });
 			return res.json(fetchfollowers);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	app.get("/fetchfollowing/:id", async (req, res, next) => {
@@ -187,7 +182,7 @@ console.log(req.body)
 			const { id } = req.params;
 			const fetchfollowing = await service.FetchFollowing({ id });
 			return res.json(fetchfollowing);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	app.post("/follow-unfollow", async (req, res, next) => {
@@ -198,17 +193,17 @@ console.log(req.body)
 				PublishMessage(channel, NOTIFICATION_BINDING_KEY, JSON.stringify(payload));
 			}
 			res.json(resp);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	app.get("/users/:search", UserAuth, async (req, res, next) => {
 		try {
 			const keyword = req.params.search;
-			console.log(keyword)
+			console.log(keyword);
 			const user = await service.FindUser({ keyword }, req);
 			res.json(user);
 			console.log(user);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	app.get("/savedpost/:id", async (req, res, next) => {
@@ -216,7 +211,7 @@ console.log(req.body)
 			const { id } = req.params;
 			const savedposts = await service.GetSavedPost({ id });
 			return res.json(savedposts);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	app.post("/savepost", async (req, res, next) => {
@@ -224,28 +219,25 @@ console.log(req.body)
 			const { postId, userId } = req.body;
 			const savepost = await service.SavePost({ postId, userId });
 			return res.json(savepost);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	app.post("/reportuser", UserAuth, async (req, res, next) => {
 		try {
-			console.log(req.body)
-			const { userId, reason } = req.body
-			const id = req.user._id
-			const reportUser = await service.ReportUser({ userId, id, reason })
-			return res.json(reportUser)
+			console.log(req.body);
+			const { userId, reason } = req.body;
+			const id = req.user._id;
+			const reportUser = await service.ReportUser({ userId, id, reason });
+			return res.json(reportUser);
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 		}
-	})
+	});
 	app.get(`/getuser/:userId`, async (req, res, next) => {
 		try {
-			const { userId } = req.params
-			const user = await service.repositary.FindUserById(userId)
-			return res.json(user)
-		} catch (error) {
-
-		}
-	})
-
+			const { userId } = req.params;
+			const user = await service.repositary.FindUserById(userId);
+			return res.json(user);
+		} catch (error) {}
+	});
 };

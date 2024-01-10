@@ -115,63 +115,61 @@ function PostModal({ isOpen, onClose }) {
 	// 			URL.revokeObjectURL(imageURL); // Clean up the object URL
 	// 		};
 	// };
-// const onSelectFile = (e) => {
-// 	const file = e.target.files[0];
-// 	const imageURL = URL.createObjectURL(file);
+	// const onSelectFile = (e) => {
+	// 	const file = e.target.files[0];
+	// 	const imageURL = URL.createObjectURL(file);
 
-// 	const image = new Image();
-// 	image.onload = () => {
-// 		imageRef.current.src = imageURL; // Setting the source for the displayed image
+	// 	const image = new Image();
+	// 	image.onload = () => {
+	// 		imageRef.current.src = imageURL; // Setting the source for the displayed image
 
-// 		const cropper = new Cropper(imageRef.current, {
-// 			aspectRatio: 4 / 5,
-// 			// Other configuration options
-// 			ready() {
-// 				const croppedCanvas = cropper.getCroppedCanvas();
-// 				if (croppedCanvas) {
-// 					const croppedImage = croppedCanvas.toDataURL("image/jpeg");
-// 					setSelectedImage(croppedImage);
-// 				} else {
-// 					console.error("Failed to get cropped canvas.");
-// 				}
-// 			}
-// 		});
+	// 		const cropper = new Cropper(imageRef.current, {
+	// 			aspectRatio: 4 / 5,
+	// 			// Other configuration options
+	// 			ready() {
+	// 				const croppedCanvas = cropper.getCroppedCanvas();
+	// 				if (croppedCanvas) {
+	// 					const croppedImage = croppedCanvas.toDataURL("image/jpeg");
+	// 					setSelectedImage(croppedImage);
+	// 				} else {
+	// 					console.error("Failed to get cropped canvas.");
+	// 				}
+	// 			}
+	// 		});
 
-// 		URL.revokeObjectURL(imageURL); // Clean up the object URL
-// 	};
+	// 		URL.revokeObjectURL(imageURL); // Clean up the object URL
+	// 	};
 
-// 	image.src = imageURL;
-// };
+	// 	image.src = imageURL;
+	// };
 
+	const onSelectFile = (e) => {
+		const file = e.target.files[0];
+		const imageURL = URL.createObjectURL(file);
 
-const onSelectFile = (e) => {
-	const file = e.target.files[0];
-	const imageURL = URL.createObjectURL(file);
+		const image = new Image();
+		image.onload = () => {
+			imageRef.current.src = imageURL; // Setting the source for the displayed image
 
-	const image = new Image();
-	image.onload = () => {
-		imageRef.current.src = imageURL; // Setting the source for the displayed image
-
-		const cropper = new Cropper(imageRef.current, {
-			aspectRatio: 4 / 5,
-			// Other configuration options
-			crop() {
-				const croppedCanvas = cropper.getCroppedCanvas();
-				if (croppedCanvas) {
-					const newCroppedImage = croppedCanvas.toDataURL("image/jpeg");
-					setSelectedImage(newCroppedImage);
-				} else {
-					console.error("Failed to get cropped canvas.");
+			const cropper = new Cropper(imageRef.current, {
+				aspectRatio: 4 / 5,
+				// Other configuration options
+				crop() {
+					const croppedCanvas = cropper.getCroppedCanvas();
+					if (croppedCanvas) {
+						const newCroppedImage = croppedCanvas.toDataURL("image/jpeg");
+						setSelectedImage(newCroppedImage);
+					} else {
+						console.error("Failed to get cropped canvas.");
+					}
 				}
-			}
-		});
+			});
 
-		URL.revokeObjectURL(imageURL); // Clean up the object URL
+			URL.revokeObjectURL(imageURL); // Clean up the object URL
+		};
+
+		image.src = imageURL;
 	};
-
-	image.src = imageURL;
-};
-
 
 	return (
 		<>

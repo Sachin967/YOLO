@@ -64,7 +64,11 @@ const PostView = ({ post, ShowPosts, fetchData }) => {
 						<Flex className="flex-0 sm:flex-1" gap="4" alignItems="center" flexWrap="wrap">
 							<a href={`/${username}`}>
 								{" "}
-								<Avatar src={propic?.url} name="Segun Adebayo" className="mb-[450px] sm: sm:mb-[650px]" />
+								<Avatar
+									src={propic?.url}
+									name="Segun Adebayo"
+									className="mb-[450px] sm: sm:mb-[650px]"
+								/>
 							</a>
 							<Box>
 								<a href={`/${username}`}>
@@ -127,11 +131,7 @@ const PostView = ({ post, ShowPosts, fetchData }) => {
 											icon={faArrowUpFromBracket}
 											className="text-3xl  text-gray-300"
 										/>
-										<ShareModal
-											post={post}
-											isOpen={isShareOpen}
-											onClose={onShareClose}
-										/>
+										<ShareModal post={post} isOpen={isShareOpen} onClose={onShareClose} />
 									</div>
 									<div onClick={() => PostSave(_id)} className="inline-block">
 										{savepost ? (

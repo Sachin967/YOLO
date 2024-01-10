@@ -39,7 +39,7 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const { isOpen: isListUserOpen, onOpen: onListUserOpen, onClose: onListUserClose } = useDisclosure();
 	const { isOpen: isAlertOpen, onOpen: onAlertOpen, onClose: onAlertClose } = useDisclosure();
-	const [isLink,setLink]=useState()
+	const [isLink, setLink] = useState();
 	const [userId, setUserId] = useState();
 	// const handleImageUpdate = (newImage) => {
 	// 	console.log(newImage);
@@ -162,7 +162,7 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 			.post("/message", { content: messageContent, chatId })
 			.then((res) => {
 				if (res.data) {
-					FetchChats()
+					FetchChats();
 					console.log(res.data.populatedMessage);
 					socket.emit("new message", res.data.populatedMessage);
 					setMessage([...messages, res.data.populatedMessage]);
@@ -174,11 +174,11 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 	};
 	const handleJoinRoom = useCallback(
 		(id) => {
-			console.log("id",id)
+			console.log("id", id);
 			setUserId(id);
 			setLink({ video: true, link: `/room/${id}` });
 			if (userId && isLink) {
-				console.log(userId)
+				console.log(userId);
 				sendMessageToServer(isLink, selectedUsers._id);
 				Navigate(`/room/${userId}`);
 			}

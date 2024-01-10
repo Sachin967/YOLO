@@ -49,11 +49,11 @@ const SendEmailToResetPass = () => {
 								Reset My Password
 							</button>
 						)}
-					<Link
-						to="/login"
-						className=" ms-24 font-semibold text-blue-800  text-primary-600 hover:underline dark:text-primary-500">
-						Login here
-					</Link>
+						<Link
+							to="/login"
+							className=" ms-24 font-semibold text-blue-800  text-primary-600 hover:underline dark:text-primary-500">
+							Login here
+						</Link>
 					</div>
 				</div>
 			</div>

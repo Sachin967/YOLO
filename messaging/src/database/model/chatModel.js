@@ -4,13 +4,13 @@ const chatSchema = mongoose.Schema(
 	{
 		chatName: { type: String, trim: true },
 		isGroupChat: { type: Boolean, default: false },
-		users: [{ type: String }], 
+		users: [{ type: String }],
 		latestMessage: {
 			type: mongoose.Schema.Types.ObjectId,
-			ref: "Message" 
+			ref: "Message"
 		},
 		groupAdminId: { type: String },
-		groupImage: { public_id: { type: String }, url: { type: String } },
+		groupImage: { public_id: { type: String }, url: { type: String } }
 	},
 	{ timestamps: true }
 );

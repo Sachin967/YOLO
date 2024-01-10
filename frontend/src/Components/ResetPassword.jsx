@@ -82,7 +82,9 @@ const ResetPassword = () => {
 						</>
 					) : (
 						<>
-							<h1 className="text-center mb-10 text-white mt-2 font-bold text-4xl border-b p-5">Bad Token</h1>
+							<h1 className="text-center mb-10 text-white mt-2 font-bold text-4xl border-b p-5">
+								Bad Token
+							</h1>
 							<h1 className="text-white w-full px-8">
 								The password reset link was invalid, possibly because it has already been used. Please
 								request{" "}

@@ -16,37 +16,36 @@ import { ENDPOINT } from "../../constants/constant";
 import { useEffect, useState } from "react";
 import { messaging } from "../../config/axios";
 var socket, selectedChatCompare;
-const ShareModal = ({ onClose, isOpen,post }) => {
-	const { peopleMessaged, people, selectedUsers, setSelectedUsers, fetchAgain, setFetchAgain } =
-		ChatState();
+const ShareModal = ({ onClose, isOpen, post }) => {
+	const { peopleMessaged, people, selectedUsers, setSelectedUsers, fetchAgain, setFetchAgain } = ChatState();
 	const { userdetails } = useSelector((state) => state.auth);
 	const { notification, setNotification } = ChatState();
 	const [messages, setMessage] = useState([]);
 	const [newMessage, setNewMessage] = useState();
-  	const [selectedChatId, setSelectedChatId] = useState(null);
+	const [selectedChatId, setSelectedChatId] = useState(null);
 	useEffect(() => {
-    setNewMessage(post)
+		setNewMessage(post);
 		socket = io(ENDPOINT);
 		socket.emit("setup", userdetails);
 		socket.on("connected");
 	}, []);
 
 	const SendMessage = () => {
-			// setNewMessage("");
-      console.log(newMessage)
-			messaging
-				.post("/message", { content: newMessage, chatId: selectedUsers._id })
-				.then((res) => {
-					if (res.data) {
-						console.log(res.data.populatedMessage);
-						socket.emit("new message", res.data.populatedMessage);
-						setMessage([...messages, res.data.populatedMessage]);
-            onClose()
-					}
-				})
-				.catch((err) => {
-					console.log(err);
-				});
+		// setNewMessage("");
+		console.log(newMessage);
+		messaging
+			.post("/message", { content: newMessage, chatId: selectedUsers._id })
+			.then((res) => {
+				if (res.data) {
+					console.log(res.data.populatedMessage);
+					socket.emit("new message", res.data.populatedMessage);
+					setMessage([...messages, res.data.populatedMessage]);
+					onClose();
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
 	};
 	useEffect(() => {
 		selectedChatCompare = selectedUsers;
@@ -80,7 +79,6 @@ const ShareModal = ({ onClose, isOpen,post }) => {
 						const isSelected = chat._id === selectedChatId;
 						return (
 							<div
-							
 								onClick={() => {
 									setSelectedUsers(chat);
 									handleChatSelection(chat);

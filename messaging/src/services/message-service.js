@@ -8,7 +8,7 @@ class MessageService {
 
 	async AccessChat({ userId, loggedInUserId }) {
 		try {
-			const chats = await this.repository.FindChat({  userId, loggedInUserId });
+			const chats = await this.repository.FindChat({ userId, loggedInUserId });
 			const response = await RPCRequest("USER_RPC", {
 				type: "FETCH_USERS",
 				data: { userId, loggedInUserId }
@@ -70,7 +70,7 @@ class MessageService {
 				data: UserIds
 			});
 			return { createdGroupchat, response };
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async RenameChat({ chatId, chatname, groupimage }) {
@@ -89,8 +89,8 @@ class MessageService {
 			// 	type: "FETCH_USERS",
 			// 	data: renamedchat.groupAdminId
 			// });
-			return renamedchat 
-		} catch (error) { }
+			return renamedchat;
+		} catch (error) {}
 	}
 
 	async AddUsertoGroup({ chatId, userIds }) {
@@ -109,8 +109,8 @@ class MessageService {
 			// 	type: "FETCH_USERS",
 			// 	data: adduser.groupAdminId
 			// });
-			return  adduser;
-		} catch (error) { }
+			return adduser;
+		} catch (error) {}
 	}
 
 	async RemoveFromGroup({ chatId, userId }) {
@@ -130,7 +130,7 @@ class MessageService {
 			// 	data: removeuser.groupAdminId
 			// });
 			return { removeuser };
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async SendMessage({ content, chatId, userId }) {
@@ -141,23 +141,23 @@ class MessageService {
 				data: chatToUpdate.users
 			});
 			return { populatedMessage, response };
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async FetchMessages({ userId, chatId }) {
 		try {
 			const messages = await this.repository.FindMessages(chatId);
-			console.log(messages[0])
-			const user = messages[0]?.chatId?.users
-			console.log("oooo", userId)
-			console.log('UUU', user)
+			console.log(messages[0]);
+			const user = messages[0]?.chatId?.users;
+			console.log("oooo", userId);
+			console.log("UUU", user);
 			const response = await RPCRequest("USER_RPC", {
 				type: "FETCH_USERS",
 				data: user
 			});
 			// console.log("========="+response);
 			return { messages, response };
-		} catch (error) { }
+		} catch (error) {}
 	}
 	async FetchGroupChats(id) {
 		try {
@@ -170,9 +170,9 @@ class MessageService {
 					data: otherUsers
 				});
 
-				return { result, chat }
+				return { result, chat };
 			}
-		} catch (error) { }
+		} catch (error) {}
 	}
 }
 

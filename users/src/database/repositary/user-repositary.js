@@ -1,7 +1,7 @@
 import User from "../models/userModel.js";
 import { APIError, STATUS_CODES } from "../../utils/app-error.js";
 import { cloudinary } from "../../config/cloudinary.js";
-import crypto from 'crypto'
+import crypto from "crypto";
 import PasswordReset from "../models/PasswordResetModel.js";
 class UserRepositary {
 	async CreateUser({ name, email, password, username, salt, Otp, dob, gender }) {
@@ -46,14 +46,14 @@ class UserRepositary {
 	}
 
 	async generateResetToken(userId) {
-		const token = crypto.randomBytes(20).toString('hex');
+		const token = crypto.randomBytes(20).toString("hex");
 		const expirationTime = new Date();
 		expirationTime.setHours(expirationTime.getHours() + 1);
 
 		const resetEntry = new PasswordReset({
 			user_id: userId,
 			reset_token: token,
-			expiry_timestamp: expirationTime,
+			expiry_timestamp: expirationTime
 		});
 
 		return resetEntry.save();
@@ -61,31 +61,27 @@ class UserRepositary {
 
 	async validateResetToken(token) {
 		try {
-			const resetEntry = await PasswordReset.findOne({ reset_token: token }).populate('user_id').exec();
+			const resetEntry = await PasswordReset.findOne({ reset_token: token }).populate("user_id").exec();
 
 			if (!resetEntry) {
-				return { status: false, message: 'Invalid or expired token' }
+				return { status: false, message: "Invalid or expired token" };
 			}
 
 			const currentDate = new Date();
 			if (resetEntry.expiry_timestamp < currentDate) {
-				return { status: false, message: 'Token has expired' }
+				return { status: false, message: "Token has expired" };
 			}
 
 			// Token is valid and associated with the correct user
 			return { status: true, resetEntry };
-		} catch (error) {
-
-		}
+		} catch (error) {}
 	}
 
 	async updatePassword(userId, password, salt) {
 		try {
-			const user = await User.findByIdAndUpdate(userId, { password: password, salt: salt }, { new: true })
-			return { status: true, message: 'Password Updated' }
-		} catch (error) {
-
-		}
+			const user = await User.findByIdAndUpdate(userId, { password: password, salt: salt }, { new: true });
+			return { status: true, message: "Password Updated" };
+		} catch (error) {}
 	}
 
 	async FindByUsername({ username }) {
@@ -110,13 +106,13 @@ class UserRepositary {
 
 	async FindUsersbyRegex(keyword) {
 		try {
-			console.log(keyword, "keyword")
+			console.log(keyword, "keyword");
 			const users = await User.find({
 				$or: [{ name: { $regex: keyword, $options: "i" } }, { username: { $regex: keyword, $options: "i" } }]
 			});
-			console.log("search", users)
+			console.log("search", users);
 			return users;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async IsBlocked(id) {
@@ -128,7 +124,7 @@ class UserRepositary {
 			} else {
 				return false;
 			}
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async updateUserVerification(id) {
@@ -146,7 +142,9 @@ class UserRepositary {
 				bio: updatedUser.bio,
 				propic: updatedUser.propic,
 				coverpic: updatedUser.coverpic,
-				day, month, year
+				day,
+				month,
+				year
 			};
 		} catch (error) {
 			console.error("Error updating user verification:", error);
@@ -222,7 +220,7 @@ class UserRepositary {
 		try {
 			const dob = new Date(year, month - 1, day);
 			const user = await User.findByIdAndUpdate({ _id: id }, { name, bio, location, dateOfBirth: dob }, { new: true });
-			console.log(user.dateOfBirth)
+			console.log(user.dateOfBirth);
 			return user;
 		} catch (error) {
 			console.log(error);
@@ -258,7 +256,7 @@ class UserRepositary {
 			);
 			await user.save();
 			return { status: "uploaded" };
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async AddProImage({ username, croppedImage }) {
@@ -289,7 +287,7 @@ class UserRepositary {
 			);
 			await user.save();
 			return { status: "uploaded" };
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async ListUsers() {
@@ -348,21 +346,21 @@ class UserRepositary {
 			}
 			const user = await User.findOneAndUpdate({ _id: userId }, { $addToSet: { reports: { reporterId: id, reason } } });
 			return { message: "Report added successfully" };
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async FindFollowing({ id }) {
 		try {
 			const user = await User.findById(id).populate("following", "_id username name propic");
 			return user;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async FindFollowers({ id }) {
 		try {
 			const user = await User.findById(id).populate("followers", "_id username name propic");
 			return user;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async SavingPost({ userId, postId }) {
@@ -378,7 +376,7 @@ class UserRepositary {
 				const savedpost = await user.save();
 				return { status: "removed", savedpost };
 			}
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async fetchSavedPosts({ id }) {
@@ -386,7 +384,7 @@ class UserRepositary {
 			const post = await User.findOne({ _id: id });
 			const postIds = post.bookmarks;
 			return postIds;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async FindFollowersorFollowing(id) {
@@ -400,7 +398,7 @@ class UserRepositary {
 				console.log("User not found");
 				return null;
 			}
-		} catch (error) { }
+		} catch (error) {}
 	}
 }
 

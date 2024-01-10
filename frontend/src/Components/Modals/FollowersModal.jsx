@@ -37,7 +37,7 @@ const FollowersModal = ({ onFollowersClose, isFollowersOpen, userId, follow, Fol
 					user.name.toLowerCase().includes(search?.toLowerCase()) ||
 					user.username.toLowerCase().includes(search?.toLowerCase())
 				);
-		  })
+			})
 		: followers;
 
 	return (

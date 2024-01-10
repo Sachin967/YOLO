@@ -3,14 +3,14 @@ import Chat from "../model/chatModel.js";
 import Message from "../model/messageModel.js";
 
 class MessageRepository {
-	async FindChat({  userId, loggedInUserId }) {
+	async FindChat({ userId, loggedInUserId }) {
 		try {
 			const chat = await Chat.find({
 				isGroupChat: false,
 				$and: [{ users: { $elemMatch: { $eq: loggedInUserId } } }, { users: { $elemMatch: { $eq: userId } } }]
 			}).populate("latestMessage");
 			return chat;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async CreatNormalChat({ loggedInUserId, userId }) {
@@ -21,7 +21,7 @@ class MessageRepository {
 				users: [loggedInUserId, userId]
 			});
 			return chat;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async FetchAllChats(userId) {
@@ -44,7 +44,7 @@ class MessageRepository {
 				groupAdminId: curruser
 			});
 			return groupChat;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async ModifyChatName({ chatId, chatname, groupimage }) {
@@ -66,11 +66,7 @@ class MessageRepository {
 				);
 				return chat;
 			} else {
-				const chat = await Chat.findByIdAndUpdate(
-					chatId,
-					{ chatName: chatname },
-					{ new: true }
-				);
+				const chat = await Chat.findByIdAndUpdate(chatId, { chatName: chatname }, { new: true });
 				console.log(chat);
 				return chat;
 			}
@@ -79,22 +75,17 @@ class MessageRepository {
 		}
 	}
 
-
 	async AddUser({ chatId, userIds }) {
 		try {
-			const chat = await Chat.findByIdAndUpdate(
-				chatId,
-				{ $push: { users: { $each: userIds } } },
-				{ new: true }
-			);
+			const chat = await Chat.findByIdAndUpdate(chatId, { $push: { users: { $each: userIds } } }, { new: true });
 			return chat;
-		} catch (error) { }
+		} catch (error) {}
 	}
 	async RemoveUser({ chatId, userId }) {
 		try {
 			const chat = await Chat.findByIdAndUpdate(chatId, { $pull: { users: userId } }, { new: true });
 			return chat;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async CreateMessage({ content, chatId, userId }) {
@@ -114,7 +105,7 @@ class MessageRepository {
 			}
 
 			return { populatedMessage, chatToUpdate };
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async FindMessages(chatId) {
@@ -123,7 +114,7 @@ class MessageRepository {
 			const message = await Message.find({ chatId: chatId }).populate("chatId");
 			console.log("message", message);
 			return message;
-		} catch (error) { }
+		} catch (error) {}
 	}
 	async FindGroupChat(id) {
 		try {
@@ -137,7 +128,7 @@ class MessageRepository {
 			}, []);
 
 			return chatsWithOtherUsers;
-		} catch (error) { }
+		} catch (error) {}
 	}
 }
 export default MessageRepository;

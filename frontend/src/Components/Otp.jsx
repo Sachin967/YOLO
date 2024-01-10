@@ -96,7 +96,10 @@ const Otp = () => {
 							className="w-full text-white border-slate-950 bg-blue-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
 							Verify
 						</button>
-						<button className={`${resendDisabled?'text-gray-600':'text-white'}`} onClick={manuallyResendOTP} disabled={resendDisabled}>
+						<button
+							className={`${resendDisabled ? "text-gray-600" : "text-white"}`}
+							onClick={manuallyResendOTP}
+							disabled={resendDisabled}>
 							Resend OTP {resendDisabled && `(${secondsRemaining}s)`}
 						</button>
 					</form>

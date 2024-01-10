@@ -33,7 +33,9 @@ class UserService {
 				username,
 				password: userPassword,
 				salt,
-				Otp, dob, gender
+				Otp,
+				dob,
+				gender
 			});
 			const token = await GenerateSignature(res, {
 				email: email,
@@ -81,7 +83,9 @@ class UserService {
 						coverpic: existingUser.coverpic,
 						followers: existingUser.followers,
 						following: existingUser.following,
-						year, month, day
+						year,
+						month,
+						day
 					});
 				} else {
 					return res.json({ msg: "Incorrect password" });
@@ -143,7 +147,9 @@ class UserService {
 				coverpic: existingUser.coverpic,
 				followers: existingUser.followers,
 				following: existingUser.following,
-				year, month, day
+				year,
+				month,
+				day
 			});
 		} catch (error) {
 			console.log(error);
@@ -166,7 +172,7 @@ class UserService {
 	}
 
 	async sendEmail(email, token) {
-		console.log('token', token)
+		console.log("token", token);
 		return new Promise((resolve, reject) => {
 			let transporter = nodemailer.createTransport({
 				service: "gmail",
@@ -199,11 +205,9 @@ class UserService {
 		try {
 			let salt = await GenerateSalt();
 			let userPassword = await GeneratePassword(password, salt);
-			const Password = await this.repositary.updatePassword(userId, userPassword, salt)
-			return Password
-		} catch (error) {
-
-		}
+			const Password = await this.repositary.updatePassword(userId, userPassword, salt);
+			return Password;
+		} catch (error) {}
 	}
 
 	async EditUser({ id, name, bio, location, day, month, year }) {
@@ -214,12 +218,20 @@ class UserService {
 			const m = dob.getMonth() + 1;
 			const d = dob.getDate();
 			return {
-				id: editedUser._id, email: editedUser.email, propic: editedUser.propic,
-				coverpic: editedUser.coverpic, followers: editedUser.followers,
-				following: editedUser.following, username: editedUser.username,
-				name: editedUser?.name, bio: editedUser?.bio, location: editedUser?.location,
-				day: d, month: m, year: y
-			}
+				id: editedUser._id,
+				email: editedUser.email,
+				propic: editedUser.propic,
+				coverpic: editedUser.coverpic,
+				followers: editedUser.followers,
+				following: editedUser.following,
+				username: editedUser.username,
+				name: editedUser?.name,
+				bio: editedUser?.bio,
+				location: editedUser?.location,
+				day: d,
+				month: m,
+				year: y
+			};
 		} catch (error) {
 			console.log(error);
 		}
@@ -229,14 +241,14 @@ class UserService {
 		try {
 			const res = await this.repositary.AddCoverImage({ username, croppedImage });
 			return res;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async UploadProfileImage({ username, croppedImage }) {
 		try {
 			const res = await this.repositary.AddProImage({ username, croppedImage });
 			return res;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async UpdateFollow({ userId, id }) {
@@ -255,8 +267,7 @@ class UserService {
 					}
 				};
 				return { resp, payload };
-			} else if (resp.status === 'unfollowed') {
-
+			} else if (resp.status === "unfollowed") {
 				const payload = {
 					event: "USER_UNFOLLOWED",
 					data: {
@@ -280,7 +291,7 @@ class UserService {
 			const users = await this.repositary.FindUsersbyRegex(keyword);
 			const filteredUsers = users.filter((user) => user._id.toString() !== req.user._id.toString());
 			return filteredUsers;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async ResendOtp(id) {
@@ -288,43 +299,43 @@ class UserService {
 			const otp = generateOTP();
 			const updatedUser = await this.repositary.updateOtp(id, otp);
 			return updatedUser;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async FetchFollowing({ id }) {
 		try {
 			const following = await this.repositary.FindFollowing({ id });
 			return following;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async FetchFollowers({ id }) {
 		try {
 			const followers = await this.repositary.FindFollowers({ id });
 			return followers;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async FetchFollowersorFollowing(id) {
 		try {
 			const followers = await this.repositary.FindFollowersorFollowing(id);
 			return followers;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async SavePost({ postId, userId }) {
 		try {
 			const post = await this.repositary.SavingPost({ userId, postId });
 			return post;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async ReportUser({ userId, id, reason }) {
 		try {
-			const reportedUser = await this.repositary.ReportingUser({ userId, id, reason })
-			return reportedUser
+			const reportedUser = await this.repositary.ReportingUser({ userId, id, reason });
+			return reportedUser;
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 		}
 	}
 
@@ -337,13 +348,13 @@ class UserService {
 			});
 			// console.log("qp"+response)
 			const userIds = response.map((post) => {
-				console.log("pppp" + post._id)
+				console.log("pppp" + post._id);
 				return post.userId;
 			});
-			console.log(userIds)
-			const users = await this.repositary.FindUsersById(userIds)
+			console.log(userIds);
+			const users = await this.repositary.FindUsersById(userIds);
 			return { users, response };
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async SubscribeEvents(payload, channel) {
@@ -362,7 +373,7 @@ class UserService {
 				default:
 					break;
 			}
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async serveRPCRequest(payload) {

@@ -1,4 +1,16 @@
-import { AlertDialog, AlertDialogBody, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogOverlay, Button, Modal, ModalContent, ModalOverlay, useDisclosure } from "@chakra-ui/react";
+import {
+	AlertDialog,
+	AlertDialogBody,
+	AlertDialogContent,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogOverlay,
+	Button,
+	Modal,
+	ModalContent,
+	ModalOverlay,
+	useDisclosure
+} from "@chakra-ui/react";
 import { modalTheme } from "../../config/ChakraModalconfig";
 import { useSelector } from "react-redux";
 import React from "react";
@@ -67,9 +79,9 @@ export const CommentDeleteModal = ({ comment, onClose, isOpen, containsPostId, c
 	);
 };
 
-export const DeleteAlert = ({onAlertClose,isAlertOpen,commentId,comments,setComment}) => {
+export const DeleteAlert = ({ onAlertClose, isAlertOpen, commentId, comments, setComment }) => {
 	const cancelRef = React.useRef();
-  const showToast = useCustomToast()
+	const showToast = useCustomToast();
 	// const { isOpen: isReportOpen, onOpen: onReportOpen, onClose: onReportClose } = useDisclosure();
 	const deleteComment = () => {
 		try {
@@ -78,7 +90,7 @@ export const DeleteAlert = ({onAlertClose,isAlertOpen,commentId,comments,setComm
 				.then((res) => {
 					console.log(res);
 					if (res.data) {
-            console.log(res.data)
+						console.log(res.data);
 						onAlertClose();
 						setComment((prevComment) => prevComment.filter((com) => com._id !== commentId));
 						showToast("success", res.data.status);

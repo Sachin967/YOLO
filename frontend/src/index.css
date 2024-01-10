@@ -14,13 +14,13 @@
 	animation: flash 0.5s ease-out infinite alternate;
 }
 .p-datatable thead {
-  background-color: #3b3737; /* Your desired color */
-  color: white; /* Text color */
-	border-radius:10px;
+	background-color: #3b3737; /* Your desired color */
+	color: white; /* Text color */
+	border-radius: 10px;
 }
 .p-datatable thead th {
-  /* Additional styles for th elements in the thead */
-	background-color: #3b3737; 
+	/* Additional styles for th elements in the thead */
+	background-color: #3b3737;
 	color: aliceblue;
 }
 @keyframes flash {

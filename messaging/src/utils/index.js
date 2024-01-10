@@ -1,7 +1,7 @@
 import { APP_SECRET, EXCHANGE_NAME, MESSAGE_BROKER_URL } from "../config/index.js";
 import { v4 as uuid4 } from "uuid";
 import amqplib from "amqplib";
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
 export const UserisBlocked = async (req) => {
 	try {
 		const { userJwt } = req.cookies;
@@ -26,7 +26,6 @@ export const ValidateSignature = async (req) => {
 		return false;
 	}
 };
-
 
 let amqplibConnection = null;
 const getChannel = async () => {

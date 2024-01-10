@@ -8,6 +8,6 @@ const expressApp = async (app) => {
 	app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 	app.use(cors());
 	app.use(ErrorHandler);
-	message(app)
+	message(app);
 };
 export default expressApp;

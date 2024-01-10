@@ -1,6 +1,6 @@
 import { ValidateSignature } from "../../utils/index.js";
 import UserRepositary from "../../database/repositary/user-repositary.js";
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
 import { APP_SECRET } from "../../config/index.js";
 
 export const UserAuth = async (req, res, next) => {

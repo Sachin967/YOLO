@@ -19,12 +19,21 @@ const reportUser = [
 
 export const ENDPOINT = "http://localhost:8000";
 
-
 export const dayOptions = Array.from({ length: 31 }, (_, i) => i + 1);
 
 export const monthOptions = [
-	'January', 'February', 'March', 'April', 'May', 'June',
-	'July', 'August', 'September', 'October', 'November', 'December'
+	"January",
+	"February",
+	"March",
+	"April",
+	"May",
+	"June",
+	"July",
+	"August",
+	"September",
+	"October",
+	"November",
+	"December"
 ];
 
 export const genderOptions = ["Male", "Female", "Other"];

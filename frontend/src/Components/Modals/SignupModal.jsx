@@ -12,8 +12,8 @@ import { dayOptions, genderOptions, monthOptions, yearOptions } from "../../cons
 import { users } from "../../config/axios";
 import { useNavigate } from "react-router-dom";
 
-const SignupModal = ({ onClose, isOpen, handleChange,formstate,showToast }) => {
-const Navigate=useNavigate()
+const SignupModal = ({ onClose, isOpen, handleChange, formstate, showToast }) => {
+	const Navigate = useNavigate();
 	const validateForm = () => {
 		// Validation logic for each field
 		const emailRegex = /^\S+@\S+\.\S+$/;

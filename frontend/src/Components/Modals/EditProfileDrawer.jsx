@@ -62,7 +62,7 @@ function EditProfileDrawer({ isOpen, onClose, showUserProfile }) {
 			.then((res) => {
 				if (res.data) {
 					dispatch(AuthActions.Userupdate(res.data));
-					console.log(res.data)
+					console.log(res.data);
 					setUpdatedUser(res.data);
 					showUserProfile();
 					onClose();

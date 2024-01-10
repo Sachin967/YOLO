@@ -8,15 +8,15 @@ export const message = (app) => {
 			const { id } = req.params;
 			const chats = await service.FetchChats(id);
 			return res.json(chats);
-		} catch (error) { }
+		} catch (error) {}
 	});
-	app.post("/accesschat",UserAuth, async (req, res, next) => {
+	app.post("/accesschat", UserAuth, async (req, res, next) => {
 		try {
 			const { userId } = req.body;
-			const loggedInUserId = req.user._id
+			const loggedInUserId = req.user._id;
 			const chat = await service.AccessChat({ userId, loggedInUserId });
 			return res.json(chat);
-		} catch (error) { }
+		} catch (error) {}
 	});
 	app.post("/group", UserAuth, async (req, res, next) => {
 		try {
@@ -27,45 +27,44 @@ export const message = (app) => {
 			}
 			const groupchat = await service.CreateGroupChat({ users, chatName }, req);
 			return res.json(groupchat);
-		} catch (error) { }
+		} catch (error) {}
 	});
 	app.put("/renamegroup/:chatId", async (req, res, next) => {
 		try {
-			console.log(req.params)
-			const { chatId } = req.params
+			console.log(req.params);
+			const { chatId } = req.params;
 			const { groupimage, chatname } = req.body;
 			const renamedchat = await service.RenameChat({ chatId, chatname, groupimage });
 			return res.json(renamedchat);
-		} catch (error) { }
+		} catch (error) {}
 	});
 	app.put("/groupadd", async (req, res, next) => {
 		try {
 			const users = JSON.parse(req.body.users);
-			console.log(users)
-			const userIds = users.map((u)=> u._id)
-			console.log(userIds)
+			console.log(users);
+			const userIds = users.map((u) => u._id);
+			console.log(userIds);
 			const { chatId } = req.body;
 			const addtogroup = await service.AddUsertoGroup({ chatId, userIds });
 			return res.json(addtogroup);
-		} catch (error) { }
+		} catch (error) {}
 	});
 	app.put("/groupremove", async (req, res, next) => {
 		try {
 			const { chatId, userId } = req.body;
 			const response = await service.RemoveFromGroup({ chatId, userId });
 			return res.json(response);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	app.post("/message", UserAuth, async (req, res, next) => {
 		try {
-
 			const { content, chatId } = req.body;
 			const userId = req.user._id;
 
 			const savemessage = await service.SendMessage({ content, chatId, userId });
 			res.json(savemessage);
-		} catch (error) { }
+		} catch (error) {}
 	});
 	app.get("/message/:chatId", UserAuth, async (req, res, next) => {
 		try {
@@ -73,15 +72,13 @@ export const message = (app) => {
 			const { chatId } = req.params;
 			const getAllmessages = await service.FetchMessages({ chatId, userId });
 			return res.json(getAllmessages);
-		} catch (error) { }
+		} catch (error) {}
 	});
 	app.get("/searchchat/:id", async (req, res, next) => {
 		try {
 			const { id } = req.params;
 			const getChats = await service.FetchGroupChats(id);
 			return res.json(getChats);
-		} catch (error) {
-
-		}
+		} catch (error) {}
 	});
 };

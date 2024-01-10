@@ -30,18 +30,18 @@ const UserSchema = new mongoose.Schema(
 		reportedPosts: [{ type: String }],
 		reports: [
 			{
-				reporterId: { type: mongoose.Schema.Types.ObjectId, ref: "user" }, 
-				reason: { type: String }, 
-				createdAt: { type: Date, default: Date.now } 
+				reporterId: { type: mongoose.Schema.Types.ObjectId, ref: "user" },
+				reason: { type: String },
+				createdAt: { type: Date, default: Date.now }
 			}
 		],
 		dateOfBirth: {
-			type: Date, 
+			type: Date
 		},
 		gender: {
-			type: String, 
-			enum: ['Male', 'Female', 'Other'], 
-		},
+			type: String,
+			enum: ["Male", "Female", "Other"]
+		}
 	},
 	{ timestamps: true }
 );

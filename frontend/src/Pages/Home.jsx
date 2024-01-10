@@ -15,7 +15,7 @@ const Home = () => {
 	useEffect(() => {
 		ShowPosts();
 	}, []);
-console.log(postsData)
+	console.log(postsData);
 	const ShowPosts = () => {
 		posts
 			.get(`/seeposts?page=${page}&limit=5`)

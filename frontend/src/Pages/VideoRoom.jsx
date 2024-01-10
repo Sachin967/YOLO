@@ -22,7 +22,7 @@ const VideoRoom = () => {
 			const zc = ZegoUIKitPrebuilt.create(kitToken);
 			zc.joinRoom({
 				container: element,
-			
+
 				scenario: {
 					mode: ZegoUIKitPrebuilt.OneONoneCall
 				},

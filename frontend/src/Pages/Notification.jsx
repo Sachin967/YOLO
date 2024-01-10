@@ -7,10 +7,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { ChatState } from "../Context/ChatProvider";
 // import FullPost from "../Components/FullPost";
-const FullPost =lazy(()=>import('../Components/FullPost'))
+const FullPost = lazy(() => import("../Components/FullPost"));
 import { SavePost, fetchLikedPost, fetchSavedPost, handleLike } from "../API/api";
 import useCustomToast from "../toast";
-	
+
 const Notification = () => {
 	const [like, setLiked] = useState(false);
 	const [likeCount, setLikeCount] = useState();
@@ -31,7 +31,7 @@ const Notification = () => {
 
 	const handleImageClick = (postId) => {
 		fetchPostDetail(postId);
-		if (user.length>0) {
+		if (user.length > 0) {
 			onOpenPostModal();
 		}
 	};
@@ -121,7 +121,11 @@ const Notification = () => {
 				<div className="flex p-5 sm:w-full w-auto items-center border-b border-gray-700" key={not._id}>
 					{not?.notificationType === "like" && (
 						<>
-							<FontAwesomeIcon className="sm:text-4xl text-2xl sm:me-10 me-2" icon={faHeart} style={{ color: "#ff3040" }} />
+							<FontAwesomeIcon
+								className="sm:text-4xl text-2xl sm:me-10 me-2"
+								icon={faHeart}
+								style={{ color: "#ff3040" }}
+							/>
 							<Link to={`/${not?.userDetail?.username}`}>
 								<Avatar size={"md"} className="me-3" src={not?.userDetail?.propic?.url} />
 							</Link>

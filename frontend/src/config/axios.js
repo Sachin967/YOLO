@@ -13,7 +13,7 @@ const posts = createAxiosInstance("http://localhost:7000", true);
 const notifications = createAxiosInstance("http://localhost:9000");
 const messaging = createAxiosInstance("http://localhost:8000");
 const admin = createAxiosInstance("http://localhost:7300", true);
-const mapbox = createAxiosInstance('https://api.mapbox.com/geocoding/v5/mapbox.places')
+const mapbox = createAxiosInstance("https://api.mapbox.com/geocoding/v5/mapbox.places");
 // Function to get the token from the cookie
 const getUserToken = () => {
 	return document.cookie.replace(/(?:(?:^|.*;\s*)userJwt\s*=\s*([^;]*).*$)|^.*$/, "$1");
@@ -49,4 +49,4 @@ const attachAdminTokenInterceptor = (axiosInstance) => {
 
 attachAdminTokenInterceptor(admin);
 
-export { users, posts, notifications, messaging, admin,mapbox };
+export { users, posts, notifications, messaging, admin, mapbox };
