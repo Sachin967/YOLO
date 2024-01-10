@@ -3,22 +3,22 @@ import Chat from "../model/chatModel.js";
 import Message from "../model/messageModel.js";
 
 class MessageRepository {
-	async FindChat({ id, userId }) {
+	async FindChat({  userId, loggedInUserId }) {
 		try {
 			const chat = await Chat.find({
 				isGroupChat: false,
-				$and: [{ users: { $elemMatch: { $eq: id } } }, { users: { $elemMatch: { $eq: userId } } }]
+				$and: [{ users: { $elemMatch: { $eq: loggedInUserId } } }, { users: { $elemMatch: { $eq: userId } } }]
 			}).populate("latestMessage");
 			return chat;
 		} catch (error) { }
 	}
 
-	async CreatNormalChat({ id, userId }) {
+	async CreatNormalChat({ loggedInUserId, userId }) {
 		try {
 			const chat = await Chat.create({
 				chatName: "sender",
 				isGroupChat: false,
-				users: [id, userId]
+				users: [loggedInUserId, userId]
 			});
 			return chat;
 		} catch (error) { }

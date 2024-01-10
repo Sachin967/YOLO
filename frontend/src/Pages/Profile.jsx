@@ -120,7 +120,7 @@ const Profile = () => {
 						<div className="bg-white">
 							<img
 								onClick={() => HandleClick("cover")}
-								className="w-full md:w-[1100px] sm:w-[1000px] lg:w-screen max-h-full"
+								className="w-full object-cover md:w-[1100px] sm:w-[1000px] lg:w-screen max-h-full"
 								src={
 									!user?.coverpic?.url || user?.coverpic?.url === ""
 										? "https://pbs.twimg.com/profile_banners/1483554293168975872/1696101628/1500x500" // Replace this with your placeholder image URL

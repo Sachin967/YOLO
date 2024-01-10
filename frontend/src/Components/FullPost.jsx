@@ -29,6 +29,7 @@ import { AuthActions } from "../store/Authslice";
 import { Error403 } from "../Commonfunctions";
 import { ImBookmark } from "react-icons/im";
 import { GrBookmark } from "react-icons/gr";
+import { CommentDeleteModal } from "./Modals/CommentDeleteModal";
 
 const FullPost = ({
 	likeCount,
@@ -45,6 +46,7 @@ const FullPost = ({
 	const { isOpen: isBasicOpen, onOpen: onBasicOpen, onClose: onBasicClose } = useDisclosure();
 	const showToast = useCustomToast();
 	const [com, setCom] = useState("");
+	const { isOpen: isAlertOpen, onOpen: onAlertOpen, onClose: onAlertClose } = useDisclosure();
 	const [emojishow, setEmojishow] = useState(false);
 	const { userdetails } = useSelector((state) => state.auth);
 	const usrname = userdetails.username;
@@ -55,16 +57,19 @@ const FullPost = ({
 	const dispatch = useDispatch();
 	const Navigate = useNavigate();
 	const [comments, setComment] = useState([]);
+	const [commentId, setCommentId] = useState("");
 	const SinglePostDetails = () => {
 		posts
 			.post("/postdetails", { postId })
 			.then((res) => {
 				const { post: post, userData } = res.data.response;
+				console.log(userData)
 				// Match user data for each post based on user IDs
 				const commentWithUserData = post.comments.map((comment) => {
 					const userDetail = userData.find((user) => {
 						return user?.username.toLowerCase() == comment?.username.toLowerCase();
 					});
+					console.log(userDetail)
 					return { ...comment, ...userDetail };
 				});
 				setComment(commentWithUserData);
@@ -130,7 +135,6 @@ const FullPost = ({
 				setUserData(null);
 			}
 		} else if (typeof postuser === "object" && postuser !== null) {
-			console.log("c");
 			setUserData(postuser);
 		} else {
 			setUserData(null);
@@ -197,7 +201,11 @@ const FullPost = ({
 		const formattedDate = new Date(dateString).toLocaleDateString("en-US", options);
 		return formattedDate;
 	};
-
+	const handleClick = (coId) => {
+		console.log(coId)
+		onAlertOpen();
+		setCommentId(coId);
+	};
 	return (
 		<div>
 			<Modal
@@ -212,9 +220,8 @@ const FullPost = ({
 					<ModalHeader bg="black" className="px-0 bg-transparent py-0">
 						<ModalCloseButton className="hover:text-white" />
 					</ModalHeader>
-				{console.log(postuser)}
 					<ModalBody bg={"black"} className="flex  bg-transparent justify-center relative">
-						<img className="w-[630px]  mr-60 h-[680px]" src={poster?.media?.url} alt="" />
+						<img className="w-[550px]  mr-60 h-[687px]" src={poster?.media} alt="" />
 						<div className="absolute flex top-5 right-0 text-white border-t border-l border-zinc-700  overflow-y-scroll max-h-[535px]">
 							<div className="flex flex-col w-[350px] h-screen">
 								<div className="flex items-center p-3">
@@ -252,8 +259,13 @@ const FullPost = ({
 													<Text className="p-2 font-bold text-sm">{comment?.name}</Text>
 												</a>
 												<Text className="p-2 text-sm">{formatDate(comment?.createdAt)}</Text>
-												<FontAwesomeIcon className="text-xl p-2" icon={faEllipsis} />
+												<FontAwesomeIcon
+													onClick={() => handleClick(comment._id)}
+													className="text-xl p-2"
+													icon={faEllipsis}
+												/>
 											</div>
+
 											<div className="flex">
 												<Text className="ml-16 text-md">{comment?.content}</Text>
 												<Popover>
@@ -316,6 +328,14 @@ const FullPost = ({
 											)}
 										</div>
 									))}
+								<CommentDeleteModal
+									comments={comments}
+									setComment={setComment}
+									commentId={commentId}
+									containsPostId={containsPostId}
+									onClose={onAlertClose}
+									isOpen={isAlertOpen}
+								/>
 							</div>
 						</div>
 						<div className=" w-[351px]  border-l border-t border-zinc-700 absolute bottom-0 right-0">

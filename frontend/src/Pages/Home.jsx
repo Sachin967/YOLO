@@ -15,7 +15,7 @@ const Home = () => {
 	useEffect(() => {
 		ShowPosts();
 	}, []);
-
+console.log(postsData)
 	const ShowPosts = () => {
 		posts
 			.get(`/seeposts?page=${page}&limit=5`)
@@ -40,30 +40,29 @@ const Home = () => {
 			});
 	};
 
-const fetchData = () => {
-	const nextPage = page + 1;
-	posts
-		.get(`/seeposts?page=${nextPage}&limit=5`) // Use nextPage here instead of page
-		.then((res) => {
-			const { posts: fetchedPosts, userData } = res.data;
+	const fetchData = () => {
+		const nextPage = page + 1;
+		posts
+			.get(`/seeposts?page=${nextPage}&limit=5`) // Use nextPage here instead of page
+			.then((res) => {
+				const { posts: fetchedPosts, userData } = res.data;
 
-			const postsWithUserData = fetchedPosts.map((post) => {
-				const userDetail = userData.find((user) => user._id === post.userId);
-				return { ...post, userDetails: userDetail };
+				const postsWithUserData = fetchedPosts.map((post) => {
+					const userDetail = userData.find((user) => user._id === post.userId);
+					return { ...post, userDetails: userDetail };
+				});
+
+				setPostsData([...postsData, ...postsWithUserData]);
+				setPage(nextPage);
+			})
+			.catch((error) => {
+				if (error?.response && error.response.status === 403) {
+					Error403(error, showToast, dispatch, Navigate);
+				} else {
+					console.error("Error:", error);
+				}
 			});
-
-			setPostsData([...postsData, ...postsWithUserData]);
-			setPage(nextPage);
-		})
-		.catch((error) => {
-			if (error?.response && error.response.status === 403) {
-				Error403(error, showToast, dispatch, Navigate);
-			} else {
-				console.error("Error:", error);
-			}
-		});
-};
-
+	};
 
 	return (
 		<>

@@ -21,7 +21,7 @@ const AlertLeaveGroup = ({ onClose, isOpen, userId, chatId, FetchChats }) => {
 			.put("/groupremove", { userId, chatId })
 			.then((res) => {
 				console.log(res);
-				FetchChats()
+				FetchChats();
 				setSelectedUsers(null);
 			})
 			.catch((error) => console.log(error));

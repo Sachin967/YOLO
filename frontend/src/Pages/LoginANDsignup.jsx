@@ -12,7 +12,6 @@ const LoginANDSignup = () => {
 	const isOtp = location.pathname.startsWith("/verifyOtp");
 	return (
 		<>
-			
 			<section className="bg-cover bg-center h-screen" style={{ backgroundImage: `url(${background})` }}>
 				{isLogin && <Login />}
 				{isOtp && <Otp />}

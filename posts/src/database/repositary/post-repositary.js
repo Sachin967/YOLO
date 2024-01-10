@@ -4,9 +4,9 @@ import { cloudinary } from "../../config/cloudinary.js";
 class PostRepositary {
 	async CreatePost({ userId, textmedia, location, privacy, media }) {
 		try {
-			const result = await cloudinary.uploader.upload(media, {
-				folder: "products"
-			});
+			// const result = await cloudinary.uploader.upload(media, {
+			// 	folder: "products"
+			// });
 			const post = new Post({
 				userId,
 				textmedia,
@@ -14,10 +14,7 @@ class PostRepositary {
 				likes: [],
 				comments: [],
 				privacy,
-				media: {
-					public_id: result.public_id,
-					url: result.secure_url
-				}
+				media: media
 			});
 			return await post.save();
 		} catch (error) {
@@ -34,7 +31,7 @@ class PostRepositary {
 	}
 	async FindPosts({ skip, limit }) {
 		try {
-			const posts = await Post.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
+			const posts = await Post.find({isListed:true}).sort({ createdAt: -1 }).skip(skip).limit(limit);
 			console.log(posts);
 			return posts;
 		} catch (error) {
@@ -128,6 +125,19 @@ class PostRepositary {
 		}
 	}
 
+	async RemoveComment(commentId){
+		try {
+			console.log(commentId)
+			const comment = await Comment.findOneAndDelete({_id:commentId})
+			if (!comment) {
+				return { status: "Comment not found" };
+			}
+			return {status:"Comment Deleted"}
+		} catch (error) {
+			
+		}
+	}
+
 	async FlagPost({ postId, username, reason }) {
 		try {
 			const postsToUpdate = await Post.find({ $or: [{ reported: { $exists: false } }, { reported: [] }] });
@@ -192,6 +202,15 @@ class PostRepositary {
 		} catch (error) {
 
 		}
+	}
+	async unListPost(data) {
+		const unlist = await Post.findOneAndUpdate({ _id: data }, { isListed: false }, { new: true });
+		return unlist;
+	}
+
+	async listPost(data) {
+		const list = await Post.findOneAndUpdate({ _id: data }, { isListed: true }, { new: true });
+		return list;
 	}
 }
 

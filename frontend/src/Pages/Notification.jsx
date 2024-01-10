@@ -1,14 +1,16 @@
 import { Avatar, useDisclosure } from "@chakra-ui/react";
 import { faCommentAlt, faHeart, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy, Suspense } from "react";
 import { notifications, posts, users } from "../config/axios";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { ChatState } from "../Context/ChatProvider";
-import FullPost from "../Components/FullPost";
+// import FullPost from "../Components/FullPost";
+const FullPost =lazy(()=>import('../Components/FullPost'))
 import { SavePost, fetchLikedPost, fetchSavedPost, handleLike } from "../API/api";
 import useCustomToast from "../toast";
+	
 const Notification = () => {
 	const [like, setLiked] = useState(false);
 	const [likeCount, setLikeCount] = useState();
@@ -29,7 +31,9 @@ const Notification = () => {
 
 	const handleImageClick = (postId) => {
 		fetchPostDetail(postId);
-		onOpenPostModal();
+		if (user.length>0) {
+			onOpenPostModal();
+		}
 	};
 
 	const fetchPostDetail = (postId) => {
@@ -37,10 +41,10 @@ const Notification = () => {
 			.post("/postdetails", { postId })
 			.then((res) => {
 				if (res.data.status) {
-					console.log(res.data)
+					console.log(res.data);
 					setPost(res.data.response);
 					console.log(res.data.response);
-					setUser(res.data.user[0]);
+					setUser(res.data.user);
 				}
 			})
 			.catch((error) => console.log(error));
@@ -114,39 +118,42 @@ const Notification = () => {
 	const renderNotification = (not) => {
 		return (
 			<>
-				<div className="flex p-5 items-center border-b border-gray-700" key={not._id}>
+				<div className="flex p-5 sm:w-full w-auto items-center border-b border-gray-700" key={not._id}>
 					{not?.notificationType === "like" && (
 						<>
-							<FontAwesomeIcon className="text-4xl me-10" icon={faHeart} style={{ color: "#ff3040" }} />
+							<FontAwesomeIcon className="sm:text-4xl text-2xl sm:me-10 me-2" icon={faHeart} style={{ color: "#ff3040" }} />
 							<Link to={`/${not?.userDetail?.username}`}>
 								<Avatar size={"md"} className="me-3" src={not?.userDetail?.propic?.url} />
 							</Link>
 							<Link to={`/${not?.userDetail?.username}`}>
 								{" "}
-								<h2 className="text-lg me-5 text-white cursor-pointer">
+								<h2 className="sm:text-lg text-sm sm:me-5 me-2 text-white cursor-pointer">
 									<span className="text-blue-400 me-3">@{not?.userDetail?.username}</span> just liked
 									your post
 								</h2>
 							</Link>
 							<img
 								onClick={() => handleImageClick(not?.entityID)}
-								className="cursor-pointer w-12 h-12 mr-5"
+								className="cursor-pointer w-12 h-12 mr-2 sm:mr-5"
 								src={not?.Postimage}
 								alt=""
 							/>
-							{post.userData && post.userData[0] && (
-								<FullPost
-									postId={not?.entityID}
-									handleLike={likeFunction}
-									like={like}
-									onClosePostModal={onClosePostModal}
-									isPostModalOpen={isPostModalOpen}
-									likeCount={likeCount}
-									poster={post.post}
-									postuser={user}
-									savepost={savepost}
-									PostSave={PostSave}
-								/>
+							{post.post && (
+								<Suspense fallback={<div>Loading...</div>}>
+									{" "}
+									<FullPost
+										postId={not?.entityID}
+										handleLike={likeFunction}
+										like={like}
+										onClosePostModal={onClosePostModal}
+										isPostModalOpen={isPostModalOpen}
+										likeCount={likeCount}
+										poster={post.post}
+										postuser={user[0]}
+										savepost={savepost}
+										PostSave={PostSave}
+									/>
+								</Suspense>
 							)}
 						</>
 					)}
@@ -186,19 +193,21 @@ const Notification = () => {
 							</Link>
 							<img className="w-12 mr-5" src={not?.Postimage} alt="" />
 
-							{post.userData && post.userData[0] && (
-								<FullPost
-									postId={not?.entityID}
-									handleLike={likeFunction}
-									like={like}
-									onClosePostModal={onClosePostModal}
-									isPostModalOpen={isPostModalOpen}
-									likeCount={likeCount}
-									poster={post.post}
-									postuser={user}
-									savepost={savepost}
-									PostSave={PostSave}
-								/>
+							{post.post && (
+								<Suspense fallback={<div>Loading...</div>}>
+									<FullPost
+										postId={not?.entityID}
+										handleLike={likeFunction}
+										like={like}
+										onClosePostModal={onClosePostModal}
+										isPostModalOpen={isPostModalOpen}
+										likeCount={likeCount}
+										poster={post.post}
+										postuser={user[0]}
+										savepost={savepost}
+										PostSave={PostSave}
+									/>
+								</Suspense>
 							)}
 						</>
 					)}
@@ -211,8 +220,7 @@ const Notification = () => {
 	return (
 		<>
 			<div className="flex h-full">
-				{console.log(user)}
-				<div className="ml-12 w-[694px] md:w-[1110px] lg:w-[750px] min-h-screen max-h-full sm:w-[980px] lg:ml-[320px] sm:ml-[55px] bg-black">
+				<div className="ml-20 w-[694px] md:w-[1110px] lg:w-[750px] min-h-screen max-h-full sm:w-[980px] lg:ml-[320px] sm:ml-[55px] bg-black">
 					<div className="p-4  max-w-[750px] ">
 						<h2 className="text-center font-poppins text-2xl text-white">Notifications</h2>
 						<br />
@@ -261,7 +269,7 @@ const Notification = () => {
 						)}
 					</div>
 				</div>
-				<div className="w-[370px] border-l border-gray-700 bg-black"></div>
+				<div className="sm:block hidden w-[370px] border-l border-gray-700 bg-black"></div>
 			</div>
 		</>
 	);

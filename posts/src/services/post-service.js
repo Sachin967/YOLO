@@ -87,8 +87,13 @@ class PostService {
 					comment.userDetails = userDetail; // Associate user details with the post
 				}
 			});
+			const user =userData.map((obj)=>{
+				const {_id,...rest}=obj
+				return rest
+			})
+			console.log("user",user)
 			// Return user data associated with comment users
-			return { post: post, userData: userData };
+			return { post: post, userData: user };
 		} catch (error) {
 			console.log(error);
 		}
@@ -185,6 +190,12 @@ class PostService {
 			return res;
 		} catch (error) {}
 	}
+	async deleteComment(commentId) {
+		try {
+			const res = await this.repositary.RemoveComment(commentId);
+			return res;
+		} catch (error) { }
+	}
 
 	async ReportPost({ postId, username, reason }) {
 		try {
@@ -208,7 +219,12 @@ class PostService {
 				type:"FETCH_USERS",
 				data:userId
 			})
-			return response
+			const modifiedArray = response.map((obj) => {
+				const { _id, ...rest } = obj; 
+				return rest; 
+			});
+			console.log("hi", modifiedArray)
+			return modifiedArray
 		} catch (error) {
 			
 		}
@@ -228,6 +244,13 @@ class PostService {
 			case "SAVED_POSTS":
 				console.log(data)
 				return this.repositary.FetchSavedPosts(data)
+				break
+			case "UNLIST_POST":
+				return this.repositary.unListPost(data);
+				break;
+			case "LIST_POST":
+				return this.repositary.listPost(data);
+				break;
 			default:
 				break;
 		}

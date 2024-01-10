@@ -82,9 +82,9 @@ const Bookmark = () => {
 										/>
 									)}
 								</Box>
-							<div onClick={() => PostSave(post?._id)} className="inline-block">
-								<ImBookmark className="cursor-pointer scale-105 h-14 w-14 p-3 transition-transform text-blue-500" />
-							</div>
+								<div onClick={() => PostSave(post?._id)} className="inline-block">
+									<ImBookmark className="cursor-pointer scale-105 h-14 w-14 p-3 transition-transform text-blue-500" />
+								</div>
 							</Flex>
 						</div>
 					))}

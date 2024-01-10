@@ -3,7 +3,7 @@ import mongoose, { Schema } from "mongoose";
 const PostSchema = new mongoose.Schema(
 	{
 		textmedia: { type: String },
-		media: { public_id: { type: String }, url: { type: String } },
+		media: { type: String },
 		likes: [
 			{
 				user: { type: String },
@@ -21,7 +21,9 @@ const PostSchema = new mongoose.Schema(
 				reason: { type: String },
 				createdAt: { type: Date, default: Date.now }
 			}
-		]
+		],
+		isListed: { type: Boolean, default: true },
+
 	},
 
 	{ timestamps: true }

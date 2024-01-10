@@ -6,12 +6,12 @@ class MessageService {
 		this.repository = new MessageRepository();
 	}
 
-	async AccessChat({ userId, id }) {
+	async AccessChat({ userId, loggedInUserId }) {
 		try {
-			const chats = await this.repository.FindChat({ id, userId });
+			const chats = await this.repository.FindChat({  userId, loggedInUserId });
 			const response = await RPCRequest("USER_RPC", {
 				type: "FETCH_USERS",
-				data: { userId, id }
+				data: { userId, loggedInUserId }
 			});
 
 			if (chats.length > 0) {
@@ -19,11 +19,11 @@ class MessageService {
 
 				return { chatData, response };
 			} else {
-				const createChat = await this.repository.CreatNormalChat({ id, userId });
+				const createChat = await this.repository.CreatNormalChat({ loggedInUserId, userId });
 
 				const response = await RPCRequest("USER_RPC", {
 					type: "FETCH_USERS",
-					data: { userId, id }
+					data: { userId, loggedInUserId }
 				});
 				const chatData = createChat;
 				return { chatData, response };

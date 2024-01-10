@@ -45,7 +45,7 @@ const GroupChatModal = ({ isOpen, onClose, filteredUsers, FetchChats }) => {
 	};
 
 	const handleSubmit = () => {
-    console.log()
+		console.log();
 		if (!groupChatname || !selectedUsers) {
 			showToast("warning", "Add all fields");
 			return;
@@ -61,7 +61,7 @@ const GroupChatModal = ({ isOpen, onClose, filteredUsers, FetchChats }) => {
 						setChats(res.data);
 						onClose();
 						showToast("success", "Group Created");
-            FetchChats()
+						FetchChats();
 					}
 				})
 				.catch((err) => {

@@ -4,12 +4,13 @@ import MyChats from "../Components/MyChats";
 import { ChatState } from "../Context/ChatProvider";
 import { messaging } from "../config/axios";
 import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 
 const Message = () => {
-	const [fetchAgain, setFetchAgain] = useState(false);
-	const [peopleMessaged, setPeopleMessaged] = useState([]);
+	const { userId } = useParams();
+	const { peopleMessaged, setPeopleMessaged, fetchAgain, setFetchAgain } = ChatState();
 	const { people, setpeople } = ChatState();
-	const {userdetails}= useSelector((state)=>state.auth)
+	const { userdetails } = useSelector((state) => state.auth);
 	const FetchChats = () => {
 		try {
 			messaging
@@ -28,6 +29,7 @@ const Message = () => {
 	return (
 		<div className="flex">
 			<MyChats
+				userId={userId}
 				people={people}
 				setpeople={setpeople}
 				peopleMessaged={peopleMessaged}

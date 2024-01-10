@@ -12,11 +12,15 @@ const ChatProvider = ({ children }) => {
 	const [selectedUsers, setSelectedUsers] = useState();
 	const [notify, setNotify] = useState([]);
 	const [savedpost, setSavedPost] = useState([]);
-		const [updatedName, setUpdatedName] = useState(null);
-		const [updatedImage, setUpdatedImage] = useState();
+	const [updatedName, setUpdatedName] = useState(null);
+	const [updatedImage, setUpdatedImage] = useState();
+	const [peopleMessaged, setPeopleMessaged] = useState([]);
+	const [fetchAgain, setFetchAgain] = useState(false);
 	return (
 		<ChatContext.Provider
 			value={{
+				fetchAgain,
+				setFetchAgain,
 				notify,
 				setNotify,
 				selectedUsers,
@@ -38,7 +42,9 @@ const ChatProvider = ({ children }) => {
 				updatedName,
 				setUpdatedName,
 				updatedImage,
-				setUpdatedImage
+				setUpdatedImage,
+				peopleMessaged,
+				setPeopleMessaged
 			}}>
 			{children}
 		</ChatContext.Provider>

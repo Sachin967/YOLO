@@ -15,6 +15,7 @@ import { GrBookmark } from "react-icons/gr";
 import { ImBookmark } from "react-icons/im";
 import { SavePost, fetchLikedPost, fetchSavedPost, handleLike } from "../API/api";
 import { ChatState } from "../Context/ChatProvider";
+import ShareModal from "./Modals/ShareModal";
 const PostView = ({ post, ShowPosts, fetchData }) => {
 	const [like, setLiked] = useState(false);
 	const [likeCount, setLikeCount] = useState();
@@ -24,6 +25,7 @@ const PostView = ({ post, ShowPosts, fetchData }) => {
 	const Navigate = useNavigate();
 	const { isOpen: isCommentModalOpen, onOpen: onCommentModal, onClose: onCloseCommentModal } = useDisclosure();
 	const { isOpen: isPostModalOpen, onOpen: onOpenPostModal, onClose: onClosePostModal } = useDisclosure();
+	const { isOpen: isShareOpen, onOpen: onShareOpen, onClose: onShareClose } = useDisclosure();
 	const { media, textmedia, _id, likes, comments } = post;
 	const { name, username, propic } = post?.userDetails || {};
 	const { userdetails } = useSelector((state) => state.auth);
@@ -43,70 +45,26 @@ const PostView = ({ post, ShowPosts, fetchData }) => {
 		}
 	};
 
-	// const handleLike = (_id) => {
-	// 	if (id) {
-	// 		posts
-	// 			.post("/likepost", { userId: id, postId: _id })
-	// 			.then((res) => {
-	// 				if (res.data.status === "liked") {
-	// 					setLikeCount(res.data.likeCount);
-	// 					setLiked(true); // Set liked state to true
-	// 					FetchLikedPost();
-	// 				} else if (res.data.status === "unliked") {
-	// 					setTimeout(() => {
-	// 						setLikeCount(res.data.likeCount);
-	// 						setLiked(false);
-	// 					}, 150);
-	// 					FetchLikedPost();
-	// 				}
-	// 			})
-	// 			.catch((error) => {
-	// 				if (error.response.status === 403) {
-	// 					Error403(error, showToast, dispatch, Navigate);
-	// 				} else {
-	// 					console.error("Error:", error);
-	// 				}
-	// 			});
-	// 	}
-	// };
-
 	const likeFunction = (_id) => {
 		handleLike(id, _id, setLikeCount, setLiked, fetchLikedPost, showToast, dispatch, Navigate);
 	};
 
-	// const FetchLikedPost = () => {
-	// 	posts
-	// 		.post("/likedPosts", { userId: id })
-	// 		.then((response) => {
-	// 			const likes = response.data.likedPosts;
-	// 			const isPostLiked = likes.some((posts) => posts._id === post._id);
-	// 			setLiked(isPostLiked);
-	// 		})
-	// 		.catch((error) => {
-	// 			if (error.response.status === 403) {
-	// 				// Handle 403 Forbidden error
-	// 				Error403(error, showToast, dispatch, Navigate);
-	// 			} else {
-	// 				console.error("Error:", error);
-	// 			}
-	// 		});
-	// };
 	useEffect(() => {
 		fetchLikedPost(id, post._id, setLiked);
-	}, [post._id, id,setLiked]);
+	}, [post._id, id, setLiked]);
 
 	const handleClick = () => {
 		onOpenPostModal();
 	};
 	return (
 		<>
-			<div className="ml-12 w-[694px] md:w-[1110px] lg:w-[1120px] sm:w-[980px] lg:ml-[320px] sm:ml-[55px] bg-black">
-				<div className="p-4 border-r border-b border-gray-700  dark:border-gray-700 max-w-[750px] ">
-					<div className="flex items-center justify-center h-[700px] mb-11 rounded bg-black dark:bg-gray-900">
-						<Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
+			<div className="ml-[70px] w-[380px] md:w-[1110px] lg:w-[1120px] sm:w-[980px] lg:ml-[320px] sm:ml-[55px] bg-black">
+				<div className=" sm:p-4 border-r border-b border-gray-700 sm:ml-80 lg:ml-0 dark:border-gray-700 max-w-[750px] ">
+					<div className="flex items-center justify-center h-[550px]  sm:h-[750px] mb-11 rounded bg-black dark:bg-gray-900">
+						<Flex className="flex-0 sm:flex-1" gap="4" alignItems="center" flexWrap="wrap">
 							<a href={`/${username}`}>
 								{" "}
-								<Avatar src={propic?.url} name="Segun Adebayo" className="mb-[650px]" />
+								<Avatar src={propic?.url} name="Segun Adebayo" className="mb-[450px] sm: sm:mb-[650px]" />
 							</a>
 							<Box>
 								<a href={`/${username}`}>
@@ -122,13 +80,12 @@ const PostView = ({ post, ShowPosts, fetchData }) => {
 								{media && (
 									<Image
 										onClick={handleClick}
-										className="rounded-3xl w-[550px] h-[600px]"
+										className="rounded-3xl w-full object-cover h-[375px]  sm:w-[480px] sm:h-[600px]"
 										objectFit="cover"
-										src={media.url}
+										src={media}
 										alt="Chakra UI"
 									/>
 								)}
-
 								<div className="flex justify-around w-full">
 									<div
 										className="cursor-pointer"
@@ -151,7 +108,6 @@ const PostView = ({ post, ShowPosts, fetchData }) => {
 											</span>
 										</div>
 									</div>
-
 									<div>
 										<button onClick={handleCommentClick}>
 											<FontAwesomeIcon
@@ -166,10 +122,15 @@ const PostView = ({ post, ShowPosts, fetchData }) => {
 											</div>
 										</button>
 									</div>
-									<div>
+									<div className="cursor-pointer p-4" onClick={onShareOpen}>
 										<FontAwesomeIcon
 											icon={faArrowUpFromBracket}
-											className="text-3xl p-3 text-gray-300"
+											className="text-3xl  text-gray-300"
+										/>
+										<ShareModal
+											post={post}
+											isOpen={isShareOpen}
+											onClose={onShareClose}
 										/>
 									</div>
 									<div onClick={() => PostSave(_id)} className="inline-block">

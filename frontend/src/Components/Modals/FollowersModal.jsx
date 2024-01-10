@@ -43,7 +43,7 @@ const FollowersModal = ({ onFollowersClose, isFollowersOpen, userId, follow, Fol
 	return (
 		<Modal scrollBehavior="inside" onClose={onFollowersClose} size={"sm"} isOpen={isFollowersOpen}>
 			<ModalOverlay />
-			<ModalContent>
+			<ModalContent style={{ backgroundColor: "#131313" }}>
 				<ModalHeader className="text-center text-white">Followers</ModalHeader>
 				<ModalCloseButton className="hover:text-white" />
 				<ModalBody>
@@ -56,15 +56,16 @@ const FollowersModal = ({ onFollowersClose, isFollowersOpen, userId, follow, Fol
 					/>
 					{filteredUsers?.map((fol) => (
 						<>
-							<div className="flex hover:bg-slate-900 p-5">
-								<Link onClick={onFollowersClose} to={`/${fol?.username}`}>
+							<Link onClick={onFollowersClose} to={`/${fol?.username}`}>
+								<div className="flex hover:bg-slate-900 p-5">
 									<Avatar className="mr-5" src={fol?.propic?.url} />
-									<div>
+									<div className="flex-1">
 										<h2 className="text-white">{fol?.name}</h2>
 										<h2 className="text-gray-600">{fol?.username}</h2>
 									</div>
-								</Link>
-								<button
+								</div>
+							</Link>
+							{/* <button
 									onClick={() => FollowUsers(fol._id)}
 									className={
 										filteredUsers.some((user) => user._id === fol._id)
@@ -72,8 +73,7 @@ const FollowersModal = ({ onFollowersClose, isFollowersOpen, userId, follow, Fol
 											: "text-green-600 border border-green-600 h-9 w-24 bg-black rounded-3xl"
 									}>
 									{filteredUsers.some((user) => user._id === fol._id) ? "Unfollow" : "Follow"}
-								</button>
-							</div>
+								</button> */}
 						</>
 					))}
 				</ModalBody>

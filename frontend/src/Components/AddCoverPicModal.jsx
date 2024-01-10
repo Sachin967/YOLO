@@ -21,7 +21,7 @@ const AddCoverPicModal = ({ isOpen, onClose, username, showUserProfile, isCoverP
 	const imageRef = useRef(null);
 	const dispatch = useDispatch();
 	const Navigate = useNavigate();
-	const [loading,setLoading]=useState(false)
+	const [loading, setLoading] = useState(false);
 	const [croppedCoverImage, setCroppedCoverImage] = useState(null);
 	const [croppedProfileImage, setCroppedProfileImage] = useState(null);
 	let cropper;
@@ -51,23 +51,23 @@ const AddCoverPicModal = ({ isOpen, onClose, username, showUserProfile, isCoverP
 	};
 
 	const uploadPic = () => {
-		setLoading(true)
+		setLoading(true);
 		const url = isCoverPic ? `/addcoverimage/${username}` : `/addprofileimage/${username}`;
 		const imageData = isCoverPic ? croppedCoverImage : croppedProfileImage;
 		users
 			.post(url, { croppedImage: imageData }) // Use 'croppedImage' as the key
 			.then((res) => {
 				if (res.data.status === "uploaded") {
-					setLoading(false)
+					setLoading(false);
 					onClose();
 					showToast("success", "Image Updated");
 					showUserProfile();
 				}
 			})
 			.catch((error) => {
-				if (error.response.status === 403) {
+				if (error.response && error.response.status === 403) {
 					// Handle 403 Forbidden error
-				Error403(error,showToast,dispatch,Navigate)
+					Error403(error, showToast, dispatch, Navigate);
 				} else {
 					console.error("Error:", error);
 				}

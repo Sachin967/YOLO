@@ -11,7 +11,7 @@ const ReportUserModal = ({ user, onReportClose, isReportOpen }) => {
 	const dispatch = useDispatch();
 	const Navigate = useNavigate();
 	const handleReport = async (reason) => {
-    console.log(reason)
+		console.log(reason);
 		try {
 			users
 				.post("/reportuser", { userId: user._id, reason })
@@ -21,7 +21,7 @@ const ReportUserModal = ({ user, onReportClose, isReportOpen }) => {
 						showToast("info", res.data.message);
 					} else {
 						onReportClose();
-						showToast("info", "Post Reported");
+						showToast("info", "User Reported");
 					}
 				})
 				.catch((error) => {
@@ -38,12 +38,12 @@ const ReportUserModal = ({ user, onReportClose, isReportOpen }) => {
 		<>
 			<Modal onClose={onReportClose} size={"xs"} isOpen={isReportOpen}>
 				<ModalOverlay />
-				<ModalContent style={{ backgroundColor: "#262626" }}>
+				<ModalContent style={{ backgroundColor: "#131313" }}>
 					<ModalHeader className="text-center text-white">Report</ModalHeader>
 					<ModalCloseButton className="text-white" />
 					<ModalBody>
 						<h2 className="text-lg mb-3 font-semibold font-serif text-center text-white">
-							Why are you reporting this post?
+							Why are you reporting this user?
 						</h2>
 						{reportUser.map((reason) => (
 							<button
