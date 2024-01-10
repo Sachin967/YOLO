@@ -14,25 +14,26 @@ import {
 import { APIError } from "../utils/app-error.js";
 import { ADMIN_BINDING_KEY } from "../config/index.js";
 import { user } from "../api/user.js";
-
+import nodemailer from "nodemailer";
 class UserService {
 	constructor() {
 		this.repositary = new UserRepositary();
 	}
 	async SignUp(userInputs, res) {
-		const { email, password, name, username } = userInputs;
+		const { email, password, name, username, day, month, year, gender } = userInputs;
 		try {
 			// create salt
 			let salt = await GenerateSalt();
 			let userPassword = await GeneratePassword(password, salt);
 			let Otp = generateOTP();
+			const dob = new Date(year, month - 1, day);
 			const existingUser = await this.repositary.CreateUser({
 				email,
 				name,
 				username,
 				password: userPassword,
 				salt,
-				Otp
+				Otp, dob, gender
 			});
 			const token = await GenerateSignature(res, {
 				email: email,
@@ -65,6 +66,10 @@ class UserService {
 						email: existingUser.email,
 						_id: existingUser._id
 					});
+					const dob = new Date(existingUser.dateOfBirth);
+					const year = dob.getFullYear();
+					const month = dob.getMonth() + 1;
+					const day = dob.getDate();
 					return FormateData({
 						status: true,
 						_id: existingUser._id,
@@ -74,9 +79,9 @@ class UserService {
 						bio: existingUser.bio,
 						propic: existingUser.propic,
 						coverpic: existingUser.coverpic,
-						followers:existingUser.followers,
-						following: existingUser.following
-
+						followers: existingUser.followers,
+						following: existingUser.following,
+						year, month, day
 					});
 				} else {
 					return res.json({ msg: "Incorrect password" });
@@ -96,6 +101,9 @@ class UserService {
 			if (existingUser && existingUser.isBlocked) {
 				res.status(401).json("You are blocked");
 			}
+			if (existingUser && existingUser.isVerified === false) {
+				res.status(401).json("You are not verified");
+			}
 			if (!existingUser) {
 				const username = generateUsername(name);
 				let usernameExists = true;
@@ -114,11 +122,15 @@ class UserService {
 				});
 				existingUser = newUser;
 			}
-
 			const token = await GenerateSignature(res, {
 				email: email,
 				_id: existingUser._id
 			});
+
+			const dob = new Date(existingUser.dateOfBirth);
+			const year = dob.getFullYear();
+			const month = dob.getMonth() + 1;
+			const day = dob.getDate();
 
 			return FormateData({
 				status: true,
@@ -129,8 +141,9 @@ class UserService {
 				bio: existingUser.bio,
 				propic: existingUser.propic,
 				coverpic: existingUser.coverpic,
-				followers:existingUser.followers,
-				following:existingUser.following
+				followers: existingUser.followers,
+				following: existingUser.following,
+				year, month, day
 			});
 		} catch (error) {
 			console.log(error);
@@ -152,10 +165,61 @@ class UserService {
 		}
 	}
 
+	async sendEmail(email, token) {
+		console.log('token', token)
+		return new Promise((resolve, reject) => {
+			let transporter = nodemailer.createTransport({
+				service: "gmail",
+				auth: {
+					user: "sachinsachu967@gmail.com",
+					pass: "rrwy jkyx qcow mcmk"
+				}
+			});
+			let mailOptions = {
+				from: "your-email@gmail.com",
+				to: email,
+				subject: "[YOLO] Password Reset E-mail",
+				text: `You're receiving this e-mail because you or someone else has requested a password reset for your user account at .Click the link below to reset your password: http://localhost:3000/reset-password/${token.reset_token}/${token.user_id}
+				If you did not request a password reset you can safely ignore this email.`
+			};
+
+			transporter.sendMail(mailOptions, (error, info) => {
+				if (error) {
+					console.log(error.message);
+					reject(error);
+				} else {
+					console.log("Email sent: " + info.response);
+					resolve(info.response);
+				}
+			});
+		});
+	}
+
+	async ChangePassword(userId, password) {
+		try {
+			let salt = await GenerateSalt();
+			let userPassword = await GeneratePassword(password, salt);
+			const Password = await this.repositary.updatePassword(userId, userPassword, salt)
+			return Password
+		} catch (error) {
+
+		}
+	}
+
 	async EditUser({ id, name, bio, location, day, month, year }) {
 		try {
 			const editedUser = await this.repositary.updateUser({ id, name, bio, location, day, month, year });
-			return editedUser;
+			const dob = new Date(editedUser.dateOfBirth);
+			const y = dob.getFullYear();
+			const m = dob.getMonth() + 1;
+			const d = dob.getDate();
+			return {
+				id: editedUser._id, email: editedUser.email, propic: editedUser.propic,
+				coverpic: editedUser.coverpic, followers: editedUser.followers,
+				following: editedUser.following, username: editedUser.username,
+				name: editedUser?.name, bio: editedUser?.bio, location: editedUser?.location,
+				day: d, month: m, year: y
+			}
 		} catch (error) {
 			console.log(error);
 		}
@@ -191,8 +255,8 @@ class UserService {
 					}
 				};
 				return { resp, payload };
-			} else if (resp.status ==='unfollowed') {
-				
+			} else if (resp.status === 'unfollowed') {
+
 				const payload = {
 					event: "USER_UNFOLLOWED",
 					data: {
@@ -233,6 +297,7 @@ class UserService {
 			return following;
 		} catch (error) { }
 	}
+
 	async FetchFollowers({ id }) {
 		try {
 			const followers = await this.repositary.FindFollowers({ id });

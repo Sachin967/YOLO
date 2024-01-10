@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import useCustomToast from "../toast";
 
 const Otp = () => {
-	const showToast = useCustomToast()
+	const showToast = useCustomToast();
 	const Dispatch = useDispatch();
 	const Navigate = useNavigate();
 	const [secondsRemaining, setSecondsRemaining] = useState(60); // State to hold remaining seconds
@@ -19,17 +19,20 @@ const Otp = () => {
 	};
 	const handleRegister = (e) => {
 		e.preventDefault();
-		users.post("/verifyOtp", data).then((res) => {
-			if (res.data.status) {
-				Dispatch(AuthActions.Userlogin(res.data));
-				Navigate("/");
-			} else {
-				showToast("error","Recheck Otp");
-			}
-		}).catch((err)=>{
-			console.log(err)
-			showToast("error", "Check Otp");
-		})
+		users
+			.post("/verifyOtp", data)
+			.then((res) => {
+				if (res.data.status) {
+					Dispatch(AuthActions.Userlogin(res.data));
+					Navigate("/");
+				} else {
+					showToast("error", "Recheck Otp");
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+				showToast("error", "Check Otp");
+			});
 	};
 	const ResendOtp = () => {
 		users.post("/resendotp", { id: data.id }).then((response) => {
@@ -58,7 +61,7 @@ const Otp = () => {
 	};
 
 	const manuallyResendOTP = (e) => {
-		e.preventDefault()
+		e.preventDefault();
 		ResendOtp(); // Call the function to send OTP immediately
 	};
 
@@ -93,7 +96,7 @@ const Otp = () => {
 							className="w-full text-white border-slate-950 bg-blue-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
 							Verify
 						</button>
-						<button className="text-white" onClick={manuallyResendOTP} disabled={resendDisabled}>
+						<button className={`${resendDisabled?'text-gray-600':'text-white'}`} onClick={manuallyResendOTP} disabled={resendDisabled}>
 							Resend OTP {resendDisabled && `(${secondsRemaining}s)`}
 						</button>
 					</form>

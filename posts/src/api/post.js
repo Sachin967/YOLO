@@ -1,3 +1,4 @@
+import { upload } from "../config/fileupload-s3.js";
 import { NOTIFICATION_BINDING_KEY, USER_BINDING_KEY } from "../config/index.js";
 import PostService from "../services/post-service.js";
 import { PublishMessage, RPCObserver } from "../utils/index.js";
@@ -7,8 +8,10 @@ export const posts = (app, channel) => {
 	const service = new PostService();
 	RPCObserver("POST_RPC", service);
 
-	app.post("/addpost", UserAuth, async (req, res, next) => {
-		const { userId, location, privacy, textmedia, media } = req.body;
+	app.post("/addpost", upload.single('media'), async (req, res, next) => {
+		console.log(req.file)
+		const media = req.file.location
+		const { userId, location, privacy, textmedia } = req.body;
 		try {
 			const response = await service.AddPost({ userId, location, textmedia, privacy, media });
 			return res.json(response);
@@ -71,7 +74,7 @@ export const posts = (app, channel) => {
 			const { postId } = req.body;
 			const response = await service.FetchPostDetail(postId);
 			const user = await service.FetchUserFromPosts(postId)
-			res.json({ status: true, response,user });
+			res.json({ status: true, response, user });
 		} catch (error) { }
 	});
 
@@ -89,6 +92,13 @@ export const posts = (app, channel) => {
 	app.delete("/deletepost/:postId", UserAuth, async (req, res) => {
 		const { postId } = req.params;
 		const response = await service.deletePost(postId);
+		return res.json(response);
+	});
+
+	app.delete("/deletecomment/:commentId", UserAuth, async (req, res) => {
+		console.log(req.params)
+		const { commentId } = req.params;
+		const response = await service.deleteComment(commentId);
 		return res.json(response);
 	});
 

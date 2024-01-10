@@ -6,7 +6,6 @@ import { ToastContainer } from "react-toastify";
 import SideBar from "./Components/sideBar";
 import { useSelector } from "react-redux";
 function App() {
-
 	return (
 		<>
 			<ToastContainer toastStyle={{ backgroundColor: "crimson" }} />

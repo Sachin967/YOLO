@@ -55,3 +55,8 @@
 {"level":"error","message":"Tue Dec 19 2023 15:23:45 GMT+0530 (India Standard Time)-{\"name\":\"Data Not found\",\"statusCode\":{},\"isOperational\":true}","private":true}
 {"level":"error","message":"Sat Dec 23 2023 09:22:58 GMT+0530 (India Standard Time)-{\"message\":\"request entity too large\",\"expected\":2354482,\"length\":2354482,\"limit\":1048576,\"type\":\"entity.too.large\"}","private":true}
 {"level":"error","message":"Sat Dec 23 2023 09:25:07 GMT+0530 (India Standard Time)-{\"code\":\"ERR_HTTP_HEADERS_SENT\"}","private":true}
+{"level":"error","message":"Sat Jan 06 2024 14:10:14 GMT+0530 (India Standard Time)-{\"message\":\"request entity too large\",\"expected\":2238366,\"length\":2238366,\"limit\":1048576,\"type\":\"entity.too.large\"}","private":true}
+{"level":"error","message":"Sat Jan 06 2024 15:08:48 GMT+0530 (India Standard Time)-{\"code\":\"ERR_HTTP_HEADERS_SENT\"}","private":true}
+{"level":"error","message":"Sat Jan 06 2024 15:13:26 GMT+0530 (India Standard Time)-{\"code\":\"ERR_HTTP_HEADERS_SENT\"}","private":true}
+{"level":"error","message":"Wed Jan 10 2024 11:19:21 GMT+0530 (India Standard Time)-{\"code\":\"ERR_HTTP_HEADERS_SENT\"}","private":true}
+{"level":"error","message":"Wed Jan 10 2024 11:28:26 GMT+0530 (India Standard Time)-{\"name\":\"Data Not found\",\"statusCode\":{\"name\":\"API Error\",\"statusCode\":500,\"isOperational\":true},\"isOperational\":true}","private":true}

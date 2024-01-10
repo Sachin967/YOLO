@@ -5,21 +5,19 @@ export const message = (app) => {
 	const service = new MessageService();
 	app.get("/fetchchat/:id", async (req, res, next) => {
 		try {
-
 			const { id } = req.params;
 			const chats = await service.FetchChats(id);
 			return res.json(chats);
 		} catch (error) { }
 	});
-	app.post("/accesschat", async (req, res, next) => {
+	app.post("/accesschat",UserAuth, async (req, res, next) => {
 		try {
-
-			const { userId, id } = req.body;
-			const chat = await service.AccessChat({ userId, id });
+			const { userId } = req.body;
+			const loggedInUserId = req.user._id
+			const chat = await service.AccessChat({ userId, loggedInUserId });
 			return res.json(chat);
 		} catch (error) { }
 	});
-	app.post;
 	app.post("/group", UserAuth, async (req, res, next) => {
 		try {
 			const users = JSON.parse(req.body.users);

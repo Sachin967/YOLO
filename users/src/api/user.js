@@ -12,9 +12,9 @@ export const user = (app, channel) => {
 	RPCObserver("USER_RPC", service);
 
 	app.post("/register", async (req, res, next) => {
-		const { name, username, email, password } = req.body;
+		const { name, username, email, password, day, month, year, gender } = req.body;
 		try {
-			const { data } = await service.SignUp({ email, password, name, username }, res);
+			const { data } = await service.SignUp({ email, password, name, username, day, month, year, gender }, res);
 			const { otp, id } = data;
 			const otpResponse = await sendOTP(email, otp);
 			const response = {
@@ -75,6 +75,40 @@ export const user = (app, channel) => {
 		}
 	});
 
+	app.post('/sendemail', async (req, res, next) => {
+		console.log(req.body)
+		const { email } = req.body
+		try {
+			const user = await service.repositary.FindUser(email)
+			const generateResetToken = await service.repositary.generateResetToken(user._id)
+			const sendEmail = await service.sendEmail(user.email, generateResetToken)
+			return res.json({ status: true, message: 'Reset Link has been send to your email', sendEmail })
+
+		} catch (error) {
+			console.log(error)
+		}
+	})
+
+	app.get('/validatetoken/:token', async (req, res) => {
+		try {
+			const { token } = req.params
+			const validate = await service.repositary.validateResetToken(token)
+			return res.json(validate)
+		} catch (error) {
+
+		}
+	})
+
+	app.post('/changepassword', async (req, res) => {
+		try {
+			const { userId, password } = req.body
+			const response = await service.ChangePassword(userId, password)
+			return res.json(response)
+		} catch (error) {
+
+		}
+	})
+
 	app.post("/logout", async (req, res, next) => {
 		try {
 			res.cookie("userJwt", "", {
@@ -131,7 +165,8 @@ export const user = (app, channel) => {
 	app.put("/editprofile/:id", async (req, res, next) => {
 		try {
 			const { id } = req.params;
-
+			console.log(req.params)
+console.log(req.body)
 			const { name, bio, location, day, month, year } = req.body.updatedUser;
 
 			const editedUser = await service.EditUser({ id, name, bio, location, day, month, year });
@@ -166,7 +201,7 @@ export const user = (app, channel) => {
 		} catch (error) { }
 	});
 
-	app.get("/users/:search",UserAuth, async (req, res, next) => {
+	app.get("/users/:search", UserAuth, async (req, res, next) => {
 		try {
 			const keyword = req.params.search;
 			console.log(keyword)
@@ -203,14 +238,14 @@ export const user = (app, channel) => {
 			console.log(error)
 		}
 	})
-app.get(`/getuser/:userId`,async(req,res,next)=>{
-	try {
-		const {userId}= req.params
-		const user = await service.repositary.FindUserById(userId)
-		return res.json(user)
-	} catch (error) {
-		
-	}
-})
+	app.get(`/getuser/:userId`, async (req, res, next) => {
+		try {
+			const { userId } = req.params
+			const user = await service.repositary.FindUserById(userId)
+			return res.json(user)
+		} catch (error) {
+
+		}
+	})
 
 };

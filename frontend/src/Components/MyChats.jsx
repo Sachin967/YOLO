@@ -6,7 +6,7 @@ import { messaging, users } from "../config/axios";
 import { useSelector } from "react-redux";
 import GroupChatModal from "./Modals/GroupChatModal";
 import { ChatState } from "../Context/ChatProvider";
-const MyChats = ({ fetchAgain, people, setpeople, peopleMessaged, setPeopleMessaged }) => {
+const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeopleMessaged, FetchChats }) => {
 	const [search, setSearch] = useState("");
 	const [showSearch, setShowSearch] = useState(false);
 	const [follow, setFollow] = useState([]);
@@ -14,14 +14,15 @@ const MyChats = ({ fetchAgain, people, setpeople, peopleMessaged, setPeopleMessa
 	const { userdetails } = useSelector((state) => state.auth);
 	// const [peopleMessaged, setPeopleMessaged] = useState([]);
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const { selectedUsers, setSelectedUsers, chatdata, setChatData, updatedName, updatedImage } =
-		ChatState();
+	const { selectedUsers, setSelectedUsers, chatdata, setChatData, updatedName, updatedImage } = ChatState();
 	const [selectedChatId, setSelectedChatId] = useState(null);
 	const handleChatSelection = (chat) => {
 		setSelectedChatId(chat._id === selectedChatId ? null : chat._id);
 	};
-
 	useEffect(() => {
+		if (userId) {
+			AccessChats(userId);
+		}
 		SearchUsers();
 		FetchChats();
 		searchGroupChat();
@@ -30,10 +31,10 @@ const MyChats = ({ fetchAgain, people, setpeople, peopleMessaged, setPeopleMessa
 	const AccessChats = (userId) => {
 		try {
 			messaging
-				.post("/accesschat", { id: userdetails._id, userId })
+				.post("/accesschat", { userId })
 				.then((res) => {
 					if (res.data) {
-						console.log(res.data);
+						setSelectedUsers(res.data.chatData);
 						setChatData(res.data.response);
 					}
 				})
@@ -42,23 +43,17 @@ const MyChats = ({ fetchAgain, people, setpeople, peopleMessaged, setPeopleMessa
 				});
 		} catch (error) {}
 	};
-
-	const FetchChats = () => {
-		try {
-			messaging
-				.get(`/fetchchat/${userdetails._id}`)
-				.then((res) => {
-					setPeopleMessaged(res.data.chatData);
-					setpeople(res.data.users);
-				})
-				.catch((err) => {
-					console.log(err);
-				});
-		} catch (error) {
-			console.log(error);
+	const handleAccessChat = (chat) => {
+		if (!chat.isGroupChat) {
+			const loggedInUserId = userdetails._id;
+			const User = chat.users.find((user) => user !== loggedInUserId);
+			if (User) {
+				AccessChats(User);
+			} else {
+				console.log("No user ID found in the chat");
+			}
 		}
 	};
-
 	const SearchUsers = () => {
 		users
 			.get(`/searchuser/${userdetails._id}`)
@@ -75,7 +70,6 @@ const MyChats = ({ fetchAgain, people, setpeople, peopleMessaged, setPeopleMessa
 			.get(`/searchchat/${userdetails._id}`)
 			.then((res) => {
 				if (res.data) {
-					console.log(res.data.chat);
 					setChat(res.data.chat);
 				}
 			})
@@ -139,18 +133,6 @@ const MyChats = ({ fetchAgain, people, setpeople, peopleMessaged, setPeopleMessa
 		return null;
 	};
 
-	const handleAccessChat = (chat) => {
-		if (!chat.isGroupChat) {
-			const loggedInUserId = userdetails._id;
-			const User = chat.users.find((user) => user !== loggedInUserId);
-			if (User) {
-				AccessChats(User);
-			} else {
-				console.log("No user ID found in the chat");
-			}
-		}
-	};
-
 	const combinedComponents =
 		follow.followers &&
 		filteredUsers
@@ -191,8 +173,13 @@ const MyChats = ({ fetchAgain, people, setpeople, peopleMessaged, setPeopleMessa
 				))
 			);
 	return (
-		<div className="ml-12 w-[694px] md:w-[1110px] lg:w-[450px] max-h-full min-h-screen sm:w-[980px] lg:ml-[320px] sm:ml-[55px] bg-black">
-			<div className="flex justify-between items-center">
+		<div
+			className={
+				setSelectedUsers
+					? "hidden lg:block lg:ml-[320px]"
+					: " w-[694px] md:w-[1110px] lg:w-[450px] max-h-full min-h-screen sm:w-[980px] lg:ml-[320px] sm:ml-[105px] bg-black"
+			}>
+			<div className="flex sm:ml-[270px] lg:ml-0  justify-between items-center">
 				<h2 className="text-2xl text-white font-bold p-3">Messages</h2>
 				<svg
 					onClick={onOpen}
@@ -230,7 +217,7 @@ const MyChats = ({ fetchAgain, people, setpeople, peopleMessaged, setPeopleMessa
 						y2="7.153"></line>
 				</svg>
 			</div>
-			<div className="relative">
+			<div className="relative sm:ml-[270px] lg:ml-0">
 				<input
 					value={search}
 					onChange={(e) => {
@@ -249,15 +236,30 @@ const MyChats = ({ fetchAgain, people, setpeople, peopleMessaged, setPeopleMessa
 			</div>
 			<GroupChatModal FetchChats={FetchChats} filteredUsers={filteredUsers} isOpen={isOpen} onClose={onClose} />
 			{showSearch ? (
-				<div className="mt-3 ">
+				<div className="mt-3 sm:ml-[270px] lg:ml-0">
 					{search === "" ? (
-						<h2 className="text-white text-center">Search for people or groups</h2>
+						<>
+							<div className="mt-5">
+								{peopleMessaged?.map((chat) => (
+									<React.Fragment key={chat?._id}>
+										<div
+											onClick={() => {
+												setSelectedUsers(chat);
+												handleAccessChat(chat);
+											}}
+											className="flex hover:bg-zinc-900">
+											{renderChatDetails(chat)}
+										</div>
+									</React.Fragment>
+								))}
+							</div>
+						</>
 					) : (
 						<>{combinedComponents}</>
 					)}
 				</div>
 			) : (
-				<div className="mt-5">
+				<div className="mt-5 sm:ml-[270px] lg:ml-0">
 					{peopleMessaged?.map((chat) => (
 						<React.Fragment key={chat?._id}>
 							<div

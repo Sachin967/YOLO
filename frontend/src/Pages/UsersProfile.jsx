@@ -52,6 +52,9 @@ const UsersProfile = () => {
 	const [likeCount, setLikeCount] = useState();
 	const [like, setLiked] = useState(false);
 	const [savepost, setSavePost] = useState(false);
+	const HandleMessageClick = (userId) => {
+		Navigate(`/messages/${userId}`);
+	};
 	const PostSave = async (postId) => {
 		try {
 			const fetchedPosts = await SavePost({ postId, id });
@@ -90,12 +93,12 @@ const UsersProfile = () => {
 	};
 
 	const generatePostUserFunction = (postId) => {
-		console.log(postId)
+		console.log(postId);
 		return fetchUserByPostId(postId);
 	};
 
 	const fetchUserByPostId = async (postId) => {
-			console.log(postId);
+		console.log(postId);
 		return posts
 			.get(`/getusers/${postId}`)
 			.then((res) => {
@@ -187,7 +190,9 @@ const UsersProfile = () => {
 							{follow ? "Unfollow" : "Follow"}
 						</button>
 
-						<button className=" text-white h-9 w-24 bg-zinc-700 hover:bg-zinc-800  rounded-3xl">
+						<button
+							onClick={() => HandleMessageClick(user._id)}
+							className=" text-white h-9 w-24 bg-zinc-700 hover:bg-zinc-800  rounded-3xl">
 							Message
 						</button>
 						<FontAwesomeIcon
@@ -335,7 +340,7 @@ const UsersProfile = () => {
 						top: "30%",
 						left: "35%",
 						transform: "translate(-50%, 50%)",
-						backgroundColor: "#262626"
+						backgroundColor: "#131313"
 					}}>
 					<>
 						<button

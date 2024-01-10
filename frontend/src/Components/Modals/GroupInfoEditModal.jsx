@@ -10,15 +10,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { messaging } from "../../config/axios";
 
-const GroupInfoEditModal = ({
-	groupImage,
-	onClose,
-	isOpen,
-	chatName,
-	chatId,
-	setUpdatedImage,
-	setUpdatedName
-}) => {
+const GroupInfoEditModal = ({ groupImage, onClose, isOpen, chatName, chatId, setUpdatedImage, setUpdatedName }) => {
 	const [inputValue, setInputValue] = useState(chatName);
 	const [image, setImage] = useState(null);
 

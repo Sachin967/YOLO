@@ -1,9 +1,10 @@
 import User from "../models/userModel.js";
 import { APIError, STATUS_CODES } from "../../utils/app-error.js";
 import { cloudinary } from "../../config/cloudinary.js";
-
+import crypto from 'crypto'
+import PasswordReset from "../models/PasswordResetModel.js";
 class UserRepositary {
-	async CreateUser({ name, email, password, username, salt, Otp }) {
+	async CreateUser({ name, email, password, username, salt, Otp, dob, gender }) {
 		try {
 			const user = new User({
 				name,
@@ -11,7 +12,9 @@ class UserRepositary {
 				password,
 				salt,
 				username,
-				Otp
+				Otp,
+				dateOfBirth: dob,
+				gender
 			});
 			const userResult = await user.save();
 			return userResult;
@@ -42,6 +45,49 @@ class UserRepositary {
 		}
 	}
 
+	async generateResetToken(userId) {
+		const token = crypto.randomBytes(20).toString('hex');
+		const expirationTime = new Date();
+		expirationTime.setHours(expirationTime.getHours() + 1);
+
+		const resetEntry = new PasswordReset({
+			user_id: userId,
+			reset_token: token,
+			expiry_timestamp: expirationTime,
+		});
+
+		return resetEntry.save();
+	}
+
+	async validateResetToken(token) {
+		try {
+			const resetEntry = await PasswordReset.findOne({ reset_token: token }).populate('user_id').exec();
+
+			if (!resetEntry) {
+				return { status: false, message: 'Invalid or expired token' }
+			}
+
+			const currentDate = new Date();
+			if (resetEntry.expiry_timestamp < currentDate) {
+				return { status: false, message: 'Token has expired' }
+			}
+
+			// Token is valid and associated with the correct user
+			return { status: true, resetEntry };
+		} catch (error) {
+
+		}
+	}
+
+	async updatePassword(userId, password, salt) {
+		try {
+			const user = await User.findByIdAndUpdate(userId, { password: password, salt: salt }, { new: true })
+			return { status: true, message: 'Password Updated' }
+		} catch (error) {
+
+		}
+	}
+
 	async FindByUsername({ username }) {
 		try {
 			const existingUsername = await User.findOne({ username });
@@ -64,11 +110,11 @@ class UserRepositary {
 
 	async FindUsersbyRegex(keyword) {
 		try {
-			console.log(keyword,"keyword")
+			console.log(keyword, "keyword")
 			const users = await User.find({
 				$or: [{ name: { $regex: keyword, $options: "i" } }, { username: { $regex: keyword, $options: "i" } }]
 			});
-			console.log("search",users)
+			console.log("search", users)
 			return users;
 		} catch (error) { }
 	}
@@ -88,6 +134,10 @@ class UserRepositary {
 	async updateUserVerification(id) {
 		try {
 			const updatedUser = await User.findByIdAndUpdate(id, { isVerified: true }, { new: true });
+			const dob = new Date(updatedUser.dateOfBirth);
+			const year = dob.getFullYear();
+			const month = dob.getMonth() + 1;
+			const day = dob.getDate();
 			return {
 				status: true,
 				_id: updatedUser._id,
@@ -95,7 +145,8 @@ class UserRepositary {
 				username: updatedUser.username,
 				bio: updatedUser.bio,
 				propic: updatedUser.propic,
-				coverpic: updatedUser.coverpic
+				coverpic: updatedUser.coverpic,
+				day, month, year
 			};
 		} catch (error) {
 			console.error("Error updating user verification:", error);
@@ -124,10 +175,10 @@ class UserRepositary {
 			console.log(userIds);
 
 			if (userIds && typeof userIds === "object") {
-				const { userId, id } = userIds;
-				if (userId && id) {
+				const { userId, loggedInUserId } = userIds;
+				if (userId && loggedInUserId) {
 					const user1 = await User.findById(userId);
-					const user2 = await User.findById(id);
+					const user2 = await User.findById(loggedInUserId);
 					return { user1, user2 };
 				}
 			}
@@ -169,8 +220,9 @@ class UserRepositary {
 
 	async updateUser({ id, name, bio, location, day, month, year }) {
 		try {
-			const user = await User.findByIdAndUpdate({ _id: id }, { name, bio, location, day, month, year }, { new: true });
-
+			const dob = new Date(year, month - 1, day);
+			const user = await User.findByIdAndUpdate({ _id: id }, { name, bio, location, dateOfBirth: dob }, { new: true });
+			console.log(user.dateOfBirth)
 			return user;
 		} catch (error) {
 			console.log(error);
@@ -255,35 +307,35 @@ class UserRepositary {
 		return unblockeduser;
 	}
 
-async ManageFollowUnfollow({ userId, id }) {
-	const curruser = await User.findOne({ _id: id });
-	const user = await User.findOne({ _id: userId });
+	async ManageFollowUnfollow({ userId, id }) {
+		const curruser = await User.findOne({ _id: id });
+		const user = await User.findOne({ _id: userId });
 
-	const followingIndex = curruser.following.indexOf(userId);
-	const followerIndex = user.followers.indexOf(id);
+		const followingIndex = curruser.following.indexOf(userId);
+		const followerIndex = user.followers.indexOf(id);
 
-	if (followingIndex === -1) {
-		curruser.following.push(userId);
-		await curruser.save();
+		if (followingIndex === -1) {
+			curruser.following.push(userId);
+			await curruser.save();
 
-		if (followerIndex === -1) {
-			user.followers.push(id);
-			await user.save();
+			if (followerIndex === -1) {
+				user.followers.push(id);
+				await user.save();
+			}
+
+			return { status: "followed", following: curruser.following };
+		} else {
+			curruser.following.splice(followingIndex, 1);
+			await curruser.save();
+
+			if (followerIndex !== -1) {
+				user.followers.splice(followerIndex, 1);
+				await user.save();
+			}
+
+			return { status: "unfollowed", following: curruser.following };
 		}
-
-		return { status: "followed", following:curruser.following };
-	} else {
-		curruser.following.splice(followingIndex, 1);
-		await curruser.save();
-
-		if (followerIndex !== -1) {
-			user.followers.splice(followerIndex, 1);
-			await user.save();
-		}
-
-		return { status: "unfollowed", following: curruser.following };
 	}
-}
 
 	async ReportingUser({ userId, id, reason }) {
 		try {
@@ -294,7 +346,7 @@ async ManageFollowUnfollow({ userId, id }) {
 			if (existingReport) {
 				return { message: "Already reported the user" };
 			}
-			const user = await User.findOneAndUpdate({ _id:userId }, { $addToSet: { reports: { reporterId: id, reason } } });
+			const user = await User.findOneAndUpdate({ _id: userId }, { $addToSet: { reports: { reporterId: id, reason } } });
 			return { message: "Report added successfully" };
 		} catch (error) { }
 	}

@@ -14,9 +14,22 @@ const reportingReasons = [
 const reportUser = [
 	{ value: 1, label: "It's posting content that shouldn't be on yolo" },
 	{ value: 2, label: "It's pretending to be someone else" },
-	{ value: 3, label: "It maybe under the age of 13" },
-]
+	{ value: 3, label: "It maybe under the age of 13" }
+];
 
-export { reportingReasons,reportUser };
+export const ENDPOINT = "http://localhost:8000";
 
 
+export const dayOptions = Array.from({ length: 31 }, (_, i) => i + 1);
+
+export const monthOptions = [
+	'January', 'February', 'March', 'April', 'May', 'June',
+	'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+export const genderOptions = ["Male", "Female", "Other"];
+
+const currentYear = new Date().getFullYear();
+export const yearOptions = Array.from({ length: currentYear - 1900 + 1 }, (_, i) => currentYear - i);
+
+export { reportingReasons, reportUser };

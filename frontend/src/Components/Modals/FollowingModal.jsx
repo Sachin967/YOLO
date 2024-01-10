@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { users } from "../../config/axios";
 import { Link } from "react-router-dom";
 
-const FollowingModal = ({ onFollowingClose, isFollowingOpen,userId }) => {
+const FollowingModal = ({ onFollowingClose, isFollowingOpen, userId }) => {
 	const [search, setSearch] = useState();
 	const [following, setFollowing] = useState();
 	useEffect(() => {
@@ -24,7 +24,7 @@ const FollowingModal = ({ onFollowingClose, isFollowingOpen,userId }) => {
 			.get(`/fetchfollowing/${userId}`)
 			.then((res) => {
 				if (res.data) {
-          console.log(res.data)
+					console.log(res.data);
 					setFollowing(res.data.following);
 				}
 			})
@@ -43,7 +43,7 @@ const FollowingModal = ({ onFollowingClose, isFollowingOpen,userId }) => {
 	return (
 		<Modal onClose={onFollowingClose} size="sm" isOpen={isFollowingOpen}>
 			<ModalOverlay />
-			<ModalContent>
+			<ModalContent style={{ backgroundColor: "#131313" }}>
 				<ModalHeader className="text-center text-white">Following</ModalHeader>
 				<ModalCloseButton className="hover:text-white" />
 				<ModalBody>

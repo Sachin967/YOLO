@@ -5,15 +5,15 @@ export const SavePost = async ({ postId, id }) => {
 	return users
 		.post(`/savepost`, { userId: id, postId: postId })
 		.then((res) => {
-			console.log(res)
+			console.log(res);
 			if (res.data.status === "saved") {
 				// setSavePost(true);
-				return true
+				return true;
 			} else if (res.data.status === "removed") {
 				// setSavePost(false);
-				return false
+				return false;
 			}
-		})	
+		})
 		.catch((err) => console.log(err));
 };
 
@@ -31,7 +31,6 @@ export const fetchSavedPost = async (setSavedPost, id) => {
 					return { ...post, userDetail };
 				});
 				setSavedPost(postsWithUserData);
-
 			}
 		})
 		.catch((err) => console.log(err));
@@ -45,13 +44,13 @@ export const handleLike = async (id, _id, setLikeCount, setLiked, fetchLikedPost
 				if (res.data.status === "liked") {
 					setLikeCount(res.data.likeCount);
 					setLiked(true); // Set liked state to true
-					fetchLikedPost(id,_id,setLiked);
+					fetchLikedPost(id, _id, setLiked);
 				} else if (res.data.status === "unliked") {
 					setTimeout(() => {
 						setLikeCount(res.data.likeCount);
 						setLiked(false);
 					}, 150);
-					fetchLikedPost(id,_id,setLiked);
+					fetchLikedPost(id, _id, setLiked);
 				}
 			})
 			.catch((error) => {

@@ -1,16 +1,18 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ChatState } from "../Context/ChatProvider";
 import { messaging } from "../config/axios";
 import useCustomToast from "../toast";
 import ScrollableChat from "./ScrollableChat";
 import { useSelector } from "react-redux";
 import io from "socket.io-client";
-import { Link, Navigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Avatar, useDisclosure } from "@chakra-ui/react";
 import { IoArrowBack } from "react-icons/io5";
 import GroupInfoEditModal from "./Modals/GroupInfoEditModal";
 import UsersSearchModal from "./Modals/UsersSearchModal";
 import AlertLeaveGroup from "./Modals/AlertDialog";
+import EmojiPicker from "emoji-picker-react";
+import { CiVideoOn } from "react-icons/ci";
 const ENDPOINT = "http://localhost:8000";
 var socket, selectedChatCompare;
 const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
@@ -28,23 +30,27 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 		updatedImage,
 		setUpdatedImage
 	} = ChatState();
+
 	const [socketConnected, setSocketConnected] = useState(false);
 	const [typing, setTyping] = useState(false);
 	const [isTyping, setisTyping] = useState(false);
 	const [showGroupInfo, setShowGroupInfo] = useState(false);
+	const [emojishow, setEmojishow] = useState(false);
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const { isOpen: isListUserOpen, onOpen: onListUserOpen, onClose: onListUserClose } = useDisclosure();
 	const { isOpen: isAlertOpen, onOpen: onAlertOpen, onClose: onAlertClose } = useDisclosure();
-	const handleImageUpdate = (newImage) => {
-		console.log(newImage);
-		setUpdatedImage(newImage);
-	};
+	const [isLink,setLink]=useState()
+	const [userId, setUserId] = useState();
+	// const handleImageUpdate = (newImage) => {
+	// 	console.log(newImage);
+	// 	setUpdatedImage(newImage);
+	// };
 
-	const handleGroupNameUpdate = (newGroupName) => {
-		console.log(newGroupName);
-		setUpdatedName(newGroupName);
-	};
-	const showToast = useCustomToast();
+	// const handleGroupNameUpdate = (newGroupName) => {
+	// 	console.log(newGroupName);
+	// 	setUpdatedName(newGroupName);
+	// };
+	// const showToast = useCustomToast();
 	let otherUser;
 	for (const key in chatdata) {
 		if (chatdata[key]._id !== chatdata._id) {
@@ -52,6 +58,9 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 			break;
 		}
 	}
+	const addEmoji = (selectedEmoji) => {
+		setNewMessage((prevText) => prevText + selectedEmoji.emoji);
+	};
 	useEffect(() => {
 		socket = io(ENDPOINT);
 		socket.emit("setup", userdetails);
@@ -60,24 +69,6 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 		socket.on("stop typing", () => setisTyping(false));
 	}, []);
 
-	const SendMessage = (e) => {
-		if (e.key === "Enter" && newMessage) {
-			socket.emit("stop typing", selectedUsers._id);
-			setNewMessage("");
-			messaging
-				.post("/message", { content: newMessage, chatId: selectedUsers._id })
-				.then((res) => {
-					if (res.data) {
-						console.log(res.data.populatedMessage);
-						socket.emit("new message", res.data.populatedMessage);
-						setMessage([...messages, res.data.populatedMessage]);
-					}
-				})
-				.catch((err) => {
-					console.log(err);
-				});
-		}
-	};
 	useEffect(() => {
 		fetchMessages();
 		selectedChatCompare = selectedUsers;
@@ -142,17 +133,69 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 	const handleShowGroupInfo = () => {
 		setShowGroupInfo((prevState) => !prevState);
 	};
+	const openEmoji = () => {
+		setEmojishow((prevEmojiShow) => !prevEmojiShow);
+	};
+	const Navigate = useNavigate();
+
+	const SendMessage = () => {
+		if (newMessage) {
+			socket.emit("stop typing", selectedUsers._id);
+			setNewMessage("");
+			// messaging
+			// 	.post("/message", { content: newMessage, chatId: selectedUsers._id })
+			// 	.then((res) => {
+			// 		if (res.data) {
+			// 			console.log(res.data.populatedMessage);
+			// 			socket.emit("new message", res.data.populatedMessage);
+			// 			setMessage([...messages, res.data.populatedMessage]);
+			// 		}
+			// 	})
+			// 	.catch((err) => {
+			// 		console.log(err);
+			// 	});
+			sendMessageToServer(newMessage, selectedUsers._id);
+		}
+	};
+	const sendMessageToServer = (messageContent, chatId) => {
+		messaging
+			.post("/message", { content: messageContent, chatId })
+			.then((res) => {
+				if (res.data) {
+					FetchChats()
+					console.log(res.data.populatedMessage);
+					socket.emit("new message", res.data.populatedMessage);
+					setMessage([...messages, res.data.populatedMessage]);
+				}
+			})
+			.catch((err) => {
+				console.log(err);
+			});
+	};
+	const handleJoinRoom = useCallback(
+		(id) => {
+			console.log("id",id)
+			setUserId(id);
+			setLink({ video: true, link: `/room/${id}` });
+			if (userId && isLink) {
+				console.log(userId)
+				sendMessageToServer(isLink, selectedUsers._id);
+				Navigate(`/room/${userId}`);
+			}
+		},
+		[Navigate, userId]
+	);
 
 	return (
 		<>
 			{selectedUsers ? (
-				<div className="border-l border-gray-600 p-3 w-[694px] md:w-[1110px] lg:w-[680px] max-h-full min-h-screen sm:w-[980px] bg-black flex-col">
+				<div className="border-l  border-gray-600 p-3 w-[694px] md:w-[1110px] lg:w-[680px] max-h-full min-h-screen sm:w-[980px] bg-black flex-col">
 					{selectedUsers.isGroupChat ? (
 						<>
 							{!showGroupInfo ? (
 								<>
 									<div onClick={handleShowGroupInfo} className="flex cursor-pointer">
-										<Avatar src={updatedImage || selectedUsers.groupImage.url}></Avatar>
+										<Avatar src={updatedImage || selectedUsers?.groupImage?.url}></Avatar>
 										<h2 className="text-xl w-full font-semibold text-white"> {formattedNames}</h2>
 									</div>
 									<div className=" overflow-y-auto">
@@ -168,14 +211,16 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 													{updatedName || selectedUsers?.chatName}
 												</h1>
 											</div>
-											{isTyping ? (
+											{/* {isTyping ? (
 												<div className="text-green-500 text-lg text-end">typing...</div>
 											) : (
 												<></>
-											)}
+											)} */}
 										</div>
 										{/* </Link> */}
-										<ScrollableChat user={user} messages={messages} />
+										<div className="h-[470px]">
+											<ScrollableChat user={user} messages={messages} />
+										</div>
 									</div>
 								</>
 							) : (
@@ -254,10 +299,17 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 					) : (
 						<>
 							{" "}
-							<h2 className="text-2xl font-semibold text-white">{otherUser?.name}</h2>
+							<div className="flex w-full lg:ml-0  ml-20 sm:ml-80">
+								<h2 className="text-2xl font-semibold text-white ">{otherUser?.name}</h2>
+								<div
+									onClick={() => handleJoinRoom(otherUser._id)}
+									className="text-white ms-[20px] items-start">
+									<CiVideoOn className="w-8 h-8 cursor-pointer" />
+								</div>
+							</div>
 							<div className="overflow-y-auto">
 								<Link to={`/${otherUser?.username}`}>
-									<div className="h-[285px] mb-4 hover:bg-zinc-900 border-gray-600 border-b">
+									<div className="h-[285px] mb-4 sm:ml-60 ml-0 lg:ml-0 hover:bg-zinc-900 border-gray-600 border-b">
 										<div className="mt-10">
 											<img
 												className="max-h-20 rounded-full mx-auto"
@@ -280,24 +332,27 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 										)}
 									</div>
 								</Link>
-								<ScrollableChat user={user} messages={messages} />
+								<div className="h-[315px]">
+									<ScrollableChat user={user} messages={messages} />
+								</div>
 							</div>
 						</>
 					)}
 					{!showGroupInfo && (
-						<div className="relative" onKeyDown={SendMessage}>
+						<div className="relative" onKeyDown={(e) => e.key === "Enter" && SendMessage()}>
 							<input
 								value={newMessage}
 								className={`w-[640px] absolute pl-14 text-purple-600 bg-dimBlue h-14 rounded-2xl ${
-									selectedUsers.isGroupChat ? "top-[170px]" : "top-0"
+									selectedUsers.isGroupChat ? "top-[15px]" : "top-0"
 								}`}
 								type="text"
 								onChange={typingHandler}
 							/>
 							<svg
+								onClick={openEmoji}
 								aria-label="Choose an emoji"
 								className={`absolute text-purple-600 top-3 left-4 ${
-									selectedUsers.isGroupChat ? "top-[180px]" : "top-0"
+									selectedUsers.isGroupChat ? "top-[30px]" : "top-0"
 								}`}
 								fill="currentColor"
 								height="30"
@@ -310,16 +365,21 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 							<button
 								onClick={SendMessage}
 								className={`absolute right-6 text-base font-semibold text-purple-600  ${
-									selectedUsers.isGroupChat ? "top-[180px]" : "top-4"
+									selectedUsers.isGroupChat ? "top-[30px]" : "top-4"
 								}`}>
 								Send
 							</button>
+							{emojishow && (
+								<div className="fixed transform -translate-x-1/2 -translate-y-1/2 top-[470px] right-36">
+									<EmojiPicker onEmojiClick={addEmoji} />
+								</div>
+							)}
 						</div>
 					)}
 				</div>
 			) : (
 				<>
-					<div className="border-l border-gray-600  p-4 w-[694px] md:w-[1110px] lg:w-[680px] h-screen sm:w-[980px] bg-black flex flex-col justify-center items-center">
+					<div className="border-l border-gray-600 lg:flex hidden p-4 w-[694px] md:w-[1110px] lg:w-[680px] h-screen sm:w-[980px] bg-black  flex-col justify-center items-center">
 						<h2 className="text-white font-sans text-4xl font-bold">Select a message</h2>
 						<p className="text-gray-400">
 							Choose from your existing conversations, start a new one by searching

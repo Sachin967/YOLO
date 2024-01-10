@@ -54,15 +54,26 @@ function PostModal({ isOpen, onClose }) {
 		}
 	}, [selectedImage]);
 
-	const handlePost = () => {
+	const handlePost = (e) => {
+		e.preventDefault();
 		setLoading(true);
-		const data = {
-			textmedia: text,
-			userId: id,
-			media: selectedImage
-		};
+
+		const byteCharacters = atob(selectedImage.split(",")[1]);
+		const byteNumbers = new Array(byteCharacters.length);
+		for (let i = 0; i < byteCharacters.length; i++) {
+			byteNumbers[i] = byteCharacters.charCodeAt(i);
+		}
+		const byteArray = new Uint8Array(byteNumbers);
+		const blob = new Blob([byteArray], { type: "image/jpeg" }); // Adjust the type based on your image format
+
+		// Create a File from the Blob
+		const file = new File([blob], "cropped_image.jpeg", { type: "image/jpeg" }); // Adjust the name and type
+		const formData = new FormData();
+		formData.append("textmedia", text);
+		formData.append("userId", id);
+		formData.append("media", file);
 		posts
-			.post("/addpost", data)
+			.post("/addpost", formData)
 			.then((res) => {
 				console.log(res);
 				if (res.data.data.status) {
@@ -82,25 +93,86 @@ function PostModal({ isOpen, onClose }) {
 			});
 	};
 
-	const onSelectFile = (e) => {
-		const reader = new FileReader();
-		reader.onload = () => {
-			if (imageRef.current && reader.result) {
-				imageRef.current.src = reader.result;
-				cropper = new Cropper(imageRef.current, {
-					// Configure cropper options here
-					aspectRatio: 4 / 5,
-					crop: () => {
-						const canvas = cropper.getCroppedCanvas();
-						setSelectedImage(canvas.toDataURL("image/jpeg"));
-					}
-				});
+	// const onSelectFile = (e) => {
+	// 	 const file = e.target.files[0];
+	// 		const imageURL = URL.createObjectURL(file);
+
+	// 		imageRef.current.src=imageURL
+	// 		const image = new Image();
+	// 		image.src = imageRef;
+
+	// 		image.onload = () => {
+	// 			 cropper = new Cropper(imageRef, {
+	// 				aspectRatio: 4 / 5
+	// 				// Other configuration options
+	// 			});
+
+	// 			const croppedCanvas = cropper.getCroppedCanvas();
+	// 			const croppedImage = croppedCanvas.toDataURL("image/jpeg");
+
+	// 			setSelectedImage(croppedImage);
+
+	// 			URL.revokeObjectURL(imageURL); // Clean up the object URL
+	// 		};
+	// };
+// const onSelectFile = (e) => {
+// 	const file = e.target.files[0];
+// 	const imageURL = URL.createObjectURL(file);
+
+// 	const image = new Image();
+// 	image.onload = () => {
+// 		imageRef.current.src = imageURL; // Setting the source for the displayed image
+
+// 		const cropper = new Cropper(imageRef.current, {
+// 			aspectRatio: 4 / 5,
+// 			// Other configuration options
+// 			ready() {
+// 				const croppedCanvas = cropper.getCroppedCanvas();
+// 				if (croppedCanvas) {
+// 					const croppedImage = croppedCanvas.toDataURL("image/jpeg");
+// 					setSelectedImage(croppedImage);
+// 				} else {
+// 					console.error("Failed to get cropped canvas.");
+// 				}
+// 			}
+// 		});
+
+// 		URL.revokeObjectURL(imageURL); // Clean up the object URL
+// 	};
+
+// 	image.src = imageURL;
+// };
+
+
+const onSelectFile = (e) => {
+	const file = e.target.files[0];
+	const imageURL = URL.createObjectURL(file);
+
+	const image = new Image();
+	image.onload = () => {
+		imageRef.current.src = imageURL; // Setting the source for the displayed image
+
+		const cropper = new Cropper(imageRef.current, {
+			aspectRatio: 4 / 5,
+			// Other configuration options
+			crop() {
+				const croppedCanvas = cropper.getCroppedCanvas();
+				if (croppedCanvas) {
+					const newCroppedImage = croppedCanvas.toDataURL("image/jpeg");
+					setSelectedImage(newCroppedImage);
+				} else {
+					console.error("Failed to get cropped canvas.");
+				}
 			}
-		};
-		if (e.target.files && e.target.files.length > 0) {
-			reader.readAsDataURL(e.target.files[0]);
-		}
+		});
+
+		URL.revokeObjectURL(imageURL); // Clean up the object URL
 	};
+
+	image.src = imageURL;
+};
+
+
 	return (
 		<>
 			<Modal
@@ -134,69 +206,67 @@ function PostModal({ isOpen, onClose }) {
 							<span className="sr-only">Loading...</span>
 						</div>
 					)}
-					<Modal.Body className="bg-black">
-						<div className="relative mb-5 flex items-center max-w-full">
-							<Avatar size={"sm"} src="https://bit.ly/dan-abramov" />
-							{/* <img
-								src="user-image.jpg"
-								alt="User's Profile Picture"
-								className=" rounded-full object-cover mr-3"
-							/> */}
-							<textarea
-								name="textmedia"
-								value={text}
-								onChange={(e) => setText(e.target.value)}
-								id="large-input"
-								className="block w-full ms-5 p-4 text-gray-900 rounded-lg bg-black sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-black dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 resize-y overflow-auto border-none"
-								rows="3"
-								placeholder="Enter your text here..."></textarea>
-						</div>
-						<div className="w-1/2 h-auto mx-auto p-4">
-							<img ref={imageRef} alt="Crop" className="max-w-full" />
-						</div>
-						<div className="w-1/2 mx-auto">
-							{selectedImage && (
-								<div>
-									<img src={selectedImage} alt="Cropped" className="max-w-full" />
-								</div>
-							)}
-						</div>
-					
-					</Modal.Body>
-					<Modal.Footer className="flex justify-around items-center bg-black border-0">
-						<FontAwesomeIcon icon={faFaceLaughSquint} onClick={openEmoji} style={{ color: "#ffffff" }} />
-						<label for="file-upload" className="mr-3">
-							<svg
-								class="w-[25px] h-[25px] text-gray-800 dark:text-white"
-								aria-hidden="true"
-								xmlns="http://www.w3.org/2000/svg"
-								width="16"
-								height="20"
-								fill="none"
-								viewBox="0 0 16 20">
-								<path
-									stroke="currentColor"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="1.4"
-									d="M6 1v4a1 1 0 0 1-1 1H1m8.484 7.984 2.152 2.152M15 2v16a.97.97 0 0 1-.933 1H1.933A.97.97 0 0 1 1 18V5.828a2 2 0 0 1 .586-1.414l2.828-2.828A2 2 0 0 1 5.828 1h8.239A.97.97 0 0 1 15 2Zm-4.636 9.864a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
-								/>
-							</svg>
-						</label>
-						<input
-							id="file-upload"
-							type="file"
-							accept="image/*, video/*"
-							className="hidden"
-							multiple
-							onChange={onSelectFile}
-							name="media"
-						/>
+					<form onSubmit={handlePost}>
+						<Modal.Body className="bg-black">
+							<div className="relative mb-5 flex items-center max-w-full">
+								<Avatar size={"sm"} src="https://bit.ly/dan-abramov" />
+								<textarea
+									name="textmedia"
+									value={text}
+									onChange={(e) => setText(e.target.value)}
+									id="large-input"
+									className="block w-full ms-5 p-4 text-gray-900 rounded-lg bg-black sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-black dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 resize-y overflow-auto border-none"
+									rows="3"
+									placeholder="Enter your text here..."></textarea>
+							</div>
+							<div className="w-1/2 h-auto mx-auto p-4">
+								<img ref={imageRef} alt="Crop" className="max-w-full" />
+							</div>
+							<div className="w-1/2 mx-auto">
+								{selectedImage && (
+									<div>
+										<img src={selectedImage} alt="Cropped" className="max-w-full" />
+									</div>
+								)}
+							</div>
+						</Modal.Body>
+						<Modal.Footer className="flex justify-around items-center bg-black border-0">
+							<FontAwesomeIcon
+								icon={faFaceLaughSquint}
+								onClick={openEmoji}
+								style={{ color: "#ffffff" }}
+							/>
+							<label for="file-upload" className="mr-3">
+								<svg
+									class="w-[25px] h-[25px] text-gray-800 dark:text-white"
+									aria-hidden="true"
+									xmlns="http://www.w3.org/2000/svg"
+									width="16"
+									height="20"
+									fill="none"
+									viewBox="0 0 16 20">
+									<path
+										stroke="currentColor"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="1.4"
+										d="M6 1v4a1 1 0 0 1-1 1H1m8.484 7.984 2.152 2.152M15 2v16a.97.97 0 0 1-.933 1H1.933A.97.97 0 0 1 1 18V5.828a2 2 0 0 1 .586-1.414l2.828-2.828A2 2 0 0 1 5.828 1h8.239A.97.97 0 0 1 15 2Zm-4.636 9.864a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+									/>
+								</svg>
+							</label>
+							<input
+								id="file-upload"
+								type="file"
+								accept="image/*, video/*"
+								className="hidden"
+								multiple
+								onChange={onSelectFile}
+								name="media"
+							/>
 
-						<Button className="" onClick={handlePost}>
-							Post
-						</Button>
-					</Modal.Footer>
+							<Button type="submit">Post</Button>
+						</Modal.Footer>
+					</form>
 				</div>
 				{emojishow && (
 					<div

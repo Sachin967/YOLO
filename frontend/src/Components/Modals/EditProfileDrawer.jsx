@@ -20,6 +20,7 @@ import { AuthActions } from "../../store/Authslice";
 import useCustomToast from "../../toast";
 import { useNavigate } from "react-router-dom";
 import { Error403 } from "../../Commonfunctions";
+import { dayOptions, monthOptions, yearOptions } from "../../constants/constant";
 function EditProfileDrawer({ isOpen, onClose, showUserProfile }) {
 	const firstField = React.useRef();
 	const showToast = useCustomToast();
@@ -29,7 +30,10 @@ function EditProfileDrawer({ isOpen, onClose, showUserProfile }) {
 	const [updatedUser, setUpdatedUser] = useState({
 		name: "",
 		bio: "",
-		location: ""
+		location: "",
+		day: "",
+		month: "",
+		year: ""
 	});
 
 	const handleInputChange = (e) => {
@@ -45,7 +49,10 @@ function EditProfileDrawer({ isOpen, onClose, showUserProfile }) {
 			setUpdatedUser({
 				name: userdetails?.name || "",
 				bio: userdetails?.bio || "",
-				location: userdetails?.location || ""
+				location: userdetails?.location || "",
+				day: userdetails.day || "",
+				month: userdetails.month || "",
+				year: userdetails.year || ""
 			});
 		}
 	}, [userdetails]);
@@ -55,6 +62,7 @@ function EditProfileDrawer({ isOpen, onClose, showUserProfile }) {
 			.then((res) => {
 				if (res.data) {
 					dispatch(AuthActions.Userupdate(res.data));
+					console.log(res.data)
 					setUpdatedUser(res.data);
 					showUserProfile();
 					onClose();
@@ -82,9 +90,9 @@ function EditProfileDrawer({ isOpen, onClose, showUserProfile }) {
 					</DrawerHeader>
 
 					<DrawerBody className="">
-						<Stack spacing="24px">
+						<Stack spacing="50px">
 							<Box>
-								<FormLabel className="text-white" htmlFor="username">
+								<FormLabel className="text-white mt-5" htmlFor="username">
 									Name
 								</FormLabel>
 								<Input
@@ -92,7 +100,7 @@ function EditProfileDrawer({ isOpen, onClose, showUserProfile }) {
 									id="name"
 									name="name"
 									value={updatedUser?.name}
-									className="text-white"
+									className="text-white "
 									placeholder="Please enter user name"
 									onChange={(e) => handleInputChange(e)}
 								/>
@@ -128,32 +136,53 @@ function EditProfileDrawer({ isOpen, onClose, showUserProfile }) {
 									Birth Date
 								</FormLabel>
 								<div className="flex">
-									<Select className="w-[115px] mr-3" defaultValue="" placeholder="Month">
-										<option value={updatedUser?.month} disabled hidden>
-											Month
-										</option>
-										<option value="January">January</option>
-										<option value="February">February</option>
-										{/* Add other months */}
+									<Select
+										style={{ backgroundColor: "gray" }}
+										className="w-[115px] mr-3 bg-gray-700"
+										defaultValue=""
+										onChange={(e) =>
+											handleInputChange({ target: { name: "month", value: e.target.value } })
+										}
+										value={updatedUser?.month}
+										placeholder="Month">
+										{monthOptions.map((option, index) => (
+											<option key={index} value={index + 1}>
+												{option}
+											</option>
+										))}
 									</Select>
-									<Select className="w-[85px] mr-3" defaultValue="" placeholder="Day">
-										<option value={updatedUser?.day} disabled hidden>
-											Day
-										</option>
-										<option value="01">01</option>
-										<option value="02">02</option>
-										{/* Add other days */}
+									<Select
+										style={{ backgroundColor: "gray" }}
+										className="w-[85px]  mr-3"
+										defaultValue=""
+										onChange={(e) =>
+											handleInputChange({ target: { name: "day", value: e.target.value } })
+										}
+										value={updatedUser?.day}
+										placeholder="Day">
+										{dayOptions.map((option) => (
+											<option className="" key={option} value={option}>
+												{option}
+											</option>
+										))}
 									</Select>
-									<Select className="w-[100px]" defaultValue="" placeholder="Year">
-										<option value={updatedUser?.year} disabled hidden>
-											Year
-										</option>
-										<option value="2000">2000</option>
-										<option value="2001">2001</option>
-										{/* Add other years */}
+									<Select
+										style={{ backgroundColor: "gray" }}
+										className="w-[100px]"
+										defaultValue=""
+										onChange={(e) =>
+											handleInputChange({ target: { name: "year", value: e.target.value } })
+										}
+										value={updatedUser?.year}
+										placeholder="Year">
+										{yearOptions.map((option) => (
+											<option key={option} value={option}>
+												{option}
+											</option>
+										))}
 									</Select>
 								</div>
-								<FormLabel className="text-white mt-5" htmlFor="location">
+								{/* <FormLabel className="text-white mt-5" htmlFor="location">
 									Who sees this?
 								</FormLabel>
 								<Select className="mb-5" placeholder="Year">
@@ -171,20 +200,20 @@ function EditProfileDrawer({ isOpen, onClose, showUserProfile }) {
 									<option value="option1">Only You</option>
 									<option value="option2">Followers</option>
 									<option value="option3">Public</option>
-								</Select>
+								</Select> */}
 							</Box>
-							<Box className="text-center">
-								<button className=" hover:bg-red-950 p-2 text-lg text-red-600 rounded-2xl">
+							{/* <Box className="text-center">
+								<button onClick={} className=" hover:bg-red-950 p-2 text-lg text-red-600 rounded-2xl">
 									Remove Date of Birth
 								</button>
-							</Box>
+							</Box> */}
 						</Stack>
 					</DrawerBody>
 
 					<DrawerFooter className="text-white" borderTopWidth="1px">
-						<Button variant="outline" mr={3} onClick={onClose}>
+						{/* <Button variant="outline" mr={3} onClick={onClose}>
 							Cancel
-						</Button>
+						</Button> */}
 						<Button onClick={handleEditUserProfile} colorScheme="blue">
 							Submit
 						</Button>

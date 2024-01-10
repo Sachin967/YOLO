@@ -52,9 +52,9 @@ const SideBar = ({ userinfo }) => {
 	}, []);
 	return (
 		<>
-			<div className="lg:hidden fixed">
-				<div className="fixed inset-0 z-40  flex">
-					<div className="flex flex-col w-20 space-y-20 bg-black ">
+			<div className="sm:hidden fixed ">
+				<div className="fixed inset-0 z-40 flex">
+					<div className="flex flex-col w-20 border-r border-gray-600 h-screen space-y-10 bg-black ">
 						{/* <button className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
 							<span className="sr-only">Open sidebar</span>
 							<svg
@@ -70,52 +70,68 @@ const SideBar = ({ userinfo }) => {
 							</svg>
 						</button> */}
 						{/* <Avatar size={'lg'} src="./yolo2.png"/> */}
-						<a href="https://flowbite.com/" className="flex items-center">
+
+						<Link to={"/home"} className="flex items-center">
 							<img
 								src="./yolo2.png"
 								className="w-13 h-13 p-2 m-1 rounded-full  hover:bg-zinc-900"
 								alt="Flowbite Logo"
 							/>
-						</a>
+						</Link>
 
 						{/* <div className="relative"> */}
 						{/* <FontAwesomeIcon className="fa-2xl p-2 text-gray-500" icon={faHouse} /> */}
 						{/* </div> */}
 						{/* <div className="relative"> */}
-						<FontAwesomeIcon
-							className="fa-2xl p-2 hover:bg-zinc-900 rounded-full text-gray-500"
-							icon={faUser}
-						/>
+						<div className="ml-4">
+							<Link to={"/profile"}>
+								<FontAwesomeIcon
+									className="fa-2xl p-3 hover:bg-zinc-900 rounded-full text-gray-500"
+									icon={faUser}
+								/>
+							</Link>
+						</div>
 						{/* </div> */}
 						{/* <div className="relative"> */}
-						<FontAwesomeIcon
-							className="fa-2xl p-2 hover:bg-zinc-900 rounded-full text-gray-500"
-							icon={faBell}
-						/>
+						<div className="ml-4">
+							<Link to={"/notifications"}>
+								<FontAwesomeIcon
+									className="fa-2xl p-3 hover:bg-zinc-900 rounded-full text-gray-500"
+									icon={faBell}
+								/>
+							</Link>
+						</div>
 						{/* </div> */}
 						{/* <div className="relative"> */}
-						<FontAwesomeIcon
-							className="fa-2xl p-2 hover:bg-zinc-900 rounded-full text-gray-500"
-							icon={faMessage}
-						/>
+						<div className="ml-4 ">
+							<Link to={"/messages"}>
+								<FontAwesomeIcon
+									className="fa-2xl p-3 hover:bg-zinc-900 rounded-full text-gray-500"
+									icon={faMessage}
+								/>
+							</Link>
+						</div>
 						{/* </div> */}
 						{/* <div className="relative"> */}
-						<FontAwesomeIcon
-							className="fa-2xl p-2 hover:bg-zinc-900 rounded-full text-gray-500"
-							icon={faBookmark}
-						/>
+						<div className="ml-4 ">
+							<Link to={`/${userdetails.username}/saved`}>
+								<FontAwesomeIcon
+									className="fa-2xl p-3 hover:bg-zinc-900 rounded-full text-gray-500"
+									icon={faBookmark}
+								/>
+							</Link>
+						</div>
 						{/* 	</div> */}
 					</div>
 				</div>
 			</div>
-
 			<aside
 				id="logo-sidebar"
-				className="fixed top-0 left-0 z-40 w-[320px] hidden lg:block h-screen transition-transform -translate-x-full sm:translate-x-0"
+				className="fixed z-40 w-[320px] hidden sm:block h-screen transition-transform -translate-x-full sm:translate-x-0"
 				aria-label="Sidebar">
 				<div className="h-full border-r border-gray-700 overflow-y-auto bg-black">
 					<Link to={"/home"} className="flex items-center">
-						<Avatar className="ml-24 hover:bg-zinc-900" size={"xl"} src="./yolo2.png" />
+						<Avatar className="ml-24 mt-5  hover:bg-zinc-900" size={"xl"} src="./yolo2.png" />
 						{/* <img
 							src="./yolo2.png"
 							className="w-40 h-40 rounded-full ml-20 hover:bg-zinc-900"

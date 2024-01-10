@@ -106,7 +106,7 @@ const Login = () => {
 						</div>
 						<div className="flex items-center justify-between">
 							<Link
-								to="#"
+								to="/password/reset"
 								className="text-sky-500 text-sm font-medium text-primary-600 hover:underline dark:text-primary-500">
 								Forgot password?
 							</Link>

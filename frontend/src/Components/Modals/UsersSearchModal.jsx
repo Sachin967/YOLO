@@ -61,8 +61,8 @@ const UsersSearchModal = ({ onClose, isOpen, userss, chatId, fetchMessages }) =>
 				.then((res) => {
 					console.log(res);
 					if (res.data) {
-						fetchMessages()
-						onClose()
+						fetchMessages();
+						onClose();
 						showToast("success", "User Added");
 					}
 				})
@@ -74,7 +74,7 @@ const UsersSearchModal = ({ onClose, isOpen, userss, chatId, fetchMessages }) =>
 	return (
 		<Modal onClose={onClose} size="xl" isOpen={isOpen}>
 			<ModalOverlay />
-			<ModalContent>
+			<ModalContent style={{ backgroundColor: "#131313" }}>
 				<ModalHeader>
 					<h1 className="text-white">Add People</h1>
 					<button
@@ -89,7 +89,7 @@ const UsersSearchModal = ({ onClose, isOpen, userss, chatId, fetchMessages }) =>
 						<input
 							value={search}
 							onChange={handleInputChange}
-							className="bg-transparent w-full border-transparent rounded-2xl"
+							className="bg-transparent text-white w-full border-transparent rounded-2xl"
 							type="text"
 						/>
 					</div>
@@ -97,20 +97,19 @@ const UsersSearchModal = ({ onClose, isOpen, userss, chatId, fetchMessages }) =>
 						<Box display={"inline-flex"} flexWrap={"wrap"} mt={2}>
 							{selectedUsers.map((selectedUser) => (
 								<Box
+									className="text-white"
 									backgroundColor={"gainsboro"}
 									m={1}
 									px={2}
 									py={1}
 									borderRadius={"lg"}
 									mb={2}
-									key={selectedUser._id}
-									textColor={"black"}>
+									key={selectedUser._id}>
 									{selectedUser.name} - {selectedUser.username}
 									<FontAwesomeIcon
 										onClick={() => RemoveSelected(selectedUser)}
 										className="pl-2 cursor-pointer"
 										icon={faXmark}
-										style={{ color: "#ffffff" }}
 									/>
 								</Box>
 							))}

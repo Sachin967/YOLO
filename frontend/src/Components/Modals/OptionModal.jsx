@@ -22,7 +22,7 @@ import {
 	useDisclosure
 } from "@chakra-ui/react";
 import { useDispatch, useSelector } from "react-redux";
-import { posts, users } from "../../config/axios";
+import { mapbox, posts, users } from "../../config/axios";
 import React, { useEffect, useState } from "react";
 import useCustomToast from "../../toast";
 import { modalTheme } from "../../config/ChakraModalconfig";
@@ -43,6 +43,7 @@ function OptionsModal({
 }) {
 	const { userdetails } = useSelector((state) => state.auth);
 	const cancelRef = React.useRef();
+	const [search, setSearch] = useState("");
 	const dispatch = useDispatch();
 	const Navigate = useNavigate();
 	const showToast = useCustomToast();
@@ -75,7 +76,21 @@ function OptionsModal({
 		} catch (error) {}
 	};
 
+	const handleLocationAPI = (e) => {
+		setSearch(e.target.value);
+		if (search) {
+			mapbox
+				.get(
+					`/${search}.json?access_token=pk.eyJ1Ijoic2FjaGlubXMiLCJhIjoiY2xyN202c285MHBsNDJrcGF5Z2xmNTgyaCJ9.C35EQx1Ogm7j7YTXxtSCXA`
+				)
+				.then((res) => {
+					console.log(res);
+				});
+		}
+	};
+
 	const handleInputChange = (e) => {
+		setSearch(e.target.value);
 		const { name, value } = e.target;
 		setSpecificPost((prev) => ({
 			...prev,
@@ -142,7 +157,7 @@ function OptionsModal({
 						top: "30%",
 						left: "35%",
 						transform: "translate(-50%, 50%)",
-						backgroundColor: "#262626"
+						backgroundColor: "#131313"
 					}}>
 					{containsPostId ? (
 						<>
@@ -184,7 +199,7 @@ function OptionsModal({
 			{/* Repost Post */}
 			<Modal onClose={onReportClose} size={"xs"} isOpen={isReportOpen}>
 				<ModalOverlay />
-				<ModalContent style={{ backgroundColor: "#262626" }}>
+				<ModalContent style={{ backgroundColor: "#131313" }}>
 					<ModalHeader className="text-center text-white">Report</ModalHeader>
 					<ModalCloseButton className="text-white" />
 					<ModalBody>
@@ -215,7 +230,7 @@ function OptionsModal({
 							<h1 className="text-lg text-white font-bold">{username}</h1>
 						</div>
 						<textarea
-							onChange={(e) => handleInputChange(e)}
+							onChange={(e) => handleLocationAPI(e)}
 							name="textmedia"
 							value={specificPost?.textmedia}
 							className="text-white"
@@ -224,7 +239,7 @@ function OptionsModal({
 							cols="49"
 							rows="4"></textarea>
 						<input
-							onChange={(e) => handleInputChange(e)}
+							onChange={(e) => handleLocationAPI(e)}
 							name="location"
 							value={specificPost?.location}
 							type="text"

@@ -3,7 +3,7 @@ import { useSelector } from "react-redux/es/hooks/useSelector";
 import AdminSidebar from "../AdminComponents/adminSidebar";
 export const AdminPrivateRoute = () => {
 	const { Adminisloggedin } = useSelector((state) => state.admin);
-  console.log(Adminisloggedin)
+	console.log(Adminisloggedin);
 	return Adminisloggedin ? (
 		<>
 			<AdminSidebar />

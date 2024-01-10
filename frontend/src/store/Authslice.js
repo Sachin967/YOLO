@@ -24,7 +24,7 @@ const Authslice = createSlice({
 			state.Userisloggedin = false;
 			state.userdetails = [];
 			localStorage.removeItem("userdetails");
-		},
+		}
 	}
 });
 

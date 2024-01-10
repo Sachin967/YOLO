@@ -1,7 +1,6 @@
 import { users } from "./config/axios";
 import { AuthActions } from "./store/Authslice";
-export const Error403 = (error, showToast,dispatch,Navigate) => {
-
+export const Error403 = (error, showToast, dispatch, Navigate) => {
 	showToast("error", error.response.data.message);
 
 	setTimeout(() => {

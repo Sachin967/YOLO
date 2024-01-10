@@ -32,20 +32,20 @@ export const admin = (app, channel) => {
       if (usersResponse) {
         res.json(usersResponse)
       }
-    } catch (error) {}
+    } catch (error) { }
   })
 
-    app.get('/getposts', async (req, res, next) => {
-      try {
-        console.log('here')
-        const postresponse = await RPCRequest('POST_RPC', {
-          type: 'LIST_REPORTED_POSTS',
-        })
-        if (postresponse) {
-          res.json(postresponse)
-        }
-      } catch (error) {}
-    })
+  app.get('/getposts', async (req, res, next) => {
+    try {
+      console.log('here')
+      const postresponse = await RPCRequest('POST_RPC', {
+        type: 'LIST_REPORTED_POSTS',
+      })
+      if (postresponse) {
+        res.json(postresponse)
+      }
+    } catch (error) { }
+  })
 
   app.post('/blockuser', async (req, res, next) => {
     try {
@@ -61,30 +61,61 @@ export const admin = (app, channel) => {
       console.log(error)
     }
   })
-   app.post('/unblockuser', async (req, res, next) => {
-     try {
-       const { id } = req.body
-       console.log(id)
-       const unblockeduser = await RPCRequest('USER_RPC', {
-         type: 'UNBLOCK_USER',
-         data: id,
-       })
-       if (unblockeduser) {
-         res.json(unblockeduser)
-       }
-     } catch (error) {
-       console.log(error)
-     }
-   })
-   	app.post('/logout', async (req, res, next) => {
-      try {
-        res.cookie('adminJwt', '', {
-          httpOnly: true,
-          expires: new Date(0),
-        })
-        res.status(200).json({ status: true, message: 'Logged out' })
-      } catch (error) {
-        console.log(error)
+  app.post('/unblockuser', async (req, res, next) => {
+    try {
+      const { id } = req.body
+      console.log(id)
+      const unblockeduser = await RPCRequest('USER_RPC', {
+        type: 'UNBLOCK_USER',
+        data: id,
+      })
+      if (unblockeduser) {
+        res.json(unblockeduser)
       }
-    })
+    } catch (error) {
+      console.log(error)
+    }
+  })
+  app.post('/unlistpost', async (req, res, next) => {
+    try {
+      console.log(req.body)
+      const { postId } = req.body
+      const response = await RPCRequest('POST_RPC', {
+        type: 'UNLIST_POST',
+        data: postId,
+      })
+      console.log('unlist', response)
+      if (response) {
+       return res.json(response)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  })
+  app.post('/listpost', async (req, res, next) => {
+    try {
+      const { postId } = req.body
+      const response = await RPCRequest('POST_RPC', {
+        type: 'LIST_POST',
+        data: postId,
+      })
+      console.log('list', response)
+      if (response) {
+       return res.json(response)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  })
+  app.post('/logout', async (req, res, next) => {
+    try {
+      res.cookie('adminJwt', '', {
+        httpOnly: true,
+        expires: new Date(0),
+      })
+      res.status(200).json({ status: true, message: 'Logged out' })
+    } catch (error) {
+      console.log(error)
+    }
+  })
 }
