@@ -6,7 +6,7 @@ import { users } from "../config/axios.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { AuthActions } from "../store/Authslice.js";
-import useCustomToast from "../toast.js";
+import useCustomToast from "../config/toast.js";
 const Login = () => {
 	const showToast = useCustomToast();
 	const userLoggedIn = useSelector((state) => state.auth.Userisloggedin);
@@ -41,18 +41,26 @@ const Login = () => {
 		e.preventDefault();
 
 		const isValid = validateForm();
+		console.log(isValid)
 		if (isValid) {
+			console.log('hi')
 			users
 				.post("/login", formstate, { withCredentials: true })
 				.then((res) => {
-					if (res.data.status) {
+					console.log(res.data)
+					if (res.data.status===true) {
 						Dispatch(AuthActions.Userlogin(res.data));
 						Navigate("/");
+					}else{
+						console.log(res)
+						showToast('error', res.data.msg)
 					}
 				})
 				.catch((error) => {
-					if (error.response.status === 401) {
+					if (error.response&&error.response.status === 401) {
 						showToast("error", error.response.data);
+					}else{
+						console.log(error)
 					}
 				});
 		}

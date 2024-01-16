@@ -146,9 +146,8 @@ class MessageService {
 
 	async FetchMessages({ userId, chatId }) {
 		try {
-			const messages = await this.repository.FindMessages(chatId);
-			console.log(messages[0]);
-			const user = messages[0]?.chatId?.users;
+			const {message,chat} = await this.repository.FindMessages(chatId);
+			const user = chat?.users;
 			console.log("oooo", userId);
 			console.log("UUU", user);
 			const response = await RPCRequest("USER_RPC", {
@@ -156,7 +155,7 @@ class MessageService {
 				data: user
 			});
 			// console.log("========="+response);
-			return { messages, response };
+			return { message, response };
 		} catch (error) {}
 	}
 	async FetchGroupChats(id) {

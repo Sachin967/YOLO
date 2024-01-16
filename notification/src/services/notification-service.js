@@ -20,6 +20,40 @@ class NotificationService {
 		} catch (error) { }
 	}
 
+	async ConfirmRequest({ noti }) {
+		try {
+			const payload = {
+				event: 'REQUEST_CONFIRMED',
+				data: {
+					userId: noti.recipientId,
+					id: noti.senderId
+				}
+			}
+			const resp = await this.repository.CreateNotificationAndDeleteRequest({ id: noti._id, recipient: noti.recipientId, senderId: noti.senderId, notificationType: 'follow', entityId: noti.entityId, entityType: noti.entityType })
+			return { resp, payload }
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
+	async DeleteRequest({ notId }) {
+		try {
+			const notification = await this.repository.DeleteNotificationById({ notId })
+			const payload = {
+				event: 'REQUEST_DELETED',
+				data: {
+					userId: notification.recipientId,
+					id: notification.senderId
+				}
+			}
+
+			return { status: 'Deleted', payload }
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
+
 	async SubscribeEvents(payload, channel, io) {
 		payload = JSON.parse(payload);
 		const { event, data } = payload;
@@ -37,6 +71,12 @@ class NotificationService {
 					senderId,
 					notificationType,
 				});
+				break;
+			case "FOLLOW_REQUESTED":
+				this.repository.CreateNotification({ recipient, senderId, notificationType, entityId, entityType, image }, io);
+				break;
+			case "FOLLOW_REMOVED":
+				this.repository.CreateNotification({ recipient, senderId, notificationType, entityId, entityType, image });
 				break;
 			case 'POSTS_COMMENTED':
 				this.repository.CreateNotification({ recipient, senderId, notificationType, entityId, entityType, image }, io);

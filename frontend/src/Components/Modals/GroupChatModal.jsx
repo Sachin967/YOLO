@@ -16,18 +16,20 @@ import {
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
-import useCustomToast from "../../toast";
+import useCustomToast from "../../config/toast";
 import { messaging } from "../../config/axios";
+import { useSelector } from "react-redux";
 
 const GroupChatModal = ({ isOpen, onClose, filteredUsers, FetchChats }) => {
 	const [groupChatname, setgroupChatname] = useState();
 	const [selectedUsers, setSelectedUsers] = useState([]);
 	const [search, setSearch] = useState("");
+	const { userdetails } = useSelector((state) => state.auth)
 	const showToast = useCustomToast();
 	const [chats, setChats] = useState([]);
 	const filter = filteredUsers.filter((user) => {
-		const hasName = user?.name && user.name.toLowerCase().includes(search.toLowerCase());
-		const hasUsername = user?.username && user.username.toLowerCase().includes(search.toLowerCase());
+		const hasName = user?.name && user.name !== userdetails.name && user.name.toLowerCase().includes(search.toLowerCase());
+		const hasUsername = user?.username && user.username !== userdetails.username && user.username.toLowerCase().includes(search.toLowerCase());
 
 		return hasName || hasUsername;
 	});
@@ -50,6 +52,9 @@ const GroupChatModal = ({ isOpen, onClose, filteredUsers, FetchChats }) => {
 			showToast("warning", "Add all fields");
 			return;
 		}
+		if (selectedUsers.length < 2) {
+			showToast('warning', 'More than 1 member needed to create a group')
+		}
 		try {
 			messaging
 				.post("/group", {
@@ -59,15 +64,15 @@ const GroupChatModal = ({ isOpen, onClose, filteredUsers, FetchChats }) => {
 				.then((res) => {
 					if (res.data) {
 						setChats(res.data);
+						FetchChats();
 						onClose();
 						showToast("success", "Group Created");
-						FetchChats();
 					}
 				})
 				.catch((err) => {
 					console.log(err);
 				});
-		} catch (error) {}
+		} catch (error) { }
 	};
 	return (
 		<Modal onClose={onClose} size={"md"} isOpen={isOpen}>
@@ -76,7 +81,7 @@ const GroupChatModal = ({ isOpen, onClose, filteredUsers, FetchChats }) => {
 				<ModalHeader
 					fontSize={"35px"}
 					fontFamily={"Work sans"}
-					textColor={"wheat"}
+					textColor={"whitesmoke"}
 					display={"flex"}
 					justifyContent={"center"}>
 					{" "}
@@ -86,8 +91,8 @@ const GroupChatModal = ({ isOpen, onClose, filteredUsers, FetchChats }) => {
 				<ModalBody display={"flex"} flexDir={"column"} alignItems={"center"}>
 					<FormControl>
 						<Input
-							placeholder="Chat Name"
-							textColor={"wheat"}
+							placeholder="Group Name"
+							textColor={"whitesmoke"}
 							mb={"3"}
 							onChange={(e) => setgroupChatname(e.target.value)}
 						/>

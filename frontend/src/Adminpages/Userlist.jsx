@@ -74,7 +74,7 @@ const Userlist = () => {
 	};
 
 	return (
-		<div className="card bg-neutral-300">
+		<div className="card bg-black">
 			<h1 className="text-center text-black font-bold text-3xl py-3">Users List</h1>
 			<div className="flex h-screen">
 				<DataTable

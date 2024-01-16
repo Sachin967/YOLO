@@ -111,9 +111,10 @@ class MessageRepository {
 	async FindMessages(chatId) {
 		try {
 			console.log("chatId", chatId);
+			const chat = await Chat.findOne({_id:chatId})
 			const message = await Message.find({ chatId: chatId }).populate("chatId");
-			console.log("message", message);
-			return message;
+			
+			return {message,chat};
 		} catch (error) {}
 	}
 	async FindGroupChat(id) {

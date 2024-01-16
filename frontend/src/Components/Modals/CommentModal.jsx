@@ -16,7 +16,7 @@ import {
 import { modalTheme } from "../../config/ChakraModalconfig";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import useCustomToast from "../../toast";
+import useCustomToast from "../../config/toast";
 import { useNavigate } from "react-router-dom";
 const CommentModal = ({ onCloseCommentModal, isCommentModalOpen, PostUserdetails, post, ShowPosts, fetchData }) => {
 	const { userdetails } = useSelector((state) => state.auth);
@@ -59,18 +59,18 @@ const CommentModal = ({ onCloseCommentModal, isCommentModalOpen, PostUserdetails
 					<div className="flex items-center">
 						<Avatar name="Segun Adebayo" className="mb-10" src={PostUserdetails?.propic} />
 						<div className="flex flex-col ml-2">
-							<Heading className="text-white" size="sm">
+							<Heading className="dark:text-white text-black" size="sm">
 								{PostUserdetails?.name}
 							</Heading>
 							<Text className="text-gray-500">@{PostUserdetails?.username}</Text>
-							<Text className="text-white">{post?.textmedia}</Text>
+							<Text className="dark:text-white text-black">{post?.textmedia}</Text>
 						</div>
 					</div>
 				</ModalHeader>
 				<ModalCloseButton />
 				<ModalBody>
 					<textarea
-						className="bg-transparent w-full border-none mb-4 rounded-2xl text-white resize-y overflow-hidden focus:outline-none"
+						className="bg-transparent w-full border-none mb-4 rounded-2xl dark:text-white text-black resize-y overflow-hidden focus:outline-none"
 						placeholder="Post your reply"
 						onChange={(e) => setText(e.target.value)}
 						type="text"

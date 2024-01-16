@@ -1,7 +1,7 @@
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalHeader, ModalOverlay } from "@chakra-ui/react";
 import { reportUser } from "../../constants/constant";
 import { users } from "../../config/axios";
-import useCustomToast from "../../toast";
+import useCustomToast from "../../config/toast";
 import { Error403 } from "../../Commonfunctions";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";

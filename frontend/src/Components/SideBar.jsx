@@ -3,14 +3,17 @@ import { faUser, faBell, faMessage, faBookmark } from "@fortawesome/free-solid-s
 import { Button } from "flowbite-react";
 import { useEffect, useState } from "react";
 import PostModal from "./Modals/PostModal";
-import { users } from "../config/axios";
 import { useDispatch, useSelector } from "react-redux";
-import { AuthActions } from "../store/Authslice";
 import { Link, useNavigate } from "react-router-dom";
-import { Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverCloseButton, Avatar } from "@chakra-ui/react";
+import { Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverCloseButton, Avatar, useDisclosure, Box } from "@chakra-ui/react";
 import { useLocation } from "react-router-dom";
 import { ChatState } from "../Context/ChatProvider";
+import { GoMoon } from "react-icons/go";
+import { RiSettings5Line } from "react-icons/ri";
+import { GoReport } from "react-icons/go";
 import io from "socket.io-client";
+import { useTheme } from "../Context/Themecontext";
+import { handleLogout } from "../API/api";
 const ENDPOINT = "http://localhost:9000";
 var socket, selectedChatCompare;
 const SideBar = ({ userinfo }) => {
@@ -20,41 +23,53 @@ const SideBar = ({ userinfo }) => {
 	const isProfile = location.pathname.startsWith("/profile");
 	const isNotification = location.pathname.startsWith("/notifications");
 	const isMessages = location.pathname.startsWith("/messages");
+	const isSearch = location.pathname.startsWith("/search");
 	const isBookmark = location.pathname.endsWith("/saved");
-	const [openModal, setOpenModal] = useState(false);
+	const { isOpen, onOpen, onClose } = useDisclosure()
 	const { notify } = ChatState();
 	const [showNot, setshowNot] = useState(true);
 	const [notificationCount, setNotificationCount] = useState(0);
+	const { toggleTheme } = useTheme();
+
 	const dispatch = useDispatch();
 	const Navigate = useNavigate();
-	const handleLogout = () => {
-		users.post("/logout").then((res) => {
-			if (res.status) {
-				dispatch(AuthActions.UserLogout());
-				Navigate("/login");
-			}
-		});
-	};
 	const HandleNotificationCount = () => {
+		setNotificationCount(0)
 		setshowNot(false);
 	};
 	useEffect(() => {
+		let mounted = true; // To avoid setting state on unmounted component
+		let processedNotifications = new Set();
+
 		socket = io(ENDPOINT);
-		socket.emit("setup", userdetails);
+		socket.emit("suitup", userdetails);
+
 		socket.on("newNotification", (data) => {
-			// Handle the received notification data
-			if (data.notification.senderId != userdetails._id) {
-				// Increment the notification count
-				setNotificationCount((prevCount) => prevCount + 1);
-				console.log("New Notification:", data);
+			if (mounted && data.notification.senderId !== userdetails._id) {
+				// Check if the notification ID has already been processed
+				if (!processedNotifications.has(data.notification._id)) {
+					setshowNot(true);
+					setNotificationCount(1);
+
+					processedNotifications.add(data.notification._id);
+					console.log(processedNotifications)
+					console.log("New Notification:", data);
+				}
 			}
 		});
+
+		// Cleanup function to clear the processedNotifications set on component unmount
+		return () => {
+			mounted = false;
+			processedNotifications.clear();
+		};
 	}, []);
+
 	return (
 		<>
 			<div className="sm:hidden fixed ">
 				<div className="fixed inset-0 z-40 flex">
-					<div className="flex flex-col w-20 border-r border-gray-600 h-screen space-y-10 bg-black ">
+					<div className="flex flex-col w-20 border-r border-gray-600 h-screen space-y-10 bg-white dark:bg-black ">
 						{/* <button className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
 							<span className="sr-only">Open sidebar</span>
 							<svg
@@ -129,24 +144,19 @@ const SideBar = ({ userinfo }) => {
 				id="logo-sidebar"
 				className="fixed z-40 w-[320px] hidden sm:block h-screen transition-transform -translate-x-full sm:translate-x-0"
 				aria-label="Sidebar">
-				<div className="h-full border-r border-gray-700 overflow-y-auto bg-black">
+				<div className="h-full border-r border-gray-700 overflow-y-auto bg-white dark:bg-black">
 					<Link to={"/home"} className="flex items-center">
-						<Avatar className="ml-24 mt-5  hover:bg-zinc-900" size={"xl"} src="./yolo2.png" />
-						{/* <img
-							src="./yolo2.png"
-							className="w-40 h-40 rounded-full ml-20 hover:bg-zinc-900"
-							alt="Flowbite Logo"
-						/> */}
+						<Avatar className="ml-24 mt-5 bg-black" size={"xl"} src="./yolo2.png" />
 					</Link>
 					<ul className="space-y-0 w-fit ml-7 font-medium">
 						<li className="">
 							<Link
 								to={"/home"}
-								className="flex items-center p-2 my-5 text-gray-900 rounded-full dark:text-white hover:bg-zinc-900 dark:hover:bg-gray-700 group ms-16">
+								className="flex items-center p-2 my-5  rounded-full dark:text-white text-black hover:bg-zinc-200 dark:hover:bg-gray-700 group ms-16">
 								{/* <FontAwesomeIcon className="fa-xl text-white" icon={faHouse} /> */}
 								<svg
 									aria-label="Home"
-									className="text-white"
+									className="text-black dark:text-white"
 									fill="currentColor"
 									height="26"
 									role="img"
@@ -163,8 +173,8 @@ const SideBar = ({ userinfo }) => {
 								<span
 									className={
 										isHome
-											? "mx-5 text-white whitespace-nowrap text-2xl font-extrabold"
-											: "ms-5 text-gray-300 whitespace-nowrap text-2xl font-normal"
+											? "mx-5 dark:text-white text-black whitespace-nowrap text-2xl font-extrabold"
+											: "ms-5 dark:text-white text-black whitespace-nowrap text-2xl font-normal"
 									}>
 									Home
 								</span>
@@ -172,14 +182,29 @@ const SideBar = ({ userinfo }) => {
 						</li>
 						<li className="my-6">
 							<Link
+								to={"/search"}
+								className="flex items-center p-2 my-5 text-black rounded-full dark:text-white hover:bg-zinc-200 dark:hover:bg-gray-700 group ms-16 ">
+								<svg aria-label="Search" className="dark:text-white text-black" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><title>Search</title><path d="M19 10.5A8.5 8.5 0 1 1 10.5 2a8.5 8.5 0 0 1 8.5 8.5Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="16.511" x2="22" y1="16.511" y2="22"></line></svg>
+								<span
+									className={
+										isSearch
+											? "mx-5 dark:text-white text-black whitespace-nowrap text-2xl font-extrabold"
+											: "ms-5 dark:text-white text-black whitespace-nowrap text-2xl font-normal"
+									}>
+									Search
+								</span>
+							</Link>
+						</li>
+						<li className="my-6">
+							<Link
 								to={"/profile"}
-								className="flex items-center p-2 my-5 text-gray-900 rounded-full dark:text-white hover:bg-zinc-900 dark:hover:bg-gray-700 group ms-16 ">
-								<FontAwesomeIcon icon={faUser} className="fa-xl" style={{ color: "#ffffff" }} />
+								className="flex items-center p-2 my-5 text-gray-900 rounded-full dark:text-white hover:bg-zinc-200 dark:hover:bg-gray-700 group ms-16 ">
+								<FontAwesomeIcon icon={faUser} className="fa-xl dark:text-white text-black" />
 								<span
 									className={
 										isProfile
-											? "mx-5 text-white whitespace-nowrap text-2xl font-extrabold"
-											: "ms-5 text-gray-300 whitespace-nowrap text-2xl font-normal"
+											? "mx-5 dark:text-white text-black whitespace-nowrap text-2xl font-extrabold"
+											: "ms-5 dark:text-white text-black whitespace-nowrap text-2xl font-normal"
 									}>
 									Profile
 								</span>
@@ -189,12 +214,12 @@ const SideBar = ({ userinfo }) => {
 							<div onClick={HandleNotificationCount}>
 								<Link
 									to={"/notifications"}
-									className="flex items-center p-2 my-5 text-gray-900 rounded-full dark:text-white hover:bg-zinc-900 dark:hover:bg-gray-700 group ms-16 relative">
+									className="flex items-center p-2 my-5 text-gray-900 rounded-full dark:text-white hover:bg-zinc-200 dark:hover:bg-gray-700 group ms-16 relative">
 									{/* <FontAwesomeIcon icon={faBell} className="fa-xl" style={{ color: "#ffffff" }} /> */}
 
 									<svg
 										aria-label="Notifications"
-										className="text-white"
+										className="dark:text-white text-black"
 										fill="currentColor"
 										height="26"
 										role="img"
@@ -204,15 +229,15 @@ const SideBar = ({ userinfo }) => {
 										<path d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-5.197 7.222-2.512 2.243-3.865 3.469-4.303 3.752-.477-.309-2.143-1.823-4.303-3.752C5.141 14.072 2.5 12.167 2.5 9.122a4.989 4.989 0 0 1 4.708-5.218 4.21 4.21 0 0 1 3.675 1.941c.84 1.175.98 1.763 1.12 1.763s.278-.588 1.11-1.766a4.17 4.17 0 0 1 3.679-1.938m0-2a6.04 6.04 0 0 0-4.797 2.127 6.052 6.052 0 0 0-4.787-2.127A6.985 6.985 0 0 0 .5 9.122c0 3.61 2.55 5.827 5.015 7.97.283.246.569.494.853.747l1.027.918a44.998 44.998 0 0 0 3.518 3.018 2 2 0 0 0 2.174 0 45.263 45.263 0 0 0 3.626-3.115l.922-.824c.293-.26.59-.519.885-.774 2.334-2.025 4.98-4.32 4.98-7.94a6.985 6.985 0 0 0-6.708-7.218Z"></path>
 									</svg>
 									{showNot && notificationCount > 0 && (
-										<span className="inline-flex items-center justify-center w-4 h-4 p-1 bg-red-500 text-white text-xs font-semibold rounded-full absolute top-2 left-6">
+										<span className="inline-flex items-center justify-center w-4 h-4 p-1 bg-red-500 text-black dark:text-white text-xs font-semibold rounded-full absolute top-2 left-6">
 											{notificationCount}
 										</span>
 									)}
 									<span
 										className={
 											isNotification
-												? "mx-5 text-white whitespace-nowrap text-2xl font-extrabold"
-												: "ms-5 text-gray-300 whitespace-nowrap text-2xl font-normal"
+												? "mx-5 dark:text-white text-black whitespace-nowrap text-2xl font-extrabold"
+												: "ms-5 dark:text-white text-black whitespace-nowrap text-2xl font-normal"
 										}>
 										Notification
 									</span>
@@ -225,11 +250,11 @@ const SideBar = ({ userinfo }) => {
 						<li className="my-6">
 							<Link
 								to={"/messages"}
-								className="flex items-center p-2 my-5 text-gray-900 rounded-full dark:text-white hover:bg-zinc-900 dark:hover:bg-gray-700 group ms-16">
+								className="flex items-center p-2 my-5 text-gray-900 rounded-full dark:text-white hover:bg-zinc-200 dark:hover:bg-gray-700 group ms-16">
 								{/* <FontAwesomeIcon icon={faMessage} className="fa-xl" style={{ color: "#ffffff" }} /> */}
 								<svg
 									aria-label="Messenger"
-									className="text-white"
+									className="dark:text-white text-black"
 									fill="currentColor"
 									height="26"
 									role="img"
@@ -249,8 +274,8 @@ const SideBar = ({ userinfo }) => {
 								<span
 									className={
 										isMessages
-											? "mx-5 text-white whitespace-nowrap text-2xl font-extrabold"
-											: "ms-5 text-gray-300 whitespace-nowrap text-2xl font-normal"
+											? "mx-5 dark:text-white text-black whitespace-nowrap text-2xl font-extrabold"
+											: "ms-5 dark:text-white text-black whitespace-nowrap text-2xl font-normal"
 									}>
 									Messages
 								</span>
@@ -262,48 +287,71 @@ const SideBar = ({ userinfo }) => {
 						<li className="my-6">
 							<Link
 								to={`/${userdetails.username}/saved`}
-								className="flex items-center p-2 text-gray-900 rounded-full dark:text-white hover:bg-zinc-900 dark:hover:bg-gray-700 group ms-16">
-								<FontAwesomeIcon icon={faBookmark} className="fa-xl" style={{ color: "#ffffff" }} />
+								className="flex items-center p-2 text-gray-900 rounded-full dark:text-white hover:bg-zinc-200 dark:hover:bg-gray-700 group ms-16">
+								<FontAwesomeIcon icon={faBookmark} className="fa-xl dark:text-white text-black" />
 								<span
 									className={
 										isBookmark
-											? "mx-5 text-white whitespace-nowrap text-2xl font-extrabold"
-											: " text-2xl ms-5 whitespace-nowrap text-white font-normal"
+											? "mx-5 dark:text-white text-black whitespace-nowrap text-2xl font-extrabold"
+											: " text-2xl ms-5 whitespace-nowrap dark:text-white text-black font-normal"
 									}>
 									Bookmarks
 								</span>
 							</Link>
 						</li>
+
+						<li className="my-6">
+
+							<Popover colorScheme="gray" placement="top">
+								<PopoverTrigger>
+									<button
+										// to={"/profile"}
+										className="flex items-center p-2 my-5 text-gray-900 rounded-full dark:text-white hover:bg-zinc-200 dark:hover:bg-gray-700 group ms-16 ">
+										<FontAwesomeIcon icon={faUser} className="fa-xl dark:text-white text-black" />
+										<span
+											className={
+												"mx-5 dark:text-white text-black whitespace-nowrap text-2xl font-normal"
+											}>
+											More
+										</span>
+									</button>
+								</PopoverTrigger>
+								<PopoverContent className="rounded-3xl " style={{ backgroundColor: '#2b2a2a' }}>
+									{/* <PopoverArrow /> */}
+									<Link to="/settings/change-password" className="text-white dark:hover:bg-zinc-700 dark:text-white">
+										<div className="flex p-5">
+											<RiSettings5Line className="dark:text-white text-white text-2xl mr-4" />
+											Setting
+										</div>
+									</Link>
+									<div onClick={() => toggleTheme()} className="flex p-5 hover:bg-zinc-700">
+										<GoMoon className="dark:text-white text-white text-2xl mr-4" />
+										<button className=" dark:text-white text-white">Switch Appearance</button>
+									</div>
+									<div className="flex p-5 border-b hover:bg-zinc-700">
+										<GoReport className="dark:text-white text-white text-2xl mr-4" />
+										<button className=" dark:text-white text-white">Report a Problem</button>
+									</div>
+									<button className="p-5 dark:text-white text-white hover:bg-zinc-700" onClick={() => handleLogout(dispatch, Navigate)}>
+										Logout
+									</button>
+								</PopoverContent>
+							</Popover>
+						</li>
 					</ul>
 
 					<div>
-						<Button
-							className="ml-[100px] mt-10 border-gray-500 bg-purple-600 w-48 hover:bg-purple-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-semibold rounded-full px-6 py-[10px] text-center me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-							onClick={() => setOpenModal(true)}>
+						<button style={{ backgroundColor: 'rgb(147 51 234)' }}
+							className="ml-[70px] mt-10  w-44 hover:bg-purple-800 text-white font-semibold rounded-full px-6 py-[15px] text-center me-2 mb-2 "
+							onClick={onOpen}>
 							POST
-						</Button>
-						<div>
-							{" "}
-							{/* Wrapping both components in a div */}
-							<Popover>
-								<PopoverTrigger>
-									<Button className="rounded-full p-2 mt-10 ml-28 bg-black">{userinfo.name}</Button>
-								</PopoverTrigger>
-								<PopoverContent>
-									<PopoverArrow />
-									<PopoverCloseButton />
+						</button>
 
-									<Button className="bg-gray-700 " onClick={handleLogout}>
-										Logout
-									</Button>
-								</PopoverContent>
-							</Popover>
-						</div>
 					</div>
 				</div>
 			</aside>
 
-			<PostModal isOpen={openModal} onClose={() => setOpenModal(false)} />
+			<PostModal isOpen={isOpen} onClose={onClose} />
 		</>
 	);
 };

@@ -9,7 +9,7 @@ import { ChatState } from "../Context/ChatProvider";
 // import FullPost from "../Components/FullPost";
 const FullPost = lazy(() => import("../Components/FullPost"));
 import { SavePost, fetchLikedPost, fetchSavedPost, handleLike } from "../API/api";
-import useCustomToast from "../toast";
+import useCustomToast from "../config/toast";
 
 const Notification = () => {
 	const [like, setLiked] = useState(false);
@@ -54,6 +54,7 @@ const Notification = () => {
 		notifications
 			.get(`/notification/${userdetails._id}`)
 			.then((res) => {
+				console.log(res.data)
 				setLoading(false);
 				if (res.data) {
 					const { notification, response } = res.data;
@@ -65,7 +66,7 @@ const Notification = () => {
 				}
 			})
 			.catch((err) => {
-				console.log(err);
+				console.log(err.message);
 			});
 	};
 
@@ -101,24 +102,50 @@ const Notification = () => {
 	};
 	const today = new Date();
 	const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-
+	const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay());
+	const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 	const todayNotifications = [];
-	const earlierNotifications = [];
+	const thisWeekNotifications = []
+	const thisMonthNotification = []
+	const earlierNotification = []
 
 	notify.forEach((notification) => {
 		const notificationDate = new Date(notification.createdAt);
 
 		if (notificationDate >= todayStart) {
 			todayNotifications.push(notification);
+		} else if (notificationDate >= startOfWeek) {
+			thisWeekNotifications.push(notification);
+		} else if (notificationDate >= startOfMonth) {
+			thisMonthNotification.push(notification);
+		} else if (notificationDate >= startOfMonth) {
+			thisMonthNotification.push(notification);
 		} else {
-			earlierNotifications.push(notification);
+			earlierNotification.push(notification);
 		}
 	});
+
+	const handleConfirm=(not)=>{
+		notifications.post('/requestconfirm',{noti:not}).then(res=>{
+			if(res.data){
+				ShowNotifications()
+			}
+		}).catch(err=>console.log(err))
+	}
+
+	const handleDelete = (not) => {
+		console.log(not)
+		notifications.delete(`/requestdelete/${not._id}`).then(res => {
+			if(res.data){
+				ShowNotifications()
+			}
+		}).catch(err => console.log(err))
+	}
 
 	const renderNotification = (not) => {
 		return (
 			<>
-				<div className="flex p-5 sm:w-full w-auto items-center border-b border-gray-700" key={not._id}>
+				<div className="flex p-4 sm:w-full w-auto items-center" key={not._id}>
 					{not?.notificationType === "like" && (
 						<>
 							<FontAwesomeIcon
@@ -131,18 +158,18 @@ const Notification = () => {
 							</Link>
 							<Link to={`/${not?.userDetail?.username}`}>
 								{" "}
-								<h2 className="sm:text-lg text-sm sm:me-5 me-2 text-white cursor-pointer">
+								<h2 className="sm:text-lg text-sm sm:me-5 me-2 dark:text-white text-black cursor-pointer">
 									<span className="text-blue-400 me-3">@{not?.userDetail?.username}</span> just liked
 									your post
 								</h2>
 							</Link>
 							<img
 								onClick={() => handleImageClick(not?.entityID)}
-								className="cursor-pointer w-12 h-12 mr-2 sm:mr-5"
+								className="cursor-pointer w-12 h-15 mr-2 sm:mr-5"
 								src={not?.Postimage}
 								alt=""
 							/>
-							{post.post && (
+							{post?.post && (
 								<Suspense fallback={<div>Loading...</div>}>
 									{" "}
 									<FullPost
@@ -170,11 +197,29 @@ const Notification = () => {
 							</Link>
 							<Link to={`/${not?.userDetail?.username}`}>
 								{" "}
-								<h2 className="text-lg me-5 text-white">
+								<h2 className="text-lg me-5 dark:text-white text-black">
 									<span className="text-blue-400 me-3">@{not?.userDetail?.username}</span>
 									started following you
 								</h2>
 							</Link>
+						</>
+					)}
+					{not?.notificationType === "request" && (
+						<>
+							<FontAwesomeIcon className="text-4xl me-10" icon={faUser} style={{ color: "#1d9bf0" }} />
+							<Link to={`/${not?.userDetail?.username}`}>
+								{" "}
+								<Avatar size={"md"} className="me-3" src={not?.userDetail?.propic?.url} />
+							</Link>
+							<Link to={`/${not?.userDetail?.username}`}>
+								{" "}
+								<h2 className="text-lg me-5 dark:text-white text-black">
+									<span className="text-blue-400 me-3">@{not?.userDetail?.username}</span>
+								requested to follow you
+								</h2>
+							</Link>
+							<button onClick={() => handleConfirm(not)} className=" ms-2 bg-blue-700 p-2 mr-3 rounded-lg dark:text-white text-black">Confirm</button>
+							<button onClick={() => handleDelete(not)} className="bg-gray-700 p-2 rounded-lg  dark:text-white text-black">Delete</button>
 						</>
 					)}
 					{not?.notificationType === "comment" && (
@@ -190,14 +235,14 @@ const Notification = () => {
 							</Link>
 							<Link to={`/${not?.userDetail?.username}`}>
 								{" "}
-								<h2 className="text-lg me-5 text-white">
+								<h2 className="text-lg me-5 dark:text-white text-black">
 									<span className="text-blue-400 me-3">@{not?.userDetail?.username}</span>
 									commented on your post
 								</h2>
 							</Link>
 							<img className="w-12 mr-5" src={not?.Postimage} alt="" />
 
-							{post.post && (
+							{post?.post && (
 								<Suspense fallback={<div>Loading...</div>}>
 									<FullPost
 										postId={not?.entityID}
@@ -206,7 +251,7 @@ const Notification = () => {
 										onClosePostModal={onClosePostModal}
 										isPostModalOpen={isPostModalOpen}
 										likeCount={likeCount}
-										poster={post.post}
+										poster={post?.post}
 										postuser={user[0]}
 										savepost={savepost}
 										PostSave={PostSave}
@@ -216,18 +261,18 @@ const Notification = () => {
 						</>
 					)}
 
-					<p className="text-sm text-gray-300">{timeAgo(not.createdAt)}</p>
+					<p className="text-sm text-gray-300 ms-3">{timeAgo(not.createdAt)}</p>
 				</div>
 			</>
 		);
 	};
 	return (
 		<>
+		
 			<div className="flex h-full">
-				<div className="ml-20 w-[694px] md:w-[1110px] lg:w-[750px] min-h-screen max-h-full sm:w-[980px] lg:ml-[320px] sm:ml-[55px] bg-black">
+				<div className="ml-20 w-[694px] md:w-[1110px] lg:w-[750px] min-h-screen max-h-full sm:w-[980px] lg:ml-[320px] sm:ml-[55px] bg-white dark:bg-black">
 					<div className="p-4  max-w-[750px] ">
-						<h2 className="text-center font-poppins text-2xl text-white">Notifications</h2>
-						<br />
+						<h2 className="text-center font-sans font-bold text-3xl dark:text-white text-black">Notifications</h2>
 						{loading && (
 							<div role="status" className="relative">
 								<svg
@@ -251,29 +296,57 @@ const Notification = () => {
 						{!loading && notify.length < 1 && (
 							<>
 								<div className="flex justify-center h-full mt-60 font-poppins ">
-									<h1 className="text-white text-3xl">No Notifications to show</h1>
+									<h1 className="dark:text-white text-black text-3xl">No Notifications to show</h1>
 								</div>
 							</>
 						)}
+
 						{todayNotifications.length > 0 && (
 							<>
-								<p className="text-lg text-white">Today</p>
-								{todayNotifications.map(
-									(not) => renderNotification(not) // Function to render individual notification
-								)}
+								<div className="border-gray-600 border-b">
+									<p className="text-xl my-2 font-semibold dark:text-white text-black">Today</p>
+									{todayNotifications.map(
+										(not) => renderNotification(not) // Function to render individual notification
+									)}
+								</div>
 							</>
 						)}
-						{todayNotifications.length === 0 && earlierNotifications.length > 0 && (
+
+						{thisWeekNotifications.length > 0 && (
 							<>
-								<p className="text-lg text-white">Earlier</p>
-								{earlierNotifications.map(
-									(not) => renderNotification(not) // Function to render individual notification
-								)}
+								<div className=" border-b border-gray-600">
+									<p className="text-xl my-4  font-semibold dark:text-white text-black">This Week</p>
+									{thisWeekNotifications.map(
+										(not) => renderNotification(not) // Function to render individual notification
+									)}
+								</div>
+							</>
+						)}
+
+						{thisMonthNotification.length > 0 && (
+							<>
+								<div className="border-gray-600 border-b">
+									<p className="text-xl my-4 font-semibold dark:text-white text-black">This Month</p>
+									{thisMonthNotification.map(
+										(not) => renderNotification(not) // Function to render individual notification
+									)}
+								</div>
+							</>
+						)}
+
+						{earlierNotification.length > 0 && (
+							<>
+								<div className="border-gray-600 border-b">
+									<p className="text-xl my-4 font-semibold dark:text-white text-black">Earlier</p>
+									{earlierNotification.map(
+										(not) => renderNotification(not) // Function to render individual notification
+									)}
+								</div>
 							</>
 						)}
 					</div>
 				</div>
-				<div className="sm:block hidden w-[370px] border-l border-gray-700 bg-black"></div>
+				<div className="sm:block hidden w-[370px] border-l border-gray-700 bg-white dark:bg-black"></div>
 			</div>
 		</>
 	);

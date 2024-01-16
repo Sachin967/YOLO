@@ -15,7 +15,7 @@ import { modalTheme } from "../../config/ChakraModalconfig";
 import { useSelector } from "react-redux";
 import React from "react";
 import { posts } from "../../config/axios";
-import useCustomToast from "../../toast";
+import useCustomToast from "../../config/toast";
 
 export const CommentDeleteModal = ({ comment, onClose, isOpen, containsPostId, commentId, comments, setComment }) => {
 	const { userdetails } = useSelector((state) => state.auth);
@@ -41,12 +41,12 @@ export const CommentDeleteModal = ({ comment, onClose, isOpen, containsPostId, c
 									onAlertOpen();
 									onClose();
 								}}
-								className="hover:bg-slate-50 hover:rounded-full hover:text-black text-white">
+								className="hover:bg-slate-50 hover:rounded-full hover:text-black text-black dark:text-white">
 								Delete
 							</button>
 							<button
 								onClick={onClose}
-								className="hover:bg-slate-50 hover:rounded-full hover:text-black text-white">
+								className="hover:bg-slate-50 hover:rounded-full hover:text-black text-black dark:text-white">
 								Cancel
 							</button>
 						</>
@@ -57,10 +57,10 @@ export const CommentDeleteModal = ({ comment, onClose, isOpen, containsPostId, c
 									onReportOpen();
 									onClose();
 								}}
-								className="hover:bg-zinc-700 text-white text-lg hover:rounded-xl">
+									className="hover:bg-zinc-700 dark:text-white text-black text-lg hover:rounded-xl">
 								Report
 							</button>
-							<button onClick={onClose} className="hover:bg-zinc-700 text-white text-lg hover:rounded-xl">
+								<button onClick={onClose} className="hover:bg-zinc-700 dark:text-white text-black text-lg hover:rounded-xl">
 								Cancel
 							</button>
 							{/* <button className=""></button>  */}

@@ -38,6 +38,8 @@ const UserSchema = new mongoose.Schema(
 		dateOfBirth: {
 			type: Date
 		},
+		isPrivate: { type: Boolean, default: false },
+		followRequests: [{ type: String }],
 		gender: {
 			type: String,
 			enum: ["Male", "Female", "Other"]

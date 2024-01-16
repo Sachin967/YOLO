@@ -8,10 +8,10 @@ const expressApp = async (app, channel) => {
 	app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 	app.use(
 		cors({
-			origin: "http://localhost:3000",
-			methods: ["GET", "POST", "PUT", "DELETE"], // Add the allowed methods
-			allowedHeaders: ["Content-Type", "Authorization"], // Add allowed headers
-			credentials: true // Enable credentials (if needed)
+			origin: ['http://localhost:3000', "http://yolo.sachinms.fyi"],
+			methods: ['GET', 'POST', 'PUT', 'DELETE'], // Add the allowed methods
+			allowedHeaders: ['Content-Type', 'Authorization'], // Add allowed headers
+			credentials: true, // Enable credentials (if needed)
 		})
 	);
 	app.use(cookieParser());

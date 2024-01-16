@@ -1,0 +1,14 @@
+apiVersion: v2
+name: yolo
+description: A Helm chart for Kubernetes
+type: application
+version: 0.1.0
+appVersion: "1.16.0"
+
+dependencies:
+  - name: mongodb
+    version: 12.1.20
+    repository: https://charts.bitnami.com/bitnami
+  - name: rabbitmq
+    version: 10.1.8
+    repository: https://charts.bitnami.com/bitnami

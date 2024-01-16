@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SavePost, fetchLikedPost, fetchSavedPost } from "../API/api";
 import { ChatState } from "../Context/ChatProvider";
-import useCustomToast from "../toast";
+import useCustomToast from "../config/toast";
 import FullPost from "./FullPost";
 const ScrollableChat = ({ messages, user }) => {
 	const { userdetails } = useSelector((state) => state.auth);
@@ -45,7 +45,7 @@ const ScrollableChat = ({ messages, user }) => {
 					const sender = user.find((u) => u._id === message.senderId); // Find the user who sent the message
 					const isSharedPost = typeof message.content === "object";
 					return (
-						<div style={{ display: "flex" }} key={index}>
+						<div className="flex justify-end"  key={index}>
 							{message.chatId.isGroupChat ? (
 								<>
 									{" "}
@@ -53,11 +53,11 @@ const ScrollableChat = ({ messages, user }) => {
 										<div className="">
 											{isSharedPost ? (
 												<>
-													<div className="relative ml-[340px] w-[300px] h-[350px]">
+													<div className="relative mr-3 w-[300px] h-[350px]">
 														<img
 															onClick={onOpenPostModal}
 															className="rounded-xl"
-															src={message.content?.media?.url}
+															src={message.content?.media}
 															alt=""
 														/>
 														<FullPost
@@ -80,7 +80,7 @@ const ScrollableChat = ({ messages, user }) => {
 																		size="sm"
 																		className="mr-2"
 																	/>
-																	<span className="text-base font-semibold text-white">
+																	<span className="text-base font-semibold text-black dark:text-white">
 																		{message.content?.userDetails?.username}
 																	</span>
 																</Link>
@@ -91,7 +91,7 @@ const ScrollableChat = ({ messages, user }) => {
 											) : (
 												<>
 													{" "}
-													<p className="ml-[490px] px-4 py-2 bg-purple-500  text-white rounded-3xl mb-2 min-w-max max-w-[100px] break-words">
+														<p className=" px-4 py-2 bg-purple-500 mr-3 text-black dark:text-white rounded-3xl mb-2 min-w-max max-w-[100px] break-words">
 														{message?.content}
 													</p>
 												</>
@@ -110,11 +110,11 @@ const ScrollableChat = ({ messages, user }) => {
 											/>
 											{isSharedPost ? (
 												<>
-													<div className="relative w-[300px] h-[350px]">
+													<div className="relative w-[300px] mr-[300px] h-[350px]">
 														<img
 															onClick={onOpenPostModal}
 															className="rounded-xl"
-															src={message.content?.media?.url}
+															src={message.content?.media}
 															alt=""
 														/>
 														<FullPost
@@ -137,7 +137,7 @@ const ScrollableChat = ({ messages, user }) => {
 																		size="sm"
 																		className="mr-2"
 																	/>
-																	<span className="text-base font-semibold text-white">
+																	<span className="text-base font-semibold text-black dark:text-white">
 																		{message.content?.userDetails?.username}
 																	</span>
 																</Link>
@@ -147,7 +147,7 @@ const ScrollableChat = ({ messages, user }) => {
 												</>
 											) : (
 												<>
-													<p className=" text-white bg-zinc-700 px-4 py-2 rounded-3xl mb-2 min-w-min max-w-[300px] whitespace-normal break-words">
+														<p className="text-black dark:text-white mr-[540px] bg-zinc-700 px-4 py-2 rounded-3xl mb-2 min-w-min max-w-[300px] whitespace-normal break-words">
 														{message.content}
 													</p>
 												</>
@@ -162,7 +162,7 @@ const ScrollableChat = ({ messages, user }) => {
 										(isSharedPost ? (
 											message.content.video ? (
 												<>
-													<div className="text-white ms-[530px] py-2 px-4 bg-purple-500  rounded-3xl mb-2">
+													<div className="dark:text-white text-black mr-3 py-2 px-4 bg-purple-500  rounded-3xl mb-2">
 														<p className="font-bold">Video Call</p>
 														<button onClick={() => Navigate(message.content.link)}>
 															Join
@@ -171,7 +171,7 @@ const ScrollableChat = ({ messages, user }) => {
 												</>
 											) : (
 												<>
-													<div className="relative ml-[390px] w-[300px] h-[350px]">
+													<div className="relative mr-3 w-[300px] h-[350px]">
 														<img
 															onClick={onOpenPostModal}
 															className="rounded-xl"
@@ -198,7 +198,7 @@ const ScrollableChat = ({ messages, user }) => {
 																		size="sm"
 																		className="mr-2"
 																	/>
-																	<span className="text-base font-semibold text-white">
+																		<span className="text-base font-semibold text-black dark:text-white">
 																		{message.content?.userDetails?.username}
 																	</span>
 																</Link>
@@ -210,9 +210,9 @@ const ScrollableChat = ({ messages, user }) => {
 										) : (
 											<>
 												{" "}
-												<p className="ms-[525px] text-white  bg-purple-500 px-4 py-2 rounded-3xl mb-2 min-w-min max-w-[300px] whitespace-normal break-words">
-													{message.content}
-												</p>
+													<p className="mr-3 dark:text-white text-black bg-purple-500 px-4 py-2 rounded-3xl mb-2 min-w-min max-w-[300px] whitespace-normal break-words">
+														{message.content}
+													</p>
 											</>
 										))}
 									{!isSentByCurrentUser && (
@@ -230,7 +230,7 @@ const ScrollableChat = ({ messages, user }) => {
 													message?.content?.video ? (
 														<>
 															{" "}
-															<div className="text-white mr-[500px] py-2 px-4 bg-zinc-700 rounded-3xl mb-2 ">
+																<div className="dark:text-white text-black mr-[500px] py-2 px-4 bg-zinc-700 rounded-3xl mb-2 ">
 																<p className="font-bold w-[100px]">Video Call</p>
 																<button onClick={() => Navigate(message.content.link)}>
 																	Join
@@ -270,7 +270,7 @@ const ScrollableChat = ({ messages, user }) => {
 																				size="sm"
 																				className="mr-2"
 																			/>
-																			<span className="text-base font-semibold text-white">
+																					<span className="text-base font-semibold text-black dark:text-white">
 																				{message.content?.userDetails?.username}
 																			</span>
 																		</Link>
@@ -282,7 +282,7 @@ const ScrollableChat = ({ messages, user }) => {
 												) : (
 													<>
 														{" "}
-														<p className="mr-[595px] px-4 py-2 bg-zinc-700 text-white  rounded-3xl mb-2 min-w-max max-w-[100px] break-words">
+																<p className=" px-4 py-2 bg-zinc-700 text-black dark:text-white  rounded-3xl mb-2 min-w-max max-w-[100px] break-words">
 															{message?.content}
 														</p>
 													</>

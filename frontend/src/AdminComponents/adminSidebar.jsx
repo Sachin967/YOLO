@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { AiOutlineMenu, AiOutlineSearch, AiOutlineClose } from "react-icons/ai";
 import { BsFillCartFill } from "react-icons/bs";
+import { MdDashboard } from "react-icons/md";
 import { TbTruckDelivery } from "react-icons/tb";
 import { FaWallet } from "react-icons/fa";
 import { MdFavorite, MdHelp } from "react-icons/md";
@@ -25,6 +26,7 @@ const Navbar = () => {
 	};
 
 	const menuItems = [
+		{ icon: < MdDashboard  size={25} className="mr-4" />, text: "Dashboard", link: "/admin/" },
 		{ icon: <TbTruckDelivery size={25} className="mr-4" />, text: "Users", link: "/admin/users" },
 		{ icon: <MdFavorite size={25} className="mr-4" />, text: "Flagged Posts", link: "/admin/posts" },
 		{ icon: <FaWallet size={25} className="mr-4" />, text: "Problems" }
@@ -32,8 +34,7 @@ const Navbar = () => {
 
 	return (
 		<div
-			style={{ backgroundColor: "#000000" }}
-			className="max-w-[1640px] mx-auto flex justify-between items-center p-4 shadow-sm">
+			className="max-w-[1640px] mx-auto bg-zinc-800 flex justify-between items-center p-4 shadow-sm">
 			{/* Left side */}
 			<div className="flex items-center">
 				<div onClick={() => setNav(!nav)} className="text-gray-400 cursor-pointer">
@@ -61,7 +62,7 @@ const Navbar = () => {
 			<div
 				className={
 					nav
-						? "fixed top-0 left-0 w-[300px] h-screen bg-black z-10 duration-300"
+						? "fixed top-0 left-0 w-[300px] h-screen bg-zinc-800 z-10 duration-300"
 						: "fixed top-0 left-[-100%] w-[300px] h-screen bg-black z-10 duration-300"
 				}>
 				<AiOutlineClose
@@ -69,7 +70,7 @@ const Navbar = () => {
 					size={30}
 					className="absolute right-4 hover:text-white top-4 cursor-pointer"
 				/>
-				<h2 className="text-2xl text-gray-500 p-4">
+				<h2 className="text-2xl text-gray-300 p-4">
 					<span className="font-bold">YOLO</span>
 				</h2>
 				<nav>

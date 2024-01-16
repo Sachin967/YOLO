@@ -48,7 +48,7 @@ const GroupInfoEditModal = ({ groupImage, onClose, isOpen, chatName, chatId, set
 			<ModalOverlay />
 			<ModalContent className="absolute ">
 				<ModalHeader>
-					<h1>Edit</h1>
+					<h1 className="text-white ">Edit</h1>
 				</ModalHeader>
 				<ModalCloseButton />
 				<ModalBody className="flex justify-center items-center h-full">

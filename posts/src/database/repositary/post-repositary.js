@@ -31,7 +31,7 @@ class PostRepositary {
 	}
 	async FindPosts({ skip, limit }) {
 		try {
-			const posts = await Post.find({isListed:true}).sort({ createdAt: -1 }).skip(skip).limit(limit);
+			const posts = await Post.find({ isListed: true }).sort({ createdAt: -1 }).skip(skip).limit(limit);
 			console.log(posts);
 			return posts;
 		} catch (error) {
@@ -104,9 +104,10 @@ class PostRepositary {
 		}
 	}
 
-	async ModifyPost({ postId, textmedia, location }) {
+	async ModifyPost({ postId, textmedia, search }) {
 		try {
-			const post = await Post.findByIdAndUpdate({ _id: postId }, { textmedia, location }, { new: true });
+			const post = await Post.findByIdAndUpdate({ _id: postId }, { textmedia, location: search }, { new: true });
+			console.log(post)
 			return post;
 		} catch (error) {
 			console.log(error);
@@ -125,16 +126,16 @@ class PostRepositary {
 		}
 	}
 
-	async RemoveComment(commentId){
+	async RemoveComment(commentId) {
 		try {
 			console.log(commentId)
-			const comment = await Comment.findOneAndDelete({_id:commentId})
+			const comment = await Comment.findOneAndDelete({ _id: commentId })
 			if (!comment) {
 				return { status: "Comment not found" };
 			}
-			return {status:"Comment Deleted"}
+			return { status: "Comment Deleted" }
 		} catch (error) {
-			
+
 		}
 	}
 
@@ -212,6 +213,38 @@ class PostRepositary {
 		const list = await Post.findOneAndUpdate({ _id: data }, { isListed: true }, { new: true });
 		return list;
 	}
+
+	async AveragePostsPerWeek() {
+		try {
+			const result = await Post.aggregate([
+				{
+					$group: {
+						_id: {
+							week: { $week: "$createdAt" },
+							year: { $year: "$createdAt" },
+						},
+						count: { $sum: 1 },
+					},
+				},
+				{
+					$group: {
+						_id: null,
+						average: { $avg: "$count" },
+					},
+				},
+			]);
+
+			if (result.length > 0) {
+				console.log(result[0].average)
+				return result[0].average
+			} else {
+				console.log("No posts found");
+			}
+		} catch (error) {
+
+		}
+	}
+
 }
 
 export default PostRepositary;

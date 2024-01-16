@@ -5,6 +5,7 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogOverlay,
+	Box,
 	Button,
 	Drawer,
 	DrawerBody,
@@ -24,11 +25,13 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { mapbox, posts, users } from "../../config/axios";
 import React, { useEffect, useState } from "react";
-import useCustomToast from "../../toast";
+import useCustomToast from "../../config/toast";
 import { modalTheme } from "../../config/ChakraModalconfig";
 import { reportingReasons } from "../../constants/constant";
 import { AuthActions } from "../../store/Authslice";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
 function OptionsModal({
 	isOpen,
 	onClose,
@@ -39,18 +42,21 @@ function OptionsModal({
 	setSpecificPost,
 	setPosts,
 	username,
-	image
+	image,
+	FetchPosts
 }) {
 	const { userdetails } = useSelector((state) => state.auth);
 	const cancelRef = React.useRef();
-	const [search, setSearch] = useState("");
+	const [search, setSearch] = useState(null);
+	const [places, setPlaces] = useState([])
+	const [textmedia, setTextMedia] = useState(null)
+	// const [location, setLocation] = useState('')
 	const dispatch = useDispatch();
 	const Navigate = useNavigate();
 	const showToast = useCustomToast();
 	const { isOpen: isAlertOpen, onOpen: onAlertOpen, onClose: onAlertClose } = useDisclosure();
 	const { isOpen: isDrawerOpen, onOpen: onDrawerOpen, onClose: onDrawerClose } = useDisclosure();
 	const { isOpen: isReportOpen, onOpen: onReportOpen, onClose: onReportClose } = useDisclosure();
-
 	const deletePost = () => {
 		try {
 			posts
@@ -73,37 +79,57 @@ function OptionsModal({
 						console.error("Error:", error);
 					}
 				});
-		} catch (error) {}
+		} catch (error) { }
 	};
 
 	const handleLocationAPI = (e) => {
-		setSearch(e.target.value);
-		if (search) {
+		const updatedSearch = e.target.value;
+		setSearch(updatedSearch);
+		if (updatedSearch) {
 			mapbox
 				.get(
-					`/${search}.json?access_token=pk.eyJ1Ijoic2FjaGlubXMiLCJhIjoiY2xyN202c285MHBsNDJrcGF5Z2xmNTgyaCJ9.C35EQx1Ogm7j7YTXxtSCXA`
+					`/${updatedSearch}.json?access_token=pk.eyJ1Ijoic2FjaGlubXMiLCJhIjoiY2xyN202c285MHBsNDJrcGF5Z2xmNTgyaCJ9.C35EQx1Ogm7j7YTXxtSCXA`
 				)
 				.then((res) => {
-					console.log(res);
+					if (res.data.features) {
+						console.log(res.data.features);
+						setPlaces(res.data.features);
+					}
+				})
+				.catch((error) => {
+					// Handle any errors in fetching data from mapbox
+					console.error("Error fetching data:", error);
 				});
 		}
 	};
-
-	const handleInputChange = (e) => {
-		setSearch(e.target.value);
-		const { name, value } = e.target;
-		setSpecificPost((prev) => ({
-			...prev,
-			[name]: value
-		}));
-	};
+	// const handleInputChange = (e) => {
+	// 	const { name, value } = e.target;
+	// 	if (value === '') {
+	// 		setSpecificPost((prev) => ({
+	// 			...prev,
+	// 			[name]: value
+	// 		}));
+	// 		setPlaces([]); // Clear the places array
+	// 	}
+	// };
 	const EditPost = async () => {
 		try {
+			const requestData = {};
+			if (textmedia !== null) {
+				requestData.textmedia = textmedia;
+			} else {
+				requestData.textmedia = specificPost?.textmedia || null;
+			}
+			if (search !== null) {
+				requestData.search = search;
+			} else {
+				requestData.search = specificPost?.location || '';
+			}
 			posts
-				.put(`/editpost/${postId}`, { specificPost })
+				.put(`/editpost/${postId}`, { requestData })
 				.then((res) => {
-					console.log(res.data);
 					if (res.data) {
+						FetchPosts()
 						setSpecificPost(res.data);
 						onDrawerClose();
 						showToast("success", "Post updated");
@@ -143,7 +169,7 @@ function OptionsModal({
 						console.error("Error:", error);
 					}
 				});
-		} catch (error) {}
+		} catch (error) { }
 	};
 
 	return (
@@ -230,24 +256,57 @@ function OptionsModal({
 							<h1 className="text-lg text-white font-bold">{username}</h1>
 						</div>
 						<textarea
-							onChange={(e) => handleLocationAPI(e)}
+							onChange={(e) => setTextMedia(e.target.value)}
 							name="textmedia"
-							value={specificPost?.textmedia}
+							value={textmedia !== null ? textmedia : specificPost?.textmedia}
 							className="text-white"
 							style={{ backgroundColor: "#262626" }}
 							id=""
 							cols="49"
 							rows="4"></textarea>
 						<input
-							onChange={(e) => handleLocationAPI(e)}
+							onChange={(e) => {
+								handleLocationAPI(e)
+							}}
 							name="location"
-							value={specificPost?.location}
+							value={search !== null ? search : specificPost?.location}
 							type="text"
 							style={{ backgroundColor: "#262626" }}
-							className="w-full my-7 text-white"
+							className="w-full mt-5 text-white"
 							placeholder="Add Location"
 						/>
-						<img className="max-w-[400px] mx-auto max-h-[400px] " src={specificPost?.media?.url} alt="" />
+						{search!==''&&<button className="absolute top-[290px] right-9 text-white" onClick={() => {
+							setPlaces([])
+							setSearch('')
+						}}>Clear</button>}
+						<div style={{ position: 'relative' }}>
+							{places.length > 0 && search !== '' && (
+								<div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999 }}>
+									{/* Box with places */}
+									<Box display={"inline-flex"} flexWrap={"wrap"} mt={2}>
+										{places.map((place) => (
+
+											<div
+												onClick={() => {
+													// setSpecificPost({ ...specificPost, location: place.text });
+													setSearch(place.text);
+													setPlaces([]); // Clear the places array after selecting a place
+												}}
+												className='flex w-full cursor-pointer'
+												style={{ backgroundColor: 'gray', padding: '5px', margin: '5px', borderRadius: '5px' }}
+											>
+
+												<h2 className="mt-5 me-2 text-lg text-white font-bold">{place?.text}</h2>
+											</div>
+										))}
+									</Box>
+								</div>
+							)}
+						</div>
+
+
+
+						<img className="max-w-[400px] mx-auto max-h-[400px] " src={specificPost?.media} alt="" />
 					</DrawerBody>
 				</DrawerContent>
 			</Drawer>

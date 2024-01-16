@@ -9,7 +9,7 @@ const StartServer = async () => {
 	await dBConnection();
 	const channel = await createChannel();
 	const server = app
-		.listen(PORT, () => console.log(`Notifications is running on ${PORT}`))
+		.listen(PORT, () => console.log(`Notifications is running on >>>${PORT}`))
 		.on("error", (err) => {
 			console.log(err);
 			process.exit(1);
@@ -25,7 +25,7 @@ const StartServer = async () => {
 	});
 	io.on("connection", (socket) => {
 		console.log("connected to socket.io");
-		socket.on("setup", (userData) => {
+		socket.on("suitup", (userData) => {
 			socket.join(userData._id);
 			socket.emit("connected");
 		});

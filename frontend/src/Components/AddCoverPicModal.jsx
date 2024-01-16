@@ -12,7 +12,7 @@ import React, { useRef, useState } from "react";
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
 import { users } from "../config/axios";
-import useCustomToast from "../toast";
+import useCustomToast from "../config/toast";
 import { AuthActions } from "../store/Authslice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -79,15 +79,15 @@ const AddCoverPicModal = ({ isOpen, onClose, username, showUserProfile, isCoverP
 			<Modal onClose={onClose} size="full" isOpen={isOpen}>
 				<ModalOverlay />
 				<ModalContent style={{ height: "700px", width: "600px", position: "relative" }}>
-					<ModalHeader className="text-center text-white">Edit Cover Pic</ModalHeader>
+					<ModalHeader className="text-center text-black dark:text-white">Edit Cover Pic</ModalHeader>
 					<ModalCloseButton className="absolute top-0 left-0" />
-					<button onClick={uploadPic} className="absolute text-white top-2 right-5">
+					<button onClick={uploadPic} className="absolute text-black dark:text-white top-2 right-5">
 						Apply
 					</button>
 					{loading && (
 						<div
 							role="status"
-							className="absolute z-10 w-full h-full bg-black opacity-50 flex justify-center items-center">
+							className="absolute z-10 w-full h-full dark:bg-black bg-white opacity-50 flex justify-center items-center">
 							<svg
 								aria-hidden="true"
 								className="inline w-28 h-28 text-gray-200 animate-spin dark:text-gray-600 fill-purple-600"

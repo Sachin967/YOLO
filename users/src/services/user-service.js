@@ -12,7 +12,7 @@ import {
 	RPCRequest
 } from "../utils/index.js";
 import { APIError } from "../utils/app-error.js";
-import { ADMIN_BINDING_KEY } from "../config/index.js";
+import { ADMIN_BINDING_KEY, GMAIL, PASS } from "../config/index.js";
 import { user } from "../api/user.js";
 import nodemailer from "nodemailer";
 class UserService {
@@ -85,10 +85,12 @@ class UserService {
 						following: existingUser.following,
 						year,
 						month,
-						day
+						day,
+						isPrivate: existingUser.isPrivate
 					});
 				} else {
-					return res.json({ msg: "Incorrect password" });
+					console.log('ivide')
+					return { data: { status: false, msg: "Incorrect password" } }
 				}
 			}
 			return FormateData(null);
@@ -149,7 +151,8 @@ class UserService {
 				following: existingUser.following,
 				year,
 				month,
-				day
+				day,
+				isPrivate: existingUser.isPrivate
 			});
 		} catch (error) {
 			console.log(error);
@@ -177,8 +180,8 @@ class UserService {
 			let transporter = nodemailer.createTransport({
 				service: "gmail",
 				auth: {
-					user: "sachinsachu967@gmail.com",
-					pass: "rrwy jkyx qcow mcmk"
+					user: GMAIL,
+					pass: PASS
 				}
 			});
 			let mailOptions = {
@@ -207,7 +210,22 @@ class UserService {
 			let userPassword = await GeneratePassword(password, salt);
 			const Password = await this.repositary.updatePassword(userId, userPassword, salt);
 			return Password;
-		} catch (error) {}
+		} catch (error) { }
+	}
+
+	async ConfirmPasswordAndChangeIt({ currentPassword, newPassword, id }) {
+		try {
+			const user = await this.repositary.FindUserById(id)
+			const validPassword = await ValidatePassword(currentPassword, user.salt, user.password);
+			if (validPassword) {
+				const changepassword = await this.repositary.updatePassword(id, newPassword, user.salt)
+				return changepassword
+			} else {
+				return { status: 'false', message: 'The password you entered was incorrect.' }
+			}
+		} catch (error) {
+
+		}
 	}
 
 	async EditUser({ id, name, bio, location, day, month, year }) {
@@ -228,6 +246,7 @@ class UserService {
 				name: editedUser?.name,
 				bio: editedUser?.bio,
 				location: editedUser?.location,
+				isPrivate: editedUser?.isPrivate,
 				day: d,
 				month: m,
 				year: y
@@ -237,18 +256,27 @@ class UserService {
 		}
 	}
 
+	async FetchNotfollowedusers(userId) {
+		try {
+			const usernotfollowed = await this.repositary.FindNotFollowed(userId)
+			return usernotfollowed
+		} catch (error) {
+
+		}
+	}
+
 	async UploadCoverImage({ username, croppedImage }) {
 		try {
 			const res = await this.repositary.AddCoverImage({ username, croppedImage });
 			return res;
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async UploadProfileImage({ username, croppedImage }) {
 		try {
 			const res = await this.repositary.AddProImage({ username, croppedImage });
 			return res;
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async UpdateFollow({ userId, id }) {
@@ -286,12 +314,47 @@ class UserService {
 		}
 	}
 
+	async SendFollowRequest({ userId, id }) {
+		try {
+			const resp = await this.repositary.CreateRequest({ userId, id });
+			if (resp.status === "requested") {
+				const payload = {
+					event: "FOLLOW_REQUESTED",
+					data: {
+						recipient: userId,
+						senderId: id,
+						notificationType: "request",
+						entityType: "user",
+						entityId: id,
+						image: resp?.user?.propic?.url
+					}
+				};
+				return { resp, payload };
+			} else if (resp.status === "removed") {
+				const payload = {
+					event: "FOLLOW_REMOVED",
+					data: {
+						recipient: userId,
+						senderId: id,
+						notificationType: "request",
+						entityType: "user",
+						entityId: id,
+						image: resp?.user?.propic?.url
+					}
+				};
+				return { resp, payload };
+			}
+		} catch (error) {
+
+		}
+	}
+
 	async FindUser({ keyword }, req) {
 		try {
 			const users = await this.repositary.FindUsersbyRegex(keyword);
 			const filteredUsers = users.filter((user) => user._id.toString() !== req.user._id.toString());
 			return filteredUsers;
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async ResendOtp(id) {
@@ -299,35 +362,35 @@ class UserService {
 			const otp = generateOTP();
 			const updatedUser = await this.repositary.updateOtp(id, otp);
 			return updatedUser;
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async FetchFollowing({ id }) {
 		try {
 			const following = await this.repositary.FindFollowing({ id });
 			return following;
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async FetchFollowers({ id }) {
 		try {
 			const followers = await this.repositary.FindFollowers({ id });
 			return followers;
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async FetchFollowersorFollowing(id) {
 		try {
 			const followers = await this.repositary.FindFollowersorFollowing(id);
 			return followers;
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async SavePost({ postId, userId }) {
 		try {
 			const post = await this.repositary.SavingPost({ userId, postId });
 			return post;
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async ReportUser({ userId, id, reason }) {
@@ -354,7 +417,16 @@ class UserService {
 			console.log(userIds);
 			const users = await this.repositary.FindUsersById(userIds);
 			return { users, response };
-		} catch (error) {}
+		} catch (error) { }
+	}
+
+	async ManagePrivateAndPublic({ isChecked, userId }) {
+		try {
+			const response = await this.repositary.MakePrivateOrPublic({ isChecked, userId })
+			return response
+		} catch (error) {
+
+		}
 	}
 
 	async SubscribeEvents(payload, channel) {
@@ -369,11 +441,20 @@ class UserService {
 					break;
 				case "REPORT_USERPOST":
 					this.repositary.ReportUser(data);
-
+					break
+				case "REQUEST_CONFIRMED":
+					console.log(data)
+					this.repositary.ManageFollowRequest(data);
+					this.repositary.DeleteRequest(data)
+					break
+				case "REQUEST_DELETED":
+					console.log(data)
+					this.repositary.DeleteRequest(data)
+					break
 				default:
 					break;
 			}
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async serveRPCRequest(payload) {
@@ -397,6 +478,10 @@ class UserService {
 				return this.repositary.IsBlocked(data);
 			case "FETCH_USERS_BYID":
 				return this.repositary.FindUsersById(data);
+			case "COUNT_GENDERS":
+				return this.repositary.CountUserbyGender();
+			case "CATEGORIZE_BY_AGE":
+				return this.repositary.CountUserbyAge();
 			default:
 				break;
 		}

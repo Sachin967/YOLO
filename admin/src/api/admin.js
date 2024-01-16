@@ -1,11 +1,12 @@
 import { USER_BINDING_KEY } from '../config/index.js'
 import AdminService from '../services/admin-service.js'
 import { PublishMessage, RPCRequest, SubscribeMessage } from '../utils/index.js'
-
+import express from 'express'
 export const admin = (app, channel) => {
+  const router = express.Router()
   const service = new AdminService()
   SubscribeMessage(channel, service)
-  app.post('/register', async (req, res, next) => {
+  router.post('/register', async (req, res, next) => {
     try {
       const { email, password } = req.body
       const { data } = await service.AdminSignup({ email, password }, res)
@@ -14,7 +15,7 @@ export const admin = (app, channel) => {
       console.log(error)
     }
   })
-  app.post('/login', async (req, res, next) => {
+  router.post('/login', async (req, res, next) => {
     try {
       const { email, password } = req.body
       const { data } = await service.AdminLogin({ email, password }, res)
@@ -24,7 +25,7 @@ export const admin = (app, channel) => {
     }
   })
 
-  app.get('/getUsers', async (req, res, next) => {
+  router.get('/getUsers', async (req, res, next) => {
     try {
       const usersResponse = await RPCRequest('USER_RPC', {
         type: 'LIST_USERS',
@@ -35,7 +36,7 @@ export const admin = (app, channel) => {
     } catch (error) { }
   })
 
-  app.get('/getposts', async (req, res, next) => {
+  router.get('/getposts', async (req, res, next) => {
     try {
       console.log('here')
       const postresponse = await RPCRequest('POST_RPC', {
@@ -47,7 +48,7 @@ export const admin = (app, channel) => {
     } catch (error) { }
   })
 
-  app.post('/blockuser', async (req, res, next) => {
+  router.post('/blockuser', async (req, res, next) => {
     try {
       const { id } = req.body
       const blockuser = await RPCRequest('USER_RPC', {
@@ -61,7 +62,7 @@ export const admin = (app, channel) => {
       console.log(error)
     }
   })
-  app.post('/unblockuser', async (req, res, next) => {
+  router.post('/unblockuser', async (req, res, next) => {
     try {
       const { id } = req.body
       console.log(id)
@@ -76,7 +77,7 @@ export const admin = (app, channel) => {
       console.log(error)
     }
   })
-  app.post('/unlistpost', async (req, res, next) => {
+  router.post('/unlistpost', async (req, res, next) => {
     try {
       console.log(req.body)
       const { postId } = req.body
@@ -86,13 +87,13 @@ export const admin = (app, channel) => {
       })
       console.log('unlist', response)
       if (response) {
-       return res.json(response)
+        return res.json(response)
       }
     } catch (error) {
       console.log(error)
     }
   })
-  app.post('/listpost', async (req, res, next) => {
+  router.post('/listpost', async (req, res, next) => {
     try {
       const { postId } = req.body
       const response = await RPCRequest('POST_RPC', {
@@ -101,13 +102,13 @@ export const admin = (app, channel) => {
       })
       console.log('list', response)
       if (response) {
-       return res.json(response)
+        return res.json(response)
       }
     } catch (error) {
       console.log(error)
     }
   })
-  app.post('/logout', async (req, res, next) => {
+  router.post('/logout', async (req, res, next) => {
     try {
       res.cookie('adminJwt', '', {
         httpOnly: true,
@@ -118,4 +119,34 @@ export const admin = (app, channel) => {
       console.log(error)
     }
   })
+
+  router.get('/userdashboard', async (req, res, next) => {
+    try {
+      const response = await RPCRequest('USER_RPC', {
+        type: "COUNT_GENDERS"
+      })
+      const resp = await RPCRequest('USER_RPC',{
+        type:"CATEGORIZE_BY_AGE"
+      })
+      if (response && resp) {
+        return res.json({response,resp})
+      }
+    } catch (error) {
+
+    }
+  })
+  router.get('/averagepostcount', async (req, res, next) => {
+    try {
+      const response = await RPCRequest('POST_RPC', {
+        type: "POSTS_COUNT"
+      })
+    
+      if (response) {
+        return res.json({ response })
+      }
+    } catch (error) {
+
+    }
+  })
+  app.use('/admin', router)
 }

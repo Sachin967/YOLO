@@ -1,7 +1,7 @@
 packages:
-  - admin
-  - messaging
   - users
   - posts
+  - messaging
   - notification
+  - admin
   - frontend

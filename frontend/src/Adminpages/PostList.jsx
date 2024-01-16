@@ -34,7 +34,7 @@ const PostList = () => {
 					"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/1200px-Default_pfp.svg.png"
 				}
 				alt={"No Image"}
-				className="w-12 rounded-full shadow-2 border-round"
+				className="w-16  rounded-full shadow-2 border-round"
 			/>
 		);
 	};
@@ -48,13 +48,19 @@ const PostList = () => {
 			</>
 		);
 	};
+	const showLocaleDate=(post)=>{
+
+		const dateObject = new Date(post.createdAt);
+		const formattedDate = dateObject.toLocaleDateString();
+		return	<h1>{formattedDate}</h1>
+	}
 
 	const ShowReportLength = (post) => {
 		return <h1 className="text-black text-start"> {post?.reported?.length}</h1>;
 	};
 	return (
 		<>
-			<div className="card bg-white">
+			<div className="card bg-black">
 				<h1 className="text-center text-black font-bold text-3xl py-3">Post List</h1>
 				<div className="flex h-screen">
 					<DataTable
@@ -68,8 +74,8 @@ const PostList = () => {
 							className="border-b border-l text-white"
 							header="Post"
 							body={imageBodyTemplate}></Column>
-						<Column className="border-b" field="name" header="Name"></Column>
-						<Column className="border-b" field="createdAt" header="Created At"></Column>
+						<Column className="border-b" field="textmedia" header="Description"></Column>
+						<Column className="border-b" body={showLocaleDate} header="Created At"></Column>
 						<Column className="border-b" body={ShowReportLength} header="Reports"></Column>
 						<Column className="border-b " header="Action" body={actionTem}></Column>
 					</DataTable>

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { users } from "../config/axios";
 import { AuthActions } from "../store/Authslice";
 import { useDispatch } from "react-redux";
-import useCustomToast from "../toast";
+import useCustomToast from "../config/toast";
 
 const Otp = () => {
 	const showToast = useCustomToast();

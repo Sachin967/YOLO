@@ -37,7 +37,7 @@ export const SubscribeMessage = async (channel, service,io) => {
 
 	channel.consume(appQueue.queue, (data) => {
 		if (data.content) {
-			console.log("received data in posts");
+			console.log("received data in notification");
 			console.log(data.content.toString());
 			service.SubscribeEvents(data.content.toString(), channel,io);
 			channel.ack(data);

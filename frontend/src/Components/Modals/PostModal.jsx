@@ -4,9 +4,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFaceLaughSquint } from "@fortawesome/free-solid-svg-icons";
 import EmojiPicker from "emoji-picker-react";
 import { useDispatch, useSelector } from "react-redux";
-import { posts } from "../../config/axios.js";
-import { Avatar } from "@chakra-ui/react";
-import useCustomToast from "../../toast.js";
+import { mapbox, posts } from "../../config/axios.js";
+import { Avatar, Box } from "@chakra-ui/react";
+import useCustomToast from "../../config/toast.js";
 import React, { useRef } from "react";
 import Cropper from "cropperjs";
 import "cropperjs/dist/cropper.css";
@@ -37,6 +37,8 @@ function PostModal({ isOpen, onClose }) {
 	const [emojishow, setEmojishow] = useState(false);
 	const [selectedImage, setSelectedImage] = useState(null);
 	const { userdetails } = useSelector((state) => state.auth);
+	const [location, setLocation] = useState()
+	const [places, setPlaces] = useState([])
 	const id = userdetails._id;
 	const openEmoji = () => {
 		setEmojishow((prevEmojiShow) => !prevEmojiShow);
@@ -48,7 +50,7 @@ function PostModal({ isOpen, onClose }) {
 
 	useEffect(() => {
 		if (selectedImage) {
-			setModalHeight("calc(100vh)"); // Adjust according to your header/footer height
+			setModalHeight("auto"); // Adjust according to your header/footer height
 		} else {
 			setModalHeight("auto");
 		}
@@ -56,8 +58,12 @@ function PostModal({ isOpen, onClose }) {
 
 	const handlePost = (e) => {
 		e.preventDefault();
-		setLoading(true);
 
+		if (!selectedImage) {
+			showToast('warning', 'Photo required for posting')
+			return
+		}
+		setLoading(true);
 		const byteCharacters = atob(selectedImage.split(",")[1]);
 		const byteNumbers = new Array(byteCharacters.length);
 		for (let i = 0; i < byteCharacters.length; i++) {
@@ -65,11 +71,11 @@ function PostModal({ isOpen, onClose }) {
 		}
 		const byteArray = new Uint8Array(byteNumbers);
 		const blob = new Blob([byteArray], { type: "image/jpeg" }); // Adjust the type based on your image format
-
 		// Create a File from the Blob
 		const file = new File([blob], "cropped_image.jpeg", { type: "image/jpeg" }); // Adjust the name and type
 		const formData = new FormData();
 		formData.append("textmedia", text);
+		formData.append('location', location)
 		formData.append("userId", id);
 		formData.append("media", file);
 		posts
@@ -78,6 +84,7 @@ function PostModal({ isOpen, onClose }) {
 				console.log(res);
 				if (res.data.data.status) {
 					console.log(res.data.data.message);
+					location.reload()
 					setLoading(false);
 					showToast("success", "Post added");
 					onClose();
@@ -142,6 +149,26 @@ function PostModal({ isOpen, onClose }) {
 
 	// 	image.src = imageURL;
 	// };
+	const handleLocationAPI = (e) => {
+		const updatedSearch = e.target.value;
+		setLocation(updatedSearch);
+		if (updatedSearch) {
+			mapbox
+				.get(
+					`/${updatedSearch}.json?access_token=pk.eyJ1Ijoic2FjaGlubXMiLCJhIjoiY2xyN202c285MHBsNDJrcGF5Z2xmNTgyaCJ9.C35EQx1Ogm7j7YTXxtSCXA`
+				)
+				.then((res) => {
+					if (res.data.features) {
+						console.log(res.data.features);
+						setPlaces(res.data.features);
+					}
+				})
+				.catch((error) => {
+					// Handle any errors in fetching data from mapbox
+					console.error("Error fetching data:", error);
+				});
+		}
+	};
 
 	const onSelectFile = (e) => {
 		const file = e.target.files[0];
@@ -174,18 +201,22 @@ function PostModal({ isOpen, onClose }) {
 	return (
 		<>
 			<Modal
+				closeOnEsc={false}
+				closeOnOverlayClick={false}
 				onClick={onClose}
 				className="bg-gray-700 text-white dark"
 				style={{ height: modalHeight, width: "screen" }}
 				show={isOpen}
 				position="top-center"
 				onClose={onClose}>
-				<div className="" onClick={(e) => e.stopPropagation()}>
-					<Modal.Header className=" bg-black border-0">Create new post</Modal.Header>
+				<div className="" onClick={(e) => {
+					e.stopPropagation()
+				}}>
+					<Modal.Header className="dark:bg-black bg-white  border-white"><h1 className="font-bold ms-56">Create new post</h1></Modal.Header>
 					{loading && (
 						<div
 							role="status"
-							className="absolute z-10 w-full h-full bg-black opacity-50 flex justify-center items-center">
+							className="absolute z-10 w-full h-full bg-white dark:bg-black  opacity-50 flex justify-center items-center">
 							<svg
 								aria-hidden="true"
 								className="inline w-28 h-28 text-gray-200 animate-spin dark:text-gray-600 fill-purple-600"
@@ -205,38 +236,13 @@ function PostModal({ isOpen, onClose }) {
 						</div>
 					)}
 					<form onSubmit={handlePost}>
-						<Modal.Body className="bg-black">
-							<div className="relative mb-5 flex items-center max-w-full">
-								<Avatar size={"sm"} src="https://bit.ly/dan-abramov" />
-								<textarea
-									name="textmedia"
-									value={text}
-									onChange={(e) => setText(e.target.value)}
-									id="large-input"
-									className="block w-full ms-5 p-4 text-gray-900 rounded-lg bg-black sm:text-md focus:ring-blue-500 focus:border-blue-500 dark:bg-black dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 resize-y overflow-auto border-none"
-									rows="3"
-									placeholder="Enter your text here..."></textarea>
+						<Modal.Body className="bg-white dark:bg-black">
+							<div className="w-1/2 h-auto mx-auto p-2">
+								<img ref={imageRef} className="max-w-[300px] max-h-[375px]" />
 							</div>
-							<div className="w-1/2 h-auto mx-auto p-4">
-								<img ref={imageRef} alt="Crop" className="max-w-full" />
-							</div>
-							<div className="w-1/2 mx-auto">
-								{selectedImage && (
-									<div>
-										<img src={selectedImage} alt="Cropped" className="max-w-full" />
-									</div>
-								)}
-							</div>
-						</Modal.Body>
-						<Modal.Footer className="flex justify-around items-center bg-black border-0">
-							<FontAwesomeIcon
-								icon={faFaceLaughSquint}
-								onClick={openEmoji}
-								style={{ color: "#ffffff" }}
-							/>
 							<label for="file-upload" className="mr-3">
 								<svg
-									class="w-[25px] h-[25px] text-gray-800 dark:text-white"
+									className="w-[25px] ms-72 h-[25px] text-gray-800 dark:text-white"
 									aria-hidden="true"
 									xmlns="http://www.w3.org/2000/svg"
 									width="16"
@@ -261,15 +267,68 @@ function PostModal({ isOpen, onClose }) {
 								onChange={onSelectFile}
 								name="media"
 							/>
+							<div className="relative mb-5 flex items-center max-w-full">
+								<Avatar size={"sm"} src="https://bit.ly/dan-abramov" />
+								<textarea
+									name="textmedia"
+									value={text}
+									onChange={(e) => setText(e.target.value)}
+									id="large-input"
+									className="block w-2/3 me-5 ms-5 p-4 text-gray-900 rounded-lg bg-white sm:text-md  dark:bg-black dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 resize-y overflow-auto border-none"
+									rows="2"
+									placeholder="Write a caption..."></textarea>
+								<div>
 
-							<Button type="submit">Post</Button>
-						</Modal.Footer>
+									<input onChange={(e) => {
+										handleLocationAPI(e)
+									}} className="bg-zinc-900 w-full  rounded-lg border-none" placeholder="Add location" type="text" value={location} />
+									<div style={{ position: 'relative' }}>
+										{places.length > 0 && location !== '' && (
+											<div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999 }}>
+												{/* Box with places */}
+												<Box className="bg-neutral-800 border-b border-black rounded-lg" display={"inline-flex"} flexWrap={"wrap"} mt={2}>
+													{places.map((place) => (
+
+														<div
+															onClick={() => {
+																// setSpecificPost({ ...specificPost, location: place.text });
+																setLocation(place.text);
+																setPlaces([]); // Clear the places array after selecting a place
+															}}
+															className='flex w-full cursor-pointer ms-2 p-1 rounded-lg'
+														>
+															<h2 className="mt-5 me-2 text-lg text-black font-bold">{place?.text}</h2>
+														</div>
+													))}
+												</Box>
+											</div>
+										)}
+									</div>
+								</div>
+							</div>
+							<FontAwesomeIcon
+								className="absolute bottom-20 right-60 p-2 cursor-pointer"
+								icon={faFaceLaughSquint}
+								onClick={openEmoji}
+								style={{ color: "#ffffff" }}
+							/>
+
+						</Modal.Body>
+						<div className="flex justify-around items-center dark:bg-black bg-white border-0 p-3">
+
+							<Button  type="submit">Post</Button>
+						</div>
+						{/* <Modal.Footer className="flex justify-around items-center bg-black border-0">
+
+						</Modal.Footer> */}
 					</form>
 				</div>
 				{emojishow && (
-					<div
+					<div onClick={(e) => {
+						e.stopPropagation()
+					}}
 						className="fixed transform -translate-x-1/2 -translate-y-1/2 z-50"
-						style={{ top: selectedImage ? "430px" : "550px", left: "550px" }}>
+						style={{ top: selectedImage ? "530px" : "300px", right: "100px" }}>
 						<EmojiPicker onEmojiClick={addEmoji} />
 					</div>
 				)}
