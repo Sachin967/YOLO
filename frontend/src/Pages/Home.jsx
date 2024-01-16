@@ -1,22 +1,37 @@
 import PostView from "../Components/PostView";
 import { useEffect, useState } from "react";
-import { posts } from "../config/axios";
-import useCustomToast from "../toast";
-import { useDispatch } from "react-redux";
+import { posts, users } from "../config/axios";
+import useCustomToast from "../config/toast";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Error403 } from "../Commonfunctions";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { Skeleton } from 'primereact/skeleton';
+import Suggesions from "../Components/Suggesions";
 const Home = () => {
+	const [loading, setLoading] = useState(true)
 	const [postsData, setPostsData] = useState([]);
 	const showToast = useCustomToast();
 	const dispatch = useDispatch();
 	const Navigate = useNavigate();
 	const [page, setPage] = useState(1);
+	const [notfollowers, setNotfollowers] = useState([])
+	const { userdetails } = useSelector((state) => state.auth);
+	const NotFollowers = () => {
+		users.get(`/notfollowers/${userdetails._id}`).then(res => {
+			if (res.data) {
+				setNotfollowers(res.data)
+			}
+		}).catch(err => console.log(err))
+	}
+
 	useEffect(() => {
 		ShowPosts();
+		NotFollowers()
 	}, []);
 	console.log(postsData);
 	const ShowPosts = () => {
+		setLoading(false)
 		posts
 			.get(`/seeposts?page=${page}&limit=5`)
 			.then((res) => {
@@ -53,6 +68,7 @@ const Home = () => {
 				});
 
 				setPostsData([...postsData, ...postsWithUserData]);
+
 				setPage(nextPage);
 			})
 			.catch((error) => {
@@ -66,16 +82,23 @@ const Home = () => {
 
 	return (
 		<>
-			{postsData.map((post) => (
-				<PostView key={post._id} post={post} fetchData={fetchData} ShowPosts={ShowPosts} />
-			))}
-			<InfiniteScroll
-				dataLength={postsData.length} //This is important field to render the next data
-				next={fetchData}
-				hasMore={true}
-				loader={<h4>Loading...</h4>}>
-				{/* {items} */}
-			</InfiniteScroll>
+			<div className="dark:bg-black bg-white max-h-full min-h-screen">
+				{loading && <span className="loaders"></span>}
+				<div className="flex h-full">
+					<div className="ml-[70px] w-[380px] border-r md:w-[1110px] lg:w-[750px] sm:w-[980px] lg:ml-[320px] sm:ml-[55px] dark:bg-black bg-white">
+						{postsData.map((post) => (
+							<PostView post={post} fetchData={fetchData} ShowPosts={ShowPosts} />
+						))}
+					</div>
+					<Suggesions notfollowers={notfollowers} />
+				</div>
+				<InfiniteScroll
+					dataLength={postsData.length} // This is important field to render the next data
+					next={fetchData}
+					hasMore={true}
+					loader={<h4>Loading...</h4>}
+				/>
+			</div>
 		</>
 	);
 };

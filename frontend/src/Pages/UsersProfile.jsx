@@ -19,7 +19,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { posts, users } from "../config/axios";
 import { useDispatch, useSelector } from "react-redux";
-import useCustomToast from "../toast";
+import useCustomToast from "../config/toast";
 import FollowersModal from "../Components/Modals/FollowersModal";
 import FollowingModal from "../Components/Modals/FollowingModal";
 import ReportUserModal from "../Components/Modals/ReportUserModal";
@@ -33,6 +33,7 @@ const UsersProfile = () => {
 	const [post, setPosts] = useState([]);
 	const [likedPost, setLikedPost] = useState({});
 	const [follow, setFollow] = useState(false);
+	const [reqested, setRequested] = useState(false)
 	const [hoveredPostId, setHoveredPostId] = useState(null);
 	const [activeTab, setActiveTab] = useState(0);
 	const { username } = useParams();
@@ -52,6 +53,20 @@ const UsersProfile = () => {
 	const [likeCount, setLikeCount] = useState();
 	const [like, setLiked] = useState(false);
 	const [savepost, setSavePost] = useState(false);
+	const [isPrivate, setIsPrivate] = useState(false)
+	const isEmpty = (user) => {
+		return Object.keys(user).length === 0;
+	};
+	useEffect(() => {
+		// Update follow state when the user object is available
+		const emp= isEmpty(user)
+console.log('kk')
+		if(!emp){
+			console.log('hii')
+			setFollow(user?.followers.includes(userdetails._id));
+			setRequested(user?.followRequests.includes(userdetails._id));
+		}
+	}, [user, userdetails._id]);
 	const HandleMessageClick = (userId) => {
 		Navigate(`/messages/${userId}`);
 	};
@@ -71,6 +86,7 @@ const UsersProfile = () => {
 				.then((res) => {
 					if (res.data) {
 						setUser(res.data.user);
+						setIsPrivate(res.data.user.isPrivate)
 						setPosts(res.data.response.posts);
 						setLikedPost(res.data.response.likedposts);
 					}
@@ -87,6 +103,10 @@ const UsersProfile = () => {
 			console.log(error);
 		}
 	};
+
+	// const isPrivate = user.isPrivate
+
+	// const isFollow = user?.following.some((u) => u._id === userdetails._id)
 
 	const likeFunction = (_id) => {
 		handleLike(id, _id, setLikeCount, setLiked, fetchLikedPost, showToast, dispatch, Navigate);
@@ -111,37 +131,63 @@ const UsersProfile = () => {
 
 	const FollowUsers = (userId) => {
 		console.log(userId);
-		try {
-			users
-				.post("/follow-unfollow", { userId, id: userdetails._id })
-				.then((res) => {
-					console.log(res);
-					if (res.data.status === "followed") {
-						console.log("follow");
-						setFollow(true);
-						showUserProfile();
-					} else if (res.data.status === "unfollowed") {
-						console.log("unfollow");
-						setFollow(false);
-						showUserProfile();
-					}
-				})
-				.catch((error) => {
-					if (error.response && error.response.status === 403) {
-						// Handle 403 Forbidden error
-						Error403(error, showToast, dispatch, Navigate);
-					} else {
-						console.error("Error:", error);
-					}
-				});
-		} catch (error) {}
+		users
+			.post("/follow-unfollow", { userId, id: userdetails._id })
+			.then((res) => {
+				console.log(res);
+				if (res.data.status === "followed") {
+					console.log("follow");
+					setFollow(true);
+					showUserProfile();
+				} else if (res.data.status === "unfollowed") {
+					console.log("unfollow");
+					setFollow(false);
+					showUserProfile();
+				}
+			})
+			.catch((error) => {
+				if (error.response && error.response.status === 403) {
+					// Handle 403 Forbidden error
+					Error403(error, showToast, dispatch, Navigate);
+				} else {
+					console.error("Error:", error);
+				}
+			});
+
 	};
+
+	const SendFollowRequest = (userId) => {
+		users
+			.post("/followrequest", { userId, id: userdetails._id })
+			.then((res) => {
+				console.log(res);
+				if (res.data.status === "requested") {
+					console.log("requested");
+					setRequested(true);
+					showUserProfile();
+				} else if (res.data.status === "removed") {
+					console.log("removed");
+					setRequested(false);
+					showUserProfile();
+				}
+			})
+			.catch((error) => {
+				if (error.response && error.response.status === 403) {
+					// Handle 403 Forbidden error
+					Error403(error, showToast, dispatch, Navigate);
+				} else {
+					console.error("Error:", error);
+				}
+			});
+	}
 
 	useEffect(() => {
 		if (isCurrentUser) {
 			Navigate("/profile");
 		}
 		showUserProfile();
+
+		// const isFollow = user?.following.some((u) => u._id === userdetails._id)
 	}, [username]);
 	const [isFollowing, setisFollowing] = useState();
 
@@ -149,15 +195,15 @@ const UsersProfile = () => {
 		setisFollowing(!isFollowing);
 	};
 	return (
-		<div className="bg-black ">
+		<div className="dark:bg-black bg-white max-h-full min-h-screen">
 			{/* <Heading className="text-white ml-[360px] py-2 " size={"md"}>
 				{user?.name}
 			</Heading> */}
-
-			<div className="flex md:w-[1110px] lg:w-[500px] pb-12  sm:w-[980px] lg:ml-[320px] sm:ml-[55px] bg-black relative">
-				<div className="flex items-start justify-center  h-[450px] rounded bg-black dark:bg-gray-900">
+{console.log(follow)}
+			<div className="flex md:w-[1110px] lg:w-[1090px] pb-16  sm:w-[980px] lg:ml-[320px] sm:ml-[55px] dark:bg-black bg-white relative">
+				<div className="flex items-start justify-center  h-[450px] rounded dark:bg-black bg-white ">
 					<img
-						className="w-full md:w-[1100px] sm:w-[1000px] lg:w-screen  max-h-full"
+						className="w-full md:w-[1100px]  sm:w-[1000px] lg:w-screen  max-h-full"
 						src={
 							!user?.coverpic?.url || user?.coverpic?.url === ""
 								? "https://pbs.twimg.com/profile_banners/1483554293168975872/1696101628/1500x500" // Replace this with your placeholder image URL
@@ -165,7 +211,7 @@ const UsersProfile = () => {
 						}
 						alt=""
 					/>
-
+				
 					<div className="absolute top-[320px] left-[150px] transform -translate-x-1/2">
 						<Avatar size={"2xl"} src={user?.propic?.url} />
 					</div>
@@ -173,31 +219,40 @@ const UsersProfile = () => {
 				<div className="absolute top-[310px] left-[290px] flex flex-col items-start ">
 					<div className="flex items-center space-x-10 mb-5">
 						<div>
-							<Text className=" text-white text-2xl font-bold py-1">{user?.name}</Text>
+							<Text className=" dark:text-white text-black text-2xl font-bold py-1">{user?.name}</Text>
 							<Link to={`/${user?.username}`}>
 								<Text className=" text-gray-400 text-xl rounded-full bg-neutral-700 font-thin">
 									@{user?.username}
 								</Text>
 							</Link>
 						</div>
-						<button
+						{isPrivate && !follow ? <button
+							onClick={() => SendFollowRequest(user._id)}
+							className={
+								reqested
+									? "text-gray-600 border border-gray-600 h-9 w-24 bg-white dark:bg-black rounded-3xl"
+									: "text-green-600 border border-green-600 h-9 w-24 bg-white dark:bg-black rounded-3xl"
+							}>
+							{reqested ? "Requested" : "Follow"}
+						</button> : <button
 							onClick={() => FollowUsers(user._id)}
 							className={
 								follow
-									? "text-red-600 border border-red-600 h-9 w-24 bg-black rounded-3xl"
-									: "text-green-600 border border-green-600 h-9 w-24 bg-black rounded-3xl"
+									? "text-red-600 border border-red-600 h-9 w-24 bg-white dark:bg-black rounded-3xl"
+									: "text-green-600 border border-green-600 h-9 w-24 bg-white dark:bg-black rounded-3xl"
 							}>
 							{follow ? "Unfollow" : "Follow"}
-						</button>
+						</button>}
 
-						<button
+
+						{follow && <button
 							onClick={() => HandleMessageClick(user._id)}
-							className=" text-white h-9 w-24 bg-zinc-700 hover:bg-zinc-800  rounded-3xl">
+							className=" dark:text-white text-black h-9 w-24 bg-zinc-700 hover:bg-zinc-800  rounded-3xl">
 							Message
-						</button>
+						</button>}
 						<FontAwesomeIcon
 							onClick={onOptionOpen}
-							className="cursor-pointer p-1 text-white  rounded-full"
+							className="cursor-pointer p-1 dark:text-white text-black rounded-full"
 							icon={faEllipsis}
 							size="2xl"
 						/>
@@ -205,27 +260,34 @@ const UsersProfile = () => {
 					<div className="flex my-2">
 						<Text className="text-gray-600  text-lg font-poppins hover:underline ">
 							{" "}
-							<span className="text-white">{post?.length} </span>Posts
+							<span className="dark:text-white text-black">{post?.length} </span>Posts
 						</Text>
 						{/* Followers button */}
 						<button
 							onClick={() => onFollowersOpen()}
 							className="text-gray-600 mx-10 text-lg font-poppins hover:underline">
-							<span className="text-white"> {user?.followers?.length} </span> Followers
+							<span className="dark:text-white text-black"> {user?.followers?.length} </span> Followers
 						</button>
 						{/* Following button */}
 						<button
 							onClick={() => onFollowingOpen()}
 							className="text-gray-600 text-lg font-poppins hover:underline">
-							<span className="text-white"> {user?.following?.length} </span> Following
+							<span className="dark:text-white text-black"> {user?.following?.length} </span> Following
 						</button>
 					</div>
-					<Text className="p-1 pt-4 text-white text-base ">{user?.bio}</Text>
+					<Text className="p-1 pt-4 dark:text-white text-black text-base ">{user?.bio}</Text>
+					<FollowersModal userId={user._id} onFollowersClose={onFollowersClose} isFollowersOpen={isFollowersOpen} />
+					<FollowingModal userId={user._id} onFollowingClose={onFollowingClose} isFollowingOpen={isFollowingOpen} />
 				</div>
 			</div>
-			<FollowersModal userId={user._id} onFollowersClose={onFollowersClose} isFollowersOpen={isFollowersOpen} />
-			<FollowingModal userId={user._id} onFollowingClose={onFollowingClose} isFollowingOpen={isFollowingOpen} />
-			<Tabs className="ml-[320px] h-screen bg-black" isFitted>
+
+			{isPrivate && !follow ? <><div className="ml-[380px] border border-gray-600 w-[1000px] h-60 flex justify-center items-center">
+				<div className="dark:text-white text-black text-center">
+
+					<h1>This Account is Private</h1>
+					<h1 className="">Follow to see their photos and videos.</h1>
+				</div>
+			</div></> : <Tabs className="ml-[320px] h-screen bg-white dark:bg-black" isFitted>
 				<TabList mb="1em">
 					<Tab
 						className="text-lg"
@@ -256,10 +318,10 @@ const UsersProfile = () => {
 									className="w-full sm:w-1/2 md:w-1/3 lg:w-1/3 px-2 mb-4 relative"
 									onMouseEnter={() => setHoveredPostId(p._id)}
 									onMouseLeave={() => setHoveredPostId(null)}>
-									<img src={p?.media?.url} alt={`p-${p._id}`} className="w-full" />
+									<img src={p?.media} alt={`p-${p._id}`} className="w-full" />
 									{/* {/* Overlay for Like and Comment counts  */}
 									{hoveredPostId === p._id && (
-										<div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-75 text-white px-2 py-1 rounded">
+										<div className="absolute inset-0 flex items-center justify-center  dark:bg-black bg-w bg-opacity-75 dark:bg-opacity-50 text-white px-2 py-1 rounded">
 											<span className="pr-8">
 												{" "}
 												<FontAwesomeIcon className="pr-2" icon={faHeart} />
@@ -298,10 +360,10 @@ const UsersProfile = () => {
 										className="w-full sm:w-1/2 md:w-1/3 lg:w-1/3 px-2 mb-4 relative"
 										onMouseEnter={() => setHoveredPostId(post?._id)}
 										onMouseLeave={() => setHoveredPostId(null)}>
-										<img src={post?.media?.url} alt={`post-${post?._id}`} className="w-full" />
+										<img src={post?.media} alt={`post-${post?._id}`} className="w-full" />
 										{/* {/* Overlay for Like and Comment counts   */}
 										{hoveredPostId === post?._id && (
-											<div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-75 text-white px-2 py-1 rounded">
+											<div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-black bg-opacity-75 text-white px-2 py-1 rounded">
 												<span className="pr-8">
 													{" "}
 													<FontAwesomeIcon className="pr-2" icon={faHeart} />
@@ -331,7 +393,7 @@ const UsersProfile = () => {
 						</div>
 					</TabPanel>
 				</TabPanels>
-			</Tabs>
+			</Tabs>}
 			<Modal theme={modalTheme} onClick={onOptionClose} isOpen={isOptionOpen} onClose={onOptionClose}>
 				<ModalOverlay />
 				<ModalContent
@@ -348,12 +410,12 @@ const UsersProfile = () => {
 								onReportOpen();
 								onOptionClose();
 							}}
-							className="hover:bg-zinc-700 text-white text-lg hover:rounded-xl">
+							className="hover:bg-zinc-700 dark:text-white text-black text-lg hover:rounded-xl">
 							Report
 						</button>
 						<button
 							onClick={onOptionClose}
-							className="hover:bg-zinc-700 text-white text-lg hover:rounded-xl">
+							className="hover:bg-zinc-700 dark:text-white text-black text-lg hover:rounded-xl">
 							Cancel
 						</button>
 					</>

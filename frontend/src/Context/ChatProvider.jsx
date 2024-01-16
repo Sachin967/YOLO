@@ -16,9 +16,11 @@ const ChatProvider = ({ children }) => {
 	const [updatedImage, setUpdatedImage] = useState();
 	const [peopleMessaged, setPeopleMessaged] = useState([]);
 	const [fetchAgain, setFetchAgain] = useState(false);
+	const [recentSearches, setRecentSearches] = useState([]);
 	return (
 		<ChatContext.Provider
 			value={{
+				recentSearches, setRecentSearches,
 				fetchAgain,
 				setFetchAgain,
 				notify,

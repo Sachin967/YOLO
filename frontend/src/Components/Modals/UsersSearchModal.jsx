@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { messaging, users } from "../../config/axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-import useCustomToast from "../../toast";
+import useCustomToast from "../../config/toast";
 const UsersSearchModal = ({ onClose, isOpen, userss, chatId, fetchMessages }) => {
 	const [user, setUser] = useState([]);
 	const showToast = useCustomToast();
@@ -72,7 +72,7 @@ const UsersSearchModal = ({ onClose, isOpen, userss, chatId, fetchMessages }) =>
 		} catch (error) {}
 	};
 	return (
-		<Modal onClose={onClose} size="xl" isOpen={isOpen}>
+		<Modal scrollBehavior="inside" onClose={onClose} size="xl" isOpen={isOpen}>
 			<ModalOverlay />
 			<ModalContent style={{ backgroundColor: "#131313" }}>
 				<ModalHeader>
@@ -83,7 +83,7 @@ const UsersSearchModal = ({ onClose, isOpen, userss, chatId, fetchMessages }) =>
 						Add
 					</button>
 				</ModalHeader>
-				<ModalCloseButton />
+				<ModalCloseButton className="text-white" />
 				<ModalBody>
 					<div className="flex mb-5">
 						<input
@@ -91,6 +91,7 @@ const UsersSearchModal = ({ onClose, isOpen, userss, chatId, fetchMessages }) =>
 							onChange={handleInputChange}
 							className="bg-transparent text-white w-full border-transparent rounded-2xl"
 							type="text"
+							placeholder="Add friends"
 						/>
 					</div>
 					{selectedUsers.length > 0 && (
@@ -98,7 +99,7 @@ const UsersSearchModal = ({ onClose, isOpen, userss, chatId, fetchMessages }) =>
 							{selectedUsers.map((selectedUser) => (
 								<Box
 									className="text-white"
-									backgroundColor={"gainsboro"}
+									backgroundColor={"GrayText"}
 									m={1}
 									px={2}
 									py={1}
@@ -119,10 +120,10 @@ const UsersSearchModal = ({ onClose, isOpen, userss, chatId, fetchMessages }) =>
 						{user.map((u) => (
 							<div
 								onClick={() => handleUserSelect(u)}
-								className="flex items-center space-x-4 pb-2 hover:bg-stone-900">
+								className="flex items-center space-x-4 pb-2 hover:bg-zinc-800">
 								<Avatar src={u?.propic?.url}></Avatar>
 								<div className="flex-1">
-									<h1 className="text-lg font-bold">{u?.name}</h1>
+									<h1 className="text-lg text-gray-300 font-bold">{u?.name}</h1>
 									<h1 className="text-gray-500">{u?.username}</h1>
 								</div>
 							</div>

@@ -5,7 +5,7 @@ import { useEffect, useReducer } from "react";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { useDispatch, useSelector } from "react-redux";
 import { AuthActions } from "../store/Authslice.js";
-import useCustomToast from "../toast.js";
+import useCustomToast from "../config/toast.js";
 import { useDisclosure } from "@chakra-ui/react";
 import SignupModal from "./Modals/SignupModal.jsx";
 

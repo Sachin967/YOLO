@@ -74,14 +74,14 @@ class UserRepositary {
 
 			// Token is valid and associated with the correct user
 			return { status: true, resetEntry };
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async updatePassword(userId, password, salt) {
 		try {
 			const user = await User.findByIdAndUpdate(userId, { password: password, salt: salt }, { new: true });
 			return { status: true, message: "Password Updated" };
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async FindByUsername({ username }) {
@@ -112,7 +112,7 @@ class UserRepositary {
 			});
 			console.log("search", users);
 			return users;
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async IsBlocked(id) {
@@ -124,7 +124,7 @@ class UserRepositary {
 			} else {
 				return false;
 			}
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async updateUserVerification(id) {
@@ -149,6 +149,19 @@ class UserRepositary {
 		} catch (error) {
 			console.error("Error updating user verification:", error);
 			throw error;
+		}
+	}
+
+	async FindNotFollowed(userId) {
+		try {
+			const user = await User.findById(userId)
+			const userNotFollowing = await User.find({
+				_id: { $nin: [...user.following, userId] }
+			}).limit(5); 
+			console.log("fooooooo", userNotFollowing)
+			return userNotFollowing
+		} catch (error) {
+
 		}
 	}
 	// async fetchUsers(userIds) {
@@ -256,7 +269,7 @@ class UserRepositary {
 			);
 			await user.save();
 			return { status: "uploaded" };
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async AddProImage({ username, croppedImage }) {
@@ -287,7 +300,7 @@ class UserRepositary {
 			);
 			await user.save();
 			return { status: "uploaded" };
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async ListUsers() {
@@ -335,6 +348,105 @@ class UserRepositary {
 		}
 	}
 
+	async ManageFollowRequest({ userId, id }) {
+		const curruser = await User.findOne({ _id: id });
+		const user = await User.findOne({ _id: userId });
+
+		const followingIndex = curruser.following.indexOf(userId);
+		const followerIndex = user.followers.indexOf(id);
+		if (followingIndex === -1) {
+			curruser.following.push(userId);
+			await curruser.save();
+
+			if (followerIndex === -1) {
+				user.followers.push(id);
+				await user.save();
+			}
+			console.log('Done')
+		} else {
+			curruser.following.splice(followingIndex, 1);
+			await curruser.save();
+
+			if (followerIndex !== -1) {
+				user.followers.splice(followerIndex, 1);
+				await user.save();
+			}
+			console.log('gone')
+		}
+
+		const followRequestsIndex = user.followRequests.indexOf(id);
+		if (followRequestsIndex !== -1) {
+			await User.updateOne(
+				{ _id: userId },
+				{ $pull: { followRequests: id } }
+			);
+
+		}
+	}
+
+	async DeleteRequest({ userId, id }) {
+		const user = await User.findById(userId)
+		const followRequestsIndex = user.followRequests.indexOf(id);
+		if (followRequestsIndex !== -1) {
+			user.followRequests.splice(followRequestsIndex, 1);
+			await user.save();
+		}
+	}
+
+	async CreateRequest({ userId, id }) {
+		try {
+			const user = await User.findOne({ _id: userId });
+			if (!user.followRequests) {
+				// If the field doesn't exist or is falsy, update the document
+				await User.findByIdAndUpdate(
+					userId,
+					{ followRequests: [] },
+					{ new: true }
+				);
+			}
+			const followRequestsIndex = user.followRequests.indexOf(id);
+
+			if (followRequestsIndex === -1) {
+				user.followRequests.push(id);
+				await user.save();
+				return { status: 'requested' }
+			} else {
+				user.followRequests.splice(followRequestsIndex, 1);
+				await user.save();
+				return { status: 'removed' }
+			}
+
+		} catch (error) {
+
+		}
+	}
+
+	async MakePrivateOrPublic({ isChecked, userId }) {
+		try {
+			const user = await User.findById(userId);
+			let updatedUser
+			if (!user.isPrivate) {
+				// If the field doesn't exist or is falsy, update the document
+				updatedUser = await User.findByIdAndUpdate(
+					userId,
+					{ isPrivate: false },
+					{ new: true }
+				);
+			}
+			if (isChecked) {
+				const m = await User.findByIdAndUpdate(userId, { isPrivate: false }, { new: true })
+				console.log(m)
+				return { isPrivate: false }
+			} else {
+				const n = await User.findByIdAndUpdate(userId, { isPrivate: true }, { new: true })
+				console.log(n)
+				return { isPrivate: true }
+			}
+		} catch (error) {
+
+		}
+	}
+
 	async ReportingUser({ userId, id, reason }) {
 		try {
 			const existingReport = await User.findOne({
@@ -346,21 +458,21 @@ class UserRepositary {
 			}
 			const user = await User.findOneAndUpdate({ _id: userId }, { $addToSet: { reports: { reporterId: id, reason } } });
 			return { message: "Report added successfully" };
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async FindFollowing({ id }) {
 		try {
 			const user = await User.findById(id).populate("following", "_id username name propic");
 			return user;
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async FindFollowers({ id }) {
 		try {
 			const user = await User.findById(id).populate("followers", "_id username name propic");
 			return user;
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async SavingPost({ userId, postId }) {
@@ -376,7 +488,7 @@ class UserRepositary {
 				const savedpost = await user.save();
 				return { status: "removed", savedpost };
 			}
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async fetchSavedPosts({ id }) {
@@ -384,7 +496,7 @@ class UserRepositary {
 			const post = await User.findOne({ _id: id });
 			const postIds = post.bookmarks;
 			return postIds;
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async FindFollowersorFollowing(id) {
@@ -398,8 +510,60 @@ class UserRepositary {
 				console.log("User not found");
 				return null;
 			}
-		} catch (error) {}
+		} catch (error) { }
 	}
+
+	async CountUserbyGender() {
+		try {
+			console.log('user')
+			const maleCount = await User.find({ gender: 'Male' }).countDocuments()
+			const femaleCount = await User.find({ gender: 'Female' }).countDocuments()
+			const otherCount = await User.find({ gender: 'Other' }).countDocuments()
+			console.log(maleCount)
+			return { maleCount, femaleCount, otherCount }
+		} catch (error) {
+
+		}
+	}
+
+	async CountUserbyAge() {
+		try {
+			const currentDate = new Date();
+			const Age15 = new Date(currentDate);
+			const Age20 = new Date(currentDate);
+			const Age25 = new Date(currentDate);
+			const Age30 = new Date(currentDate);
+			Age15.setFullYear(currentDate.getFullYear() - 15);
+			Age20.setFullYear(currentDate.getFullYear() - 20);
+			Age25.setFullYear(currentDate.getFullYear() - 25);
+			Age30.setFullYear(currentDate.getFullYear() - 30);
+			console.log(Age15)
+			const between15and20 = await User.find({
+				dateOfBirth: {
+					$lte: Age15,
+					$gte: Age20
+				}
+			}).countDocuments()
+			const between20and25 = await User.find({
+				dateOfBirth: {
+					$lte: Age20,
+					$gte: Age25
+				}
+			}).countDocuments()
+			const between25and30 = await User.find({
+				dateOfBirth: {
+					$lte: Age25,
+					$gte: Age30
+				}
+			}).countDocuments()
+			return { between15and20, between20and25, between25and30 }
+		} catch (error) {
+
+		}
+	}
+
 }
+
+
 
 export default UserRepositary;

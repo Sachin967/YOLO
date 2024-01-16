@@ -1,17 +1,16 @@
 import UserService from "../services/user-service.js";
 // import nodemailer from "nodemailer";
 // import { GMAIL, PASS } from "../config/index.js";
-import { UserAuth } from "./middleware/auth.js";
+import { UserAuth } from "./middleware/auth.js"; 
 import { PublishMessage, RPCObserver, SubscribeMessage, sendOTP } from "../utils/index.js";
 import { NOTIFICATION_BINDING_KEY } from "../config/index.js";
+import express from 'express'
 export const user = (app, channel) => {
 	const service = new UserService();
-
 	SubscribeMessage(channel, service);
-
 	RPCObserver("USER_RPC", service);
-
-	app.post("/register", async (req, res, next) => {
+	const router = express.Router()
+	router.post("/register", async (req, res, next) => {
 		const { name, username, email, password, day, month, year, gender } = req.body;
 		try {
 			const { data } = await service.SignUp({ email, password, name, username, day, month, year, gender }, res);
@@ -28,16 +27,16 @@ export const user = (app, channel) => {
 		}
 	});
 
-	app.get(`/searchuser/:id`, async (req, res, next) => {
+	router.get(`/searchuser/:id`, async (req, res, next) => {
 		try {
 			console.log(req.params);
 			const { id } = req.params;
 			const getUsers = await service.FetchFollowersorFollowing(id);
 			return res.json(getUsers);
-		} catch (error) {}
+		} catch (error) { }
 	});
 
-	app.post("/verifyOtp", async (req, res, next) => {
+	router.post("/verifyOtp", async (req, res, next) => {
 		const { otp, id } = req.body;
 		try {
 			const user = await service.repositary.FindUserById(id);
@@ -53,17 +52,28 @@ export const user = (app, channel) => {
 		}
 	});
 
-	app.post("/login", async (req, res, next) => {
+	router.get('/notfollowers/:userId', async (req, res, next) => {
+		try {
+			const { userId } = req.params
+			const fetchNotfollowed = await service.FetchNotfollowedusers(userId)
+			return res.json(fetchNotfollowed)
+		} catch (error) {
+
+		}
+	})
+
+	router.post("/login", async (req, res, next) => {
 		const { query, password } = req.body;
 		try {
 			const { data } = await service.SignIn({ query, password }, res);
+			console.log('kola', data)
 			return res.json(data);
 		} catch (error) {
 			console.log(error);
 			next(error);
 		}
 	});
-	app.post("/googleauth", async (req, res, next) => {
+	router.post("/googleauth", async (req, res, next) => {
 		const { name, email } = req.body;
 		console.log(req.body);
 		try {
@@ -75,7 +85,7 @@ export const user = (app, channel) => {
 		}
 	});
 
-	app.post("/sendemail", async (req, res, next) => {
+	router.post("/sendemail", async (req, res, next) => {
 		console.log(req.body);
 		const { email } = req.body;
 		try {
@@ -88,23 +98,34 @@ export const user = (app, channel) => {
 		}
 	});
 
-	app.get("/validatetoken/:token", async (req, res) => {
+	router.get("/validatetoken/:token", async (req, res) => {
 		try {
 			const { token } = req.params;
 			const validate = await service.repositary.validateResetToken(token);
 			return res.json(validate);
-		} catch (error) {}
+		} catch (error) { }
 	});
 
-	app.post("/changepassword", async (req, res) => {
+	router.post("/changepassword", async (req, res) => {
 		try {
 			const { userId, password } = req.body;
 			const response = await service.ChangePassword(userId, password);
 			return res.json(response);
-		} catch (error) {}
+		} catch (error) { }
 	});
 
-	app.post("/logout", async (req, res, next) => {
+	router.put('/password', UserAuth, async (req, res) => {
+		try {
+			const { currentPassword, newPassword } = req.body
+			const id = req.user._id
+			const response = await service.ConfirmPasswordAndChangeIt({ currentPassword, newPassword, id })
+			return res.json(response)
+		} catch (error) {
+
+		}
+	})
+
+	router.post("/logout", async (req, res, next) => {
 		try {
 			res.cookie("userJwt", "", {
 				httpOnly: true,
@@ -116,16 +137,16 @@ export const user = (app, channel) => {
 		}
 	});
 
-	app.post("/resendotp", async (req, res, next) => {
+	router.post("/resendotp", async (req, res, next) => {
 		try {
 			const { id } = req.body;
 			const user = await service.ResendOtp(id);
 			const otpResponse = await sendOTP(user.email, user.Otp);
 			res.json(otpResponse);
-		} catch (error) {}
+		} catch (error) { }
 	});
 
-	app.get("/profile/:username", async (req, res, next) => {
+	router.get("/profile/:username", async (req, res, next) => {
 		try {
 			const { username } = req.params;
 			const user = await service.GetUserProfile({ username });
@@ -135,7 +156,7 @@ export const user = (app, channel) => {
 		}
 	});
 
-	app.post("/addcoverimage/:username", async (req, res) => {
+	router.post("/addcoverimage/:username", async (req, res) => {
 		try {
 			const { username } = req.params;
 			const { croppedImage } = req.body;
@@ -146,7 +167,7 @@ export const user = (app, channel) => {
 		}
 	});
 
-	app.post("/addprofileimage/:username", async (req, res) => {
+	router.post("/addprofileimage/:username", async (req, res) => {
 		try {
 			const { username } = req.params;
 			const { croppedImage } = req.body;
@@ -157,7 +178,7 @@ export const user = (app, channel) => {
 		}
 	});
 
-	app.put("/editprofile/:id", async (req, res, next) => {
+	router.put("/editprofile/:id", async (req, res, next) => {
 		try {
 			const { id } = req.params;
 			console.log(req.params);
@@ -166,26 +187,26 @@ export const user = (app, channel) => {
 
 			const editedUser = await service.EditUser({ id, name, bio, location, day, month, year });
 			return res.json(editedUser);
-		} catch (error) {}
+		} catch (error) { }
 	});
 
-	app.get("/fetchfollowers/:id", async (req, res, next) => {
+	router.get("/fetchfollowers/:id", async (req, res, next) => {
 		try {
 			const { id } = req.params;
 			const fetchfollowers = await service.FetchFollowers({ id });
 			return res.json(fetchfollowers);
-		} catch (error) {}
+		} catch (error) { }
 	});
 
-	app.get("/fetchfollowing/:id", async (req, res, next) => {
+	router.get("/fetchfollowing/:id", async (req, res, next) => {
 		try {
 			const { id } = req.params;
 			const fetchfollowing = await service.FetchFollowing({ id });
 			return res.json(fetchfollowing);
-		} catch (error) {}
+		} catch (error) { }
 	});
 
-	app.post("/follow-unfollow", async (req, res, next) => {
+	router.post("/follow-unfollow", async (req, res, next) => {
 		try {
 			const { userId, id } = req.body;
 			const { resp, payload } = await service.UpdateFollow({ userId, id });
@@ -193,36 +214,49 @@ export const user = (app, channel) => {
 				PublishMessage(channel, NOTIFICATION_BINDING_KEY, JSON.stringify(payload));
 			}
 			res.json(resp);
-		} catch (error) {}
+		} catch (error) { }
 	});
 
-	app.get("/users/:search", UserAuth, async (req, res, next) => {
+	router.post('/followrequest', async (req, res, next) => {
+		try {
+			const { userId, id } = req.body
+			const { resp, payload } = await service.SendFollowRequest({ userId, id })
+			if (payload && Object.keys(payload).length !== 0) {
+				PublishMessage(channel, NOTIFICATION_BINDING_KEY, JSON.stringify(payload));
+			}
+			res.json(resp);
+		} catch (error) {
+
+		}
+	})
+
+	router.get("/users/:search", UserAuth, async (req, res, next) => {
 		try {
 			const keyword = req.params.search;
 			console.log(keyword);
 			const user = await service.FindUser({ keyword }, req);
 			res.json(user);
 			console.log(user);
-		} catch (error) {}
+		} catch (error) { }
 	});
 
-	app.get("/savedpost/:id", async (req, res, next) => {
+	router.get("/savedpost/:id", async (req, res, next) => {
 		try {
 			const { id } = req.params;
 			const savedposts = await service.GetSavedPost({ id });
 			return res.json(savedposts);
-		} catch (error) {}
+		} catch (error) { }
 	});
 
-	app.post("/savepost", async (req, res, next) => {
+	router.post("/savepost", async (req, res, next) => {
 		try {
 			const { postId, userId } = req.body;
 			const savepost = await service.SavePost({ postId, userId });
 			return res.json(savepost);
-		} catch (error) {}
+		} catch (error) { }
 	});
 
-	app.post("/reportuser", UserAuth, async (req, res, next) => {
+	router.post("/reportuser", UserAuth, async (req, res, next) => {
 		try {
 			console.log(req.body);
 			const { userId, reason } = req.body;
@@ -233,11 +267,27 @@ export const user = (app, channel) => {
 			console.log(error);
 		}
 	});
-	app.get(`/getuser/:userId`, async (req, res, next) => {
+	router.get(`/getuser/:userId`, async (req, res, next) => {
 		try {
 			const { userId } = req.params;
+			console.log(req.params)
 			const user = await service.repositary.FindUserById(userId);
 			return res.json(user);
-		} catch (error) {}
+		} catch (error) { }
 	});
+
+
+
+	router.put('/makeprivate/:userId', async (req, res, next) => {
+		try {
+			const { userId } = req.params;
+			const { isChecked } = req.body
+			const makeprivate = await service.ManagePrivateAndPublic({ isChecked, userId })
+			return res.json(makeprivate)
+		} catch (error) {
+
+		}
+	})
+	app.use("/users", router)
+
 };

@@ -104,10 +104,10 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 				<>
 					<div
 						onClick={() => handleChatSelection(chat)}
-						className={`flex w-full ${isSelected ? "bg-zinc-800" : ""}`}
+						className={`flex w-full ${isSelected ? "dark:bg-neutral-800 bg-zinc-400" : ""}`}
 						key={chat._id}>
 						<Avatar className="m-5" src={updatedImage || chat?.groupImage?.url} />
-						<h2 className="mt-5 me-2 text-lg text-white font-bold">{updatedName || chat?.chatName}</h2>
+						<h2 className="mt-5 me-2 text-lg dark:text-white text-black font-bold">{updatedName || chat?.chatName}</h2>
 					</div>
 
 					{/* <h2 className="mt-5 me-2 text-xl">@{chat?.username}</h2> */}
@@ -120,10 +120,10 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 					<>
 						<div
 							onClick={() => handleChatSelection(chat)}
-							className={`flex w-full ${isSelected ? "bg-zinc-800" : ""}`}
+							className={`flex w-full ${isSelected ? "dark:bg-neutral-800 bg-zinc-400" : ""}`}
 							key={chat._id}>
 							<Avatar className="m-5" src={otherUser?.propic?.url} />
-							<h2 className="mt-5 me-2 text-lg text-white font-bold">{otherUser?.name}</h2>
+							<h2 className="mt-5 me-2 text-lg dark:text-white text-black font-bold">{otherUser?.name}</h2>
 							<h2 className="mt-5 me-2 text-lg text-gray-400 font-normal">@{otherUser?.username}</h2>
 						</div>
 					</>
@@ -139,9 +139,9 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 			.map((user) => {
 				if (user?.isGroupChat) {
 					return (
-						<div key={user._id} className="flex mt-3 hover:bg-neutral-900">
+						<div key={user._id} className="flex mt-3 hover:bg-zinc-300 dark:hover:bg-neutral-900">
 							<Avatar className="m-5" src={user?.propic?.url} />
-							<h2 className="mt-5 me-2 text-xl text-white font-bold">{user?.chatName}</h2>
+							<h2 className="mt-5 me-2 text-xl dark:text-white text-black font-bold">{user?.chatName}</h2>
 							{/* <h2 className="mt-5 me-2 text-xl">@{user?.username}</h2> */}
 						</div>
 					);
@@ -149,10 +149,10 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 					return (
 						<div
 							key={user._id}
-							className="flex mt-3 hover:bg-neutral-900"
+							className="flex mt-3 hover:bg-zinc-300 dark:hover:bg-neutral-900"
 							onClick={() => AccessChats(user._id)}>
 							<Avatar className="m-5" src={user?.propic?.url} />
-							<h2 className="mt-5 me-2 text-xl text-white font-bold">{user?.name}</h2>
+							<h2 className="mt-5 me-2 text-xl dark:text-white text-black font-bold">{user?.name}</h2>
 							<h2 className="mt-5 me-2 text-xl">@{user?.username}</h2>
 						</div>
 					);
@@ -166,7 +166,7 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 								setSelectedUsers(chat);
 								handleAccessChat(chat);
 							}}
-							className="flex hover:bg-zinc-900">
+							className="flex hover:bg-zinc-300 dark:hover:bg-neutral-900">
 							{renderChatDetails(chat)}
 						</div>
 					</React.Fragment>
@@ -176,14 +176,14 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 		<div
 			className={
 				setSelectedUsers
-					? "hidden lg:block lg:ml-[320px]"
-					: " w-[694px] md:w-[1110px] lg:w-[450px] max-h-full min-h-screen sm:w-[980px] lg:ml-[320px] sm:ml-[105px] bg-black"
+					? "hidden lg:block lg:ml-[320px] overflow-y-auto dark:bg-black bg-white max-h-screen"
+					: " w-[694px] md:w-[1110px] lg:w-[450px]  min-h-screen sm:w-[980px] lg:ml-[320px] sm:ml-[105px] dark:bg-black bg-white overflow-y-auto max-h-screen"
 			}>
 			<div className="flex sm:ml-[270px] lg:ml-0  justify-between items-center">
-				<h2 className="text-2xl text-white font-bold p-3">Messages</h2>
+				<h2 className="text-2xl text-black dark:text-white font-bold p-3">Messages</h2>
 				<svg
 					onClick={onOpen}
-					className="me-5 text-white cursor-pointer"
+					className="me-5 dark:text-white text-black cursor-pointer"
 					aria-label="Create new Group"
 					fill="currentColor"
 					height="26"
@@ -226,12 +226,12 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 					onClick={(e) => setShowSearch(true)}
 					type="text"
 					placeholder="Search"
-					className="w-[410px] h-14 bg-transparent ms-5 mt-5 text-white pl-14 rounded-full"
+					className="w-[410px] h-14 bg-transparent ms-5 mt-5 text-black dark:text-white pl-14 rounded-full"
 					style={{ paddingRight: "2rem" }}
 				/>
 				<FontAwesomeIcon
 					icon={faMagnifyingGlass}
-					className="absolute top-12 left-10 transform -translate-y-1/2 text-white"
+					className="absolute top-12 left-10 transform -translate-y-1/2 text-black dark:text-white"
 				/>
 			</div>
 			<GroupChatModal FetchChats={FetchChats} filteredUsers={filteredUsers} isOpen={isOpen} onClose={onClose} />
@@ -247,7 +247,7 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 												setSelectedUsers(chat);
 												handleAccessChat(chat);
 											}}
-											className="flex hover:bg-zinc-900">
+											className="flex hover:bg-zinc-300 dark:hover:bg-neutral-900">
 											{renderChatDetails(chat)}
 										</div>
 									</React.Fragment>
@@ -259,7 +259,7 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 					)}
 				</div>
 			) : (
-				<div className="mt-5 sm:ml-[270px] lg:ml-0">
+				<div className="mt-5 sm:ml-[270px]  lg:ml-0">
 					{peopleMessaged?.map((chat) => (
 						<React.Fragment key={chat?._id}>
 							<div
@@ -267,7 +267,7 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 									setSelectedUsers(chat);
 									handleAccessChat(chat);
 								}}
-								className="flex hover:bg-zinc-900">
+								className="flex hover:bg-zinc-300 dark:hover:bg-neutral-900">
 								{renderChatDetails(chat)}
 							</div>
 						</React.Fragment>

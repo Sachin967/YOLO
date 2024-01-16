@@ -1,4 +1,5 @@
 import axios from "axios";
+import { ADMIN_SERVICE, MAPBOX, MESSAGE_SERVICE, NOTIFICATION_SERVICE, POST_SERVICE, USER_SERVICE } from "../constants/constant.js";
 
 function createAxiosInstance(baseURL, withCredentials = false) {
 	return axios.create({
@@ -7,13 +8,12 @@ function createAxiosInstance(baseURL, withCredentials = false) {
 	});
 }
 
-// Create Axios instances
-const users = createAxiosInstance("http://localhost:7100", true);
-const posts = createAxiosInstance("http://localhost:7000", true);
-const notifications = createAxiosInstance("http://localhost:9000");
-const messaging = createAxiosInstance("http://localhost:8000");
-const admin = createAxiosInstance("http://localhost:7300", true);
-const mapbox = createAxiosInstance("https://api.mapbox.com/geocoding/v5/mapbox.places");
+const users = createAxiosInstance(USER_SERVICE, true);
+const posts = createAxiosInstance(POST_SERVICE, true);
+const notifications = createAxiosInstance(NOTIFICATION_SERVICE);
+const messaging = createAxiosInstance(MESSAGE_SERVICE);
+const admin = createAxiosInstance(ADMIN_SERVICE, true);
+const mapbox = createAxiosInstance(MAPBOX);
 // Function to get the token from the cookie
 const getUserToken = () => {
 	return document.cookie.replace(/(?:(?:^|.*;\s*)userJwt\s*=\s*([^;]*).*$)|^.*$/, "$1");
@@ -42,7 +42,6 @@ const attachAdminTokenInterceptor = (axiosInstance) => {
 	});
 };
 
-// Attach the token interceptor to each Axios instance
 [users, posts, notifications, messaging].forEach((axiosInstance) => {
 	attachUserTokenInterceptor(axiosInstance);
 });

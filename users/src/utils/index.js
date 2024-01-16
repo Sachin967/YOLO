@@ -80,8 +80,8 @@ export const sendOTP = (email, otp) => {
 		let transporter = nodemailer.createTransport({
 			service: "gmail",
 			auth: {
-				user: "sachinsachu967@gmail.com",
-				pass: "rrwy jkyx qcow mcmk"
+				user: GMAIL,
+				pass: PASS
 			}
 		});
 		let mailOptions = {

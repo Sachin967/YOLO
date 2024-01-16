@@ -26,6 +26,10 @@ import SendEmailToResetPass from "./Components/SendEmailToResetPass.jsx";
 import ResetPassword from "./Components/ResetPassword.jsx";
 import "primereact/resources/themes/lara-light-cyan/theme.css";
 import AdminDashboard from "./Adminpages/AdminDashboard.jsx";
+import Search from "./Pages/Search.jsx";
+import Settings from "./Pages/Settings.jsx";
+import { ThemeProvider } from "./Context/Themecontext.jsx";
+import Page404 from "./Pages/Page404.jsx";
 const theme = extendTheme({
 	components: {
 		Modal: {
@@ -46,6 +50,7 @@ const routes = createBrowserRouter(
 				<Route path="/password/reset" element={<SendEmailToResetPass />} />
 				<Route path="/reset-password/:token/:userId" element={<ResetPassword />} />
 				<Route path="/admin/login" element={<AdminLogin />} />
+				<Route path="*" element={<Page404 />} />
 				{/* User Routes */}
 				<Route path="/" element={<UserPrivateRoute />}>
 					<Route path="/" element={<Navigate to="/home" />} />
@@ -58,6 +63,11 @@ const routes = createBrowserRouter(
 					<Route path="/messages/:userId" element={<Message />} />
 					<Route path="/:username/saved" element={<Bookmark />} />
 					<Route path="/room/:userId" element={<VideoRoom />} />
+					<Route path="/search" element={<Search />} />
+					<Route path="/settings" element={<Settings />} />
+					<Route path="/settings/change-password" element={<Settings />} />
+					<Route path="/settings/account-privacy" element={<Settings />} />
+					<Route path="/settings/deactivate-account" element={<Settings />} />
 				</Route>
 				{/* Admin Routes */}
 				<Route path="/admin" element={<AdminPrivateRoute />}>
@@ -74,7 +84,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 	<ChatProvider>
 		<Provider store={Store}>
 			<ChakraProvider theme={theme}>
+				<ThemeProvider>
 				<RouterProvider router={routes} />
+				</ThemeProvider>
 			</ChakraProvider>
 		</Provider>
 	</ChatProvider>

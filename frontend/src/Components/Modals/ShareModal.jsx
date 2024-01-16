@@ -68,11 +68,11 @@ const ShareModal = ({ onClose, isOpen, post }) => {
 	return (
 		<Modal onClose={onClose} size={"xl"} isOpen={isOpen}>
 			<ModalOverlay />
-			<ModalContent style={{ backgroundColor: "#262626" }}>
+			<ModalContent >
 				<ModalHeader className="text-center w-full text-white border-b">Share</ModalHeader>
 				<ModalCloseButton />
 				<ModalBody>
-					{peopleMessaged.map((chat) => {
+					{peopleMessaged?.map((chat) => {
 						const otherUser = people.find(
 							(user) => chat.users.includes(user._id) && user._id !== userdetails._id
 						);

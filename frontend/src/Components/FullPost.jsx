@@ -22,7 +22,7 @@ import { faBookmark, faEllipsis, faFaceSurprise, faHeart, faPaperPlane } from "@
 import { posts, users } from "../config/axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import useCustomToast from "../toast";
+import useCustomToast from "../config/toast";
 import { Link, useNavigate } from "react-router-dom";
 import OptionModal from "./Modals/OptionModal";
 import { AuthActions } from "../store/Authslice";
@@ -62,8 +62,8 @@ const FullPost = ({
 		posts
 			.post("/postdetails", { postId })
 			.then((res) => {
+				console.log(res.data)
 				const { post: post, userData } = res.data.response;
-				console.log(userData);
 				// Match user data for each post based on user IDs
 				const commentWithUserData = post.comments.map((comment) => {
 					const userDetail = userData.find((user) => {
@@ -109,6 +109,7 @@ const FullPost = ({
 	const containsPostId = post.some((p) => p._id === postId);
 	useEffect(() => {
 		const specificpost = post.find((p) => p._id === postId);
+	
 		setSpecificPost(specificpost);
 		extractUserData();
 	}, [postId, post, postuser]);
@@ -157,6 +158,7 @@ const FullPost = ({
 			.post("/addcomment", data)
 			.then((res) => {
 				if (res.data.status) {
+					setCom('')
 					SinglePostDetails();
 					showToast("success", "Comment added");
 				}
@@ -189,7 +191,7 @@ const FullPost = ({
 						console.error("Error:", error);
 					}
 				});
-		} catch (error) {}
+		} catch (error) { }
 	};
 	const formatDate = (dateString) => {
 		const options = {
@@ -222,7 +224,7 @@ const FullPost = ({
 					</ModalHeader>
 					<ModalBody bg={"black"} className="flex  bg-transparent justify-center relative">
 						<img className="w-[550px]  mr-60 h-[687px]" src={poster?.media} alt="" />
-						<div className="absolute flex top-5 right-0 text-white border-t border-l border-zinc-700  overflow-y-scroll max-h-[535px]">
+						<div className="absolute flex top-5 right-0  text-white border-t border-l border-zinc-700  overflow-y-scroll max-h-[535px]">
 							<div className="flex flex-col w-[350px] h-screen">
 								<div className="flex items-center p-3">
 									<Avatar className="m-1" name="Dan Abrahmov" src={userData?.propic?.url} />
@@ -233,17 +235,17 @@ const FullPost = ({
 												{userData?.username}
 											</Heading>
 										</a>
-										<Text className="text-gray-600">{poster?.location}</Text>
+										<h1 className="text-white  w-40">{specificPost?.location||poster?.location}</h1>
 									</div>
 									<FontAwesomeIcon
 										onClick={onBasicOpen}
-										className="ml-40 text-2xl cursor-pointer"
+										className="ml-20 text-2xl cursor-pointer"
 										icon={faEllipsis}
 									/>
 								</div>
 								{/* Text content here */}
 								<div className="p-2 border-b border-zinc-700">
-									<Text className="font-poppins font-light text-lg">{poster?.textmedia}</Text>
+									<Text className="font-poppins font-light text-lg">{specificPost?.textmedia||poster?.textmedia}</Text>
 								</div>
 								{/* Iterate through comments */}
 								{comments.length > 0 &&
@@ -312,7 +314,7 @@ const FullPost = ({
 																{comment?.replies.map((reply, index) => (
 																	<div key={index} className="flex flex-col mb-3">
 																		<Link to={`/${reply?.username}`}>
-																			<h2 className="text-white text-base font-bold">
+																			<h2 className="dark:text-white text-black text-base font-bold">
 																				{reply?.username}
 																			</h2>
 																		</Link>
@@ -343,12 +345,11 @@ const FullPost = ({
 							<div className="flex p-3 justify-between">
 								<FontAwesomeIcon
 									onClick={() => handleLike(postId)}
-									className={`text-3xl transition-transform cursor-pointer p-3 ${
-										like ? "text-red-700 scale-125" : "text-gray-200"
-									}`}
+									className={`text-3xl transition-transform cursor-pointer p-3 ${like ? "text-red-700 scale-125" : "text-gray-200"
+										}`}
 									icon={faHeart}
 								/>
-								<FontAwesomeIcon className="text-2xl p-2" icon={faPaperPlane} />
+								{/* <FontAwesomeIcon className="text-2xl p-2" icon={faPaperPlane} /> */}
 								{/* <FontAwesomeIcon className="text-2xl p-2" icon={faBookmark} /> */}
 								<div onClick={() => PostSave(postId)} className="inline-block">
 									{savepost ? (
@@ -361,16 +362,16 @@ const FullPost = ({
 									)}
 								</div>
 							</div>
-							<Text className="font-semibold text-2xl ml-8 mb-3"> {likeCount}</Text>
+							<Text className="font-semibold text-2xl dark:text-white text-black ml-8 mb-3"> {likeCount}</Text>
 							<div className="">{emojishow && <EmojiPicker onEmojiClick={addEmoji} />}</div>
 							<div className="flex p-3 border-t border-b border-3 border-zinc-700 justify-between items-center">
 								<FontAwesomeIcon
 									onClick={openEmoji}
-									className="p-2 text-2xl text-white"
+									className="p-2 text-2xl dark:text-white text-black"
 									icon={faFaceSurprise}
 								/>
 								<textarea
-									className="bg-transparent w-full border-none rounded-2xl text-white resize-y overflow-hidden focus:bg-slate-900"
+									className="bg-transparent w-full border-none rounded-2xl text-white  resize-y overflow-hidden focus:bg-slate-900"
 									type="text"
 									placeholder="Post your reply"
 									value={com} // Set the value of the textarea to the state variable
@@ -394,7 +395,8 @@ const FullPost = ({
 				setSpecificPost={setSpecificPost}
 				setPosts={setPosts}
 				username={postuser?.username}
-				image={poster?.media?.url}
+				image={poster?.media}
+				FetchPosts={FetchPosts}
 			/>
 		</div>
 	);

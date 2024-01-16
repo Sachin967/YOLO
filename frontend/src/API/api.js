@@ -1,5 +1,8 @@
+import { useNavigate } from "react-router-dom";
 import { Error403 } from "../Commonfunctions";
 import { posts, users } from "../config/axios";
+import { useDispatch } from "react-redux";
+import { AuthActions } from "../store/Authslice";
 
 export const SavePost = async ({ postId, id }) => {
 	return users
@@ -79,4 +82,13 @@ export const fetchLikedPost = (userId, postId, setLiked) => {
 				console.error("Error:", error);
 			}
 		});
+};
+
+export const handleLogout = (dispatch,Navigate) => {
+	users.post("/logout").then((res) => {
+		if (res.status) {
+			dispatch(AuthActions.UserLogout());
+			Navigate("/login");
+		}
+	});
 };

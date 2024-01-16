@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { users } from "../config/axios";
-import useCustomToast from "../toast";
+import useCustomToast from "../config/toast.js"
 import background from "../assets/bg.svg";
 const ResetPassword = () => {
 	const { token, userId } = useParams();

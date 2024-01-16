@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { users } from "../config/axios";
-import useCustomToast from "../toast";
+import useCustomToast from "../config/toast";
 import background from "../assets/bg.svg";
 import { Link } from "react-router-dom";
 const SendEmailToResetPass = () => {

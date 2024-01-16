@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification
+  template:
+    metadata:
+      labels:
+        app: notification
+    spec:
+      containers:
+        - name: notification
+          image: sachin967/notification
+          ports:
+            - containerPort: 9000
+          # env:
+          #   - name: PORT
+          #     value: 9000
+          #   - name: MONGODB_URL
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: my-secrets
+          #         key: mongodb-url
+          #   - name: MESSAGE_BROKER_URL
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: my-secrets
+          #         key: message-broker-url
+          #   - name: APP_SECRET
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: my-secrets
+          #         key: app-secret

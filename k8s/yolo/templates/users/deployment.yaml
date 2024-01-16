@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: users
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: users
+  template:
+    metadata:
+      labels:
+        app: users
+    spec:
+      containers:
+        - name: users
+          image: sachin967/users
+          ports:
+            - containerPort: 7100
+          # env:
+          #   - name: PORT
+          #     value: 7100
+          #   - name: MONGODB_URL
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: my-secrets
+          #         key: mongodb-url
+          #   - name: MESSAGE_BROKER_URL
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: my-secrets
+          #         key: message-broker-url
+          #   - name: APP_SECRET
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: my-secrets
+          #         key: app-secret 
+          #   - name: GMAIL
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: my-secrets
+          #         key: gmail     
+          #   - name: PASS
+          #     valueFrom:
+          #       secretKeyRef:
+          #         name: my-secrets
+          #         key: pass

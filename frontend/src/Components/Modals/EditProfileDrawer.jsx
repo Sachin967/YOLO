@@ -17,10 +17,11 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { users } from "../../config/axios";
 import { AuthActions } from "../../store/Authslice";
-import useCustomToast from "../../toast";
+import useCustomToast from "../../config/toast";
 import { useNavigate } from "react-router-dom";
 import { Error403 } from "../../Commonfunctions";
 import { dayOptions, monthOptions, yearOptions } from "../../constants/constant";
+import { faL } from "@fortawesome/free-solid-svg-icons";
 function EditProfileDrawer({ isOpen, onClose, showUserProfile }) {
 	const firstField = React.useRef();
 	const showToast = useCustomToast();
@@ -81,7 +82,7 @@ function EditProfileDrawer({ isOpen, onClose, showUserProfile }) {
 
 	return (
 		<>
-			<Drawer isOpen={isOpen} placement="right" initialFocusRef={firstField} onClose={onClose}>
+			<Drawer onEsc={false} onOverlayClick={false} isOpen={isOpen} placement="right" initialFocusRef={firstField} onClose={onClose}>
 				<DrawerOverlay />
 				<DrawerContent style={{ backgroundColor: "#262626" }}>
 					<DrawerCloseButton className="text-white" />

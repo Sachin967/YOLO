@@ -1,16 +1,18 @@
 import MessageService from "../services/message-service.js";
 import { UserAuth } from "./middleware/auth.js";
-
+import express from 'express'
 export const message = (app) => {
+	const router = express.Router()
+
 	const service = new MessageService();
-	app.get("/fetchchat/:id", async (req, res, next) => {
+	router.get("/fetchchat/:id", async (req, res, next) => {
 		try {
 			const { id } = req.params;
 			const chats = await service.FetchChats(id);
 			return res.json(chats);
 		} catch (error) {}
 	});
-	app.post("/accesschat", UserAuth, async (req, res, next) => {
+	router.post("/accesschat", UserAuth, async (req, res, next) => {
 		try {
 			const { userId } = req.body;
 			const loggedInUserId = req.user._id;
@@ -18,7 +20,7 @@ export const message = (app) => {
 			return res.json(chat);
 		} catch (error) {}
 	});
-	app.post("/group", UserAuth, async (req, res, next) => {
+	router.post("/group", UserAuth, async (req, res, next) => {
 		try {
 			const users = JSON.parse(req.body.users);
 			const chatName = req.body.name;
@@ -29,7 +31,7 @@ export const message = (app) => {
 			return res.json(groupchat);
 		} catch (error) {}
 	});
-	app.put("/renamegroup/:chatId", async (req, res, next) => {
+	router.put("/renamegroup/:chatId", async (req, res, next) => {
 		try {
 			console.log(req.params);
 			const { chatId } = req.params;
@@ -38,7 +40,7 @@ export const message = (app) => {
 			return res.json(renamedchat);
 		} catch (error) {}
 	});
-	app.put("/groupadd", async (req, res, next) => {
+	router.put("/groupadd", async (req, res, next) => {
 		try {
 			const users = JSON.parse(req.body.users);
 			console.log(users);
@@ -49,7 +51,7 @@ export const message = (app) => {
 			return res.json(addtogroup);
 		} catch (error) {}
 	});
-	app.put("/groupremove", async (req, res, next) => {
+	router.put("/groupremove", async (req, res, next) => {
 		try {
 			const { chatId, userId } = req.body;
 			const response = await service.RemoveFromGroup({ chatId, userId });
@@ -57,7 +59,7 @@ export const message = (app) => {
 		} catch (error) {}
 	});
 
-	app.post("/message", UserAuth, async (req, res, next) => {
+	router.post("/message", UserAuth, async (req, res, next) => {
 		try {
 			const { content, chatId } = req.body;
 			const userId = req.user._id;
@@ -66,7 +68,7 @@ export const message = (app) => {
 			res.json(savemessage);
 		} catch (error) {}
 	});
-	app.get("/message/:chatId", UserAuth, async (req, res, next) => {
+	router.get("/message/:chatId", UserAuth, async (req, res, next) => {
 		try {
 			const userId = req.user._id;
 			const { chatId } = req.params;
@@ -74,11 +76,12 @@ export const message = (app) => {
 			return res.json(getAllmessages);
 		} catch (error) {}
 	});
-	app.get("/searchchat/:id", async (req, res, next) => {
+	router.get("/searchchat/:id", async (req, res, next) => {
 		try {
 			const { id } = req.params;
 			const getChats = await service.FetchGroupChats(id);
 			return res.json(getChats);
 		} catch (error) {}
 	});
+	app.use('/messaging', router)
 };

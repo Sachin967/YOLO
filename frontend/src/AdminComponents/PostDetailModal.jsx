@@ -58,7 +58,7 @@ const PostDetailModal = ({ post, isOpen, onClose }) => {
 							{/* <button className="w-[500px] h-16 bg-green-900 ">Unlist</button> */}
 							<button
 								className={`w-[500px] h-16 text-white text-xl font-bold ${
-									postData?.isListed ? "bg-purple-500" : "bg-purple-600"
+									postData?.isListed ? "bg-red-800" : "bg-purple-600"
 								}`}
 								onClick={handlePostblock}>
 								{postData.isListed ? "Unlist" : "List"}

@@ -1,10 +1,16 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import logo from '../../public/yolo2.png'
 const VideoRoom = () => {
 	const { userId } = useParams();
 	const [element, setElement] = useState(null);
 	const containerRef = useRef(null);
+	const Navigate = useNavigate()
+
+	const {userdetails}=useSelector((state)=>state.auth)
+
 	useEffect(() => {
 		setElement(containerRef.current);
 	}, []);
@@ -17,12 +23,18 @@ const VideoRoom = () => {
 				serverSecret,
 				userId,
 				Date.now().toString(),
-				"Sachin"
+				userdetails.name
 			);
 			const zc = ZegoUIKitPrebuilt.create(kitToken);
 			zc.joinRoom({
 				container: element,
-
+				onLeaveRoom:()=>{
+					Navigate(`/messages`)
+				},
+				showPreJoinView: false,
+				 branding: {
+					logoURL: logo
+				},
 				scenario: {
 					mode: ZegoUIKitPrebuilt.OneONoneCall
 				},
@@ -35,8 +47,8 @@ const VideoRoom = () => {
 	}, [element, userId]);
 
 	return (
-		<div className="w-screen flex items-center justify-center h-screen bg-black">
-			<div className="bg-black" ref={containerRef} />
+		<div className="w-screen flex items-center justify-center h-screen bg-white dark:bg-black">
+			<div className="text-cyan-700" ref={containerRef} />
 		</div>
 	);
 };

@@ -112,7 +112,7 @@ class PostService {
 							notificationType: "like",
 							entityType: "post",
 							entityId: postId,
-							image: resp.post.media.url
+							image: resp.post.media
 						}
 					};
 					return { resp, payload };
@@ -161,7 +161,7 @@ class PostService {
 						notificationType: "comment",
 						entityType: "post",
 						entityId: postId,
-						image: post.media.url
+						image: post.media
 					}
 				};
 				return { payload, reply };
@@ -177,9 +177,9 @@ class PostService {
 		} catch (error) {}
 	}
 
-	async EditPost({ postId, textmedia, location }) {
+	async EditPost({ postId, textmedia, search }) {
 		try {
-			const updatedPost = await this.repositary.ModifyPost({ postId, textmedia, location });
+			const updatedPost = await this.repositary.ModifyPost({ postId, textmedia, search });
 			return updatedPost;
 		} catch (error) {}
 	}
@@ -250,6 +250,9 @@ class PostService {
 				break;
 			case "LIST_POST":
 				return this.repositary.listPost(data);
+				break;
+			case "POSTS_COUNT":
+				return this.repositary.AveragePostsPerWeek();
 				break;
 			default:
 				break;

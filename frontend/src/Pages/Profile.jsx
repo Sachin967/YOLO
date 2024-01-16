@@ -8,7 +8,7 @@ import { useDisclosure } from "@chakra-ui/react";
 import EditProfileDrawer from "../Components/Modals/EditProfileDrawer";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AddCoverPicModal from "../Components/AddCoverPicModal";
-import useCustomToast from "../toast";
+import useCustomToast from "../config/toast";
 import FollowersModal from "../Components/Modals/FollowersModal";
 import FollowingModal from "../Components/Modals/FollowingModal";
 import FullPost from "../Components/FullPost";
@@ -110,13 +110,13 @@ const Profile = () => {
 	};
 	return (
 		<>
-			<div className="bg-black max-h-full min-h-screen">
+			<div className="dark:bg-black bg-white max-h-full min-h-screen">
 				{/* <Heading className="text-white ml-[360px] py-2 " size={"md"}>
 					{userdetails?.name}
 				</Heading> */}
 				{/* <Text className="text-gray-400 text-lg ml-[360px]">{posts?.length} Posts</Text> */}
-				<div className="flex md:w-[1110px] lg:w-[1090px] pb-16  sm:w-[980px] lg:ml-[320px] sm:ml-[55px] bg-black relative">
-					<div className="flex items-start  h-[450px] rounded bg-black dark:bg-gray-900">
+				<div className="flex md:w-[1110px] lg:w-[1090px] pb-16  sm:w-[980px] lg:ml-[320px] sm:ml-[55px] bg-white dark:bg-black relative">
+					<div className="flex items-start  h-[450px] rounded dark:bg-black bg-white ">
 						<div className="bg-white">
 							<img
 								onClick={() => HandleClick("cover")}
@@ -142,7 +142,7 @@ const Profile = () => {
 						{/* Edit Profile button */}
 						<div className="flex items-center space-x-10 mb-4">
 							<div>
-								<Text className=" text-white text-2xl font-bold py-1">{user?.name}</Text>
+								<Text className=" dark:text-white text-black text-2xl font-bold py-1">{user?.name}</Text>
 								<Link to={`/${user?.username}`}>
 									{" "}
 									<Text className=" text-gray-400 text-xl rounded-full bg-neutral-700 font-thin">
@@ -151,7 +151,7 @@ const Profile = () => {
 								</Link>
 							</div>
 							<button
-								className=" text-white h-9 w-24 bg-zinc-700 hover:bg-zinc-800  rounded-3xl"
+								className=" dark:text-white text-black h-9 w-24 bg-zinc-700 hover:bg-zinc-800  rounded-3xl"
 								// leftIcon={<AddIcon />}
 								colorScheme="teal"
 								onClick={onOpen}>
@@ -163,16 +163,16 @@ const Profile = () => {
 							<button
 								onClick={() => onFollowersOpen()}
 								className=" text-gray-500 my-3 text-lg font-poppins hover:underline">
-								<span className="text-white">{user?.followers?.length}</span> Followers
+								<span className="dark:text-white text-black">{user?.followers?.length}</span> Followers
 							</button>
 							{/* Following button */}
 							<button
 								onClick={() => onFollowingOpen()}
 								className=" text-gray-500  text-lg font-poppins hover:underline ">
-								<span className="text-white">{user?.following?.length}</span> Following
+								<span className="dark:text-white text-black">{user?.following?.length}</span> Following
 							</button>
 						</div>
-						<Text className="pr-36  text-xl rounded-full text-white font-thin">{user?.bio}</Text>
+						<Text className="pr-36  text-xl rounded-full dark:text-white text-black font-thin">{user?.bio}</Text>
 					</div>
 				</div>
 				<FollowersModal
@@ -185,7 +185,7 @@ const Profile = () => {
 					onFollowingClose={onFollowingClose}
 					isFollowingOpen={isFollowingOpen}
 				/>
-				<Tabs className="ml-[320px]  bg-black h-auto" isFitted>
+				<Tabs className="ml-[320px] bg-white dark:bg-black h-auto" isFitted>
 					<TabList mb="1em">
 						<Tab
 							className="text-lg"
@@ -216,10 +216,10 @@ const Profile = () => {
 										className="w-full sm:w-1/2 md:w-1/3 lg:w-1/3 px-2 mb-4 relative"
 										onMouseEnter={() => debouncedSetHoveredPostId(post._id)}
 										onMouseLeave={() => setHoveredPostId(null)}>
-										<img src={post?.media?.url} alt={`post-${post._id}`} className="w-full" />
+										<img src={post?.media} alt={`post-${post._id}`} className="w-full" />
 										{/* Overlay for Like and Comment counts */}
 										{hoveredPostId === post._id && (
-											<div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-75 text-white px-2 py-1 rounded">
+											<div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-black bg-opacity-75 text-white px-2 py-1 rounded">
 												<span className="pr-8">
 													{" "}
 													<FontAwesomeIcon className="pr-2" icon={faHeart} />
@@ -258,10 +258,10 @@ const Profile = () => {
 											className="w-full sm:w-1/2 md:w-1/3 lg:w-1/3 px-2 mb-4 relative"
 											onMouseEnter={() => setHoveredPostId(post?._id)}
 											onMouseLeave={() => setHoveredPostId(null)}>
-											<img src={post?.media?.url} alt={`post-${post?._id}`} className="w-full" />
+											<img src={post?.media} alt={`post-${post?._id}`} className="w-full" />
 											{/* {/* Overlay for Like and Comment counts  */}
 											{hoveredPostId === post?._id && (
-												<div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-75 text-white px-2 py-1 rounded">
+												<div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-black bg-opacity-75 text-white px-2 py-1 rounded">
 													<span className="pr-8">
 														{" "}
 														<FontAwesomeIcon className="pr-2" icon={faHeart} />
