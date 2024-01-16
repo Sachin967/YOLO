@@ -1,8 +1,8 @@
 import MessageService from "../services/message-service.js";
 import { UserAuth } from "./middleware/auth.js";
-import express from 'express'
+import express from "express";
 export const message = (app) => {
-	const router = express.Router()
+	const router = express.Router();
 
 	const service = new MessageService();
 	router.get("/fetchchat/:id", async (req, res, next) => {
@@ -83,5 +83,5 @@ export const message = (app) => {
 			return res.json(getChats);
 		} catch (error) {}
 	});
-	app.use('/messaging', router)
+	app.use("/messaging", router);
 };

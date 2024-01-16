@@ -43,7 +43,7 @@ class PostRepositary {
 		try {
 			const posts = await Post.find({ reported: { $exists: true, $not: { $size: 0 } } });
 			return posts;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async FindUserPostAndLikes(id) {
@@ -81,13 +81,13 @@ class PostRepositary {
 				const likeCount = post.likes.length;
 				return { post: savedPost, status: "unliked", likeCount };
 			}
-		} catch (error) { }
+		} catch (error) {}
 	}
 	async LikedPosts(userId) {
 		try {
 			const likedPosts = await Post.find({ likes: { $elemMatch: { user: userId } } });
 			return likedPosts;
-		} catch (error) { }
+		} catch (error) {}
 	}
 	async CreateComment({ content, username, postId }) {
 		try {
@@ -107,7 +107,7 @@ class PostRepositary {
 	async ModifyPost({ postId, textmedia, search }) {
 		try {
 			const post = await Post.findByIdAndUpdate({ _id: postId }, { textmedia, location: search }, { new: true });
-			console.log(post)
+			console.log(post);
 			return post;
 		} catch (error) {
 			console.log(error);
@@ -128,15 +128,13 @@ class PostRepositary {
 
 	async RemoveComment(commentId) {
 		try {
-			console.log(commentId)
-			const comment = await Comment.findOneAndDelete({ _id: commentId })
+			console.log(commentId);
+			const comment = await Comment.findOneAndDelete({ _id: commentId });
 			if (!comment) {
 				return { status: "Comment not found" };
 			}
-			return { status: "Comment Deleted" }
-		} catch (error) {
-
-		}
+			return { status: "Comment Deleted" };
+		} catch (error) {}
 	}
 
 	async FlagPost({ postId, username, reason }) {
@@ -174,15 +172,15 @@ class PostRepositary {
 			if (reportedPost) {
 				return reportedPost;
 			}
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async FetchSavedPosts(postIds) {
 		try {
-			console.log("l", postIds)
-			const posts = await Post.find({ _id: { $in: postIds } })
-			return posts
-		} catch (error) { }
+			console.log("l", postIds);
+			const posts = await Post.find({ _id: { $in: postIds } });
+			return posts;
+		} catch (error) {}
 	}
 
 	async CreateCommentReply({ username, replyText, commentId }) {
@@ -193,16 +191,14 @@ class PostRepositary {
 				{ new: true }
 			);
 			return comment;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async FindUserId(postId) {
 		try {
-			const userId = await Post.findOne({ _id: postId }, { userId: 1, _id: 0 })
-			return userId
-		} catch (error) {
-
-		}
+			const userId = await Post.findOne({ _id: postId }, { userId: 1, _id: 0 });
+			return userId;
+		} catch (error) {}
 	}
 	async unListPost(data) {
 		const unlist = await Post.findOneAndUpdate({ _id: data }, { isListed: false }, { new: true });
@@ -221,30 +217,27 @@ class PostRepositary {
 					$group: {
 						_id: {
 							week: { $week: "$createdAt" },
-							year: { $year: "$createdAt" },
+							year: { $year: "$createdAt" }
 						},
-						count: { $sum: 1 },
-					},
+						count: { $sum: 1 }
+					}
 				},
 				{
 					$group: {
 						_id: null,
-						average: { $avg: "$count" },
-					},
-				},
+						average: { $avg: "$count" }
+					}
+				}
 			]);
 
 			if (result.length > 0) {
-				console.log(result[0].average)
-				return result[0].average
+				console.log(result[0].average);
+				return result[0].average;
 			} else {
 				console.log("No posts found");
 			}
-		} catch (error) {
-
-		}
+		} catch (error) {}
 	}
-
 }
 
 export default PostRepositary;

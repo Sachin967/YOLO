@@ -24,12 +24,16 @@ const GroupChatModal = ({ isOpen, onClose, filteredUsers, FetchChats }) => {
 	const [groupChatname, setgroupChatname] = useState();
 	const [selectedUsers, setSelectedUsers] = useState([]);
 	const [search, setSearch] = useState("");
-	const { userdetails } = useSelector((state) => state.auth)
+	const { userdetails } = useSelector((state) => state.auth);
 	const showToast = useCustomToast();
 	const [chats, setChats] = useState([]);
 	const filter = filteredUsers.filter((user) => {
-		const hasName = user?.name && user.name !== userdetails.name && user.name.toLowerCase().includes(search.toLowerCase());
-		const hasUsername = user?.username && user.username !== userdetails.username && user.username.toLowerCase().includes(search.toLowerCase());
+		const hasName =
+			user?.name && user.name !== userdetails.name && user.name.toLowerCase().includes(search.toLowerCase());
+		const hasUsername =
+			user?.username &&
+			user.username !== userdetails.username &&
+			user.username.toLowerCase().includes(search.toLowerCase());
 
 		return hasName || hasUsername;
 	});
@@ -53,7 +57,7 @@ const GroupChatModal = ({ isOpen, onClose, filteredUsers, FetchChats }) => {
 			return;
 		}
 		if (selectedUsers.length < 2) {
-			showToast('warning', 'More than 1 member needed to create a group')
+			showToast("warning", "More than 1 member needed to create a group");
 		}
 		try {
 			messaging
@@ -72,7 +76,7 @@ const GroupChatModal = ({ isOpen, onClose, filteredUsers, FetchChats }) => {
 				.catch((err) => {
 					console.log(err);
 				});
-		} catch (error) { }
+		} catch (error) {}
 	};
 	return (
 		<Modal onClose={onClose} size={"md"} isOpen={isOpen}>

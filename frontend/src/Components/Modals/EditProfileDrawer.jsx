@@ -82,7 +82,13 @@ function EditProfileDrawer({ isOpen, onClose, showUserProfile }) {
 
 	return (
 		<>
-			<Drawer onEsc={false} onOverlayClick={false} isOpen={isOpen} placement="right" initialFocusRef={firstField} onClose={onClose}>
+			<Drawer
+				onEsc={false}
+				onOverlayClick={false}
+				isOpen={isOpen}
+				placement="right"
+				initialFocusRef={firstField}
+				onClose={onClose}>
 				<DrawerOverlay />
 				<DrawerContent style={{ backgroundColor: "#262626" }}>
 					<DrawerCloseButton className="text-white" />

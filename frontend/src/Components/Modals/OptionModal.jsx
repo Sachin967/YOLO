@@ -48,8 +48,8 @@ function OptionsModal({
 	const { userdetails } = useSelector((state) => state.auth);
 	const cancelRef = React.useRef();
 	const [search, setSearch] = useState(null);
-	const [places, setPlaces] = useState([])
-	const [textmedia, setTextMedia] = useState(null)
+	const [places, setPlaces] = useState([]);
+	const [textmedia, setTextMedia] = useState(null);
 	// const [location, setLocation] = useState('')
 	const dispatch = useDispatch();
 	const Navigate = useNavigate();
@@ -79,7 +79,7 @@ function OptionsModal({
 						console.error("Error:", error);
 					}
 				});
-		} catch (error) { }
+		} catch (error) {}
 	};
 
 	const handleLocationAPI = (e) => {
@@ -123,13 +123,13 @@ function OptionsModal({
 			if (search !== null) {
 				requestData.search = search;
 			} else {
-				requestData.search = specificPost?.location || '';
+				requestData.search = specificPost?.location || "";
 			}
 			posts
 				.put(`/editpost/${postId}`, { requestData })
 				.then((res) => {
 					if (res.data) {
-						FetchPosts()
+						FetchPosts();
 						setSpecificPost(res.data);
 						onDrawerClose();
 						showToast("success", "Post updated");
@@ -169,7 +169,7 @@ function OptionsModal({
 						console.error("Error:", error);
 					}
 				});
-		} catch (error) { }
+		} catch (error) {}
 	};
 
 	return (
@@ -266,7 +266,7 @@ function OptionsModal({
 							rows="4"></textarea>
 						<input
 							onChange={(e) => {
-								handleLocationAPI(e)
+								handleLocationAPI(e);
 							}}
 							name="location"
 							value={search !== null ? search : specificPost?.location}
@@ -275,36 +275,45 @@ function OptionsModal({
 							className="w-full mt-5 text-white"
 							placeholder="Add Location"
 						/>
-						{search!==''&&<button className="absolute top-[290px] right-9 text-white" onClick={() => {
-							setPlaces([])
-							setSearch('')
-						}}>Clear</button>}
-						<div style={{ position: 'relative' }}>
-							{places.length > 0 && search !== '' && (
-								<div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999 }}>
+						{search !== "" && (
+							<button
+								className="absolute top-[290px] right-9 text-white"
+								onClick={() => {
+									setPlaces([]);
+									setSearch("");
+								}}>
+								Clear
+							</button>
+						)}
+						<div style={{ position: "relative" }}>
+							{places.length > 0 && search !== "" && (
+								<div
+									style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0, zIndex: 999 }}>
 									{/* Box with places */}
 									<Box display={"inline-flex"} flexWrap={"wrap"} mt={2}>
 										{places.map((place) => (
-
 											<div
 												onClick={() => {
 													// setSpecificPost({ ...specificPost, location: place.text });
 													setSearch(place.text);
 													setPlaces([]); // Clear the places array after selecting a place
 												}}
-												className='flex w-full cursor-pointer'
-												style={{ backgroundColor: 'gray', padding: '5px', margin: '5px', borderRadius: '5px' }}
-											>
-
-												<h2 className="mt-5 me-2 text-lg text-white font-bold">{place?.text}</h2>
+												className="flex w-full cursor-pointer"
+												style={{
+													backgroundColor: "gray",
+													padding: "5px",
+													margin: "5px",
+													borderRadius: "5px"
+												}}>
+												<h2 className="mt-5 me-2 text-lg text-white font-bold">
+													{place?.text}
+												</h2>
 											</div>
 										))}
 									</Box>
 								</div>
 							)}
 						</div>
-
-
 
 						<img className="max-w-[400px] mx-auto max-h-[400px] " src={specificPost?.media} alt="" />
 					</DrawerBody>

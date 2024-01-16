@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const notificationSchema = new mongoose.Schema({
 	recipientId: {
-		type: String,
+		type: String
 		// required: true
 	},
 	senderId: {
@@ -11,7 +11,7 @@ const notificationSchema = new mongoose.Schema({
 	},
 	notificationType: {
 		type: String,
-		enum: ["like", "comment", "follow", "message", "admin","request"],
+		enum: ["like", "comment", "follow", "message", "admin", "request"],
 		required: true
 	},
 	entityType: {

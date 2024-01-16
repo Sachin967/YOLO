@@ -41,7 +41,7 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 	const { isOpen: isAlertOpen, onOpen: onAlertOpen, onClose: onAlertClose } = useDisclosure();
 	const [isLink, setLink] = useState();
 	const [userId, setUserId] = useState();
-	
+
 	// const handleImageUpdate = (newImage) => {
 	// 	console.log(newImage);
 	// 	setUpdatedImage(newImage);
@@ -93,7 +93,7 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 			messaging
 				.get(`/message/${selectedUsers._id}`)
 				.then((res) => {
-					console.log(res.data.response)
+					console.log(res.data.response);
 					setUser(res.data.response);
 					setMessage(res.data.message);
 					socket.emit("join chat", selectedUsers._id);
@@ -129,7 +129,6 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 		});
 		return `Joined on ${formattedDate}`;
 	}
-
 
 	const handleShowGroupInfo = () => {
 		setShowGroupInfo((prevState) => !prevState);
@@ -197,7 +196,10 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 								<>
 									<div onClick={handleShowGroupInfo} className="flex cursor-pointer">
 										<Avatar src={updatedImage || selectedUsers?.groupImage?.url}></Avatar>
-										<h2 className="text-2xl ms-3 w-full font-semibold text-black dark:text-white"> 	{updatedName || selectedUsers?.chatName}</h2>
+										<h2 className="text-2xl ms-3 w-full font-semibold text-black dark:text-white">
+											{" "}
+											{updatedName || selectedUsers?.chatName}
+										</h2>
 									</div>
 									<div className=" overflow-y-auto">
 										{/* <Link to={`/${selectedUsers?.chatName}`}> */}
@@ -227,17 +229,19 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 							) : (
 								<>
 									<div className="flex pb-3">
-											<button className="text-3xl text-black dark:text-white" onClick={handleShowGroupInfo}>
+										<button
+											className="text-3xl text-black dark:text-white"
+											onClick={handleShowGroupInfo}>
 											<IoArrowBack />
 										</button>
 										<h2 className="ms-3 dark:text-gray-300 text-gray-600 text-2xl">Group Info</h2>
 									</div>
 									<div className="flex p-3 pb-5 border-b border-gray-500 mt-5 w-full items-center">
 										<Avatar src={updatedImage || selectedUsers?.groupImage?.url} />
-											<h2 className="ps-3 text-xl text-black dark:text-white flex-1">
+										<h2 className="ps-3 text-xl text-black dark:text-white flex-1">
 											{updatedName || selectedUsers?.chatName}
 										</h2>
-									{console.log(user)}
+										{console.log(user)}
 										<button onClick={onOpen} className="text-purple-700">
 											Edit
 										</button>
@@ -251,13 +255,15 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 										setUpdatedImage={setUpdatedImage}
 										setUpdatedName={setUpdatedName}
 									/>
-										<h1 className="text-2xl font-bold text-black dark:text-white pt-5">Peoples</h1>
+									<h1 className="text-2xl font-bold text-black dark:text-white pt-5">Peoples</h1>
 									<div className="h-[350px] overflow-y-auto border-b">
 										{user?.map((u) => (
 											<div className="flex p-3 pt-5 pb-5 items-center" key={u?._id}>
 												<Avatar src={u?.propic?.url} />
 												<div className="ml-4">
-													<h2 className="text-black dark:text-white font-semibold text-lg">{u?.name}</h2>
+													<h2 className="text-black dark:text-white font-semibold text-lg">
+														{u?.name}
+													</h2>
 													<h2 className="text-gray-400">@{u?.username}</h2>
 												</div>
 												{/* <div className="ml-auto">
@@ -302,10 +308,12 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 						<>
 							{" "}
 							<div className="flex w-full lg:ml-0  ml-20 sm:ml-80">
-									<h2 className="text-2xl font-semibold text-black dark:text-white ">{otherUser?.name}</h2>
+								<h2 className="text-2xl font-semibold text-black dark:text-white ">
+									{otherUser?.name}
+								</h2>
 								<div
 									onClick={() => handleJoinRoom(otherUser._id)}
-										className="dark:text-white text-black ps-[20px] items-start">
+									className="dark:text-white text-black ps-[20px] items-start">
 									<CiVideoOn className="w-8 h-8 cursor-pointer" />
 								</div>
 							</div>
@@ -318,7 +326,7 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 												src={otherUser?.propic?.url}
 												alt=""
 											/>
-												<h1 className="text-center text-black dark:text-white text-[22px] font-semibold ">
+											<h1 className="text-center text-black dark:text-white text-[22px] font-semibold ">
 												{chatdata?.user1?.name}
 											</h1>
 											<h2 className="text-center text-gray-500 pb-4">@{otherUser?.username}</h2>
@@ -382,8 +390,8 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 				</div>
 			) : (
 				<>
-						<div className="border-l border-gray-600 lg:flex hidden p-4 w-[694px] md:w-[1110px] lg:w-[680px] h-screen sm:w-[980px] dark:bg-black bg-white flex-col justify-center items-center">
-							<h2 className="dark:text-white text-black font-sans text-4xl font-bold">Select a message</h2>
+					<div className="border-l border-gray-600 lg:flex hidden p-4 w-[694px] md:w-[1110px] lg:w-[680px] h-screen sm:w-[980px] dark:bg-black bg-white flex-col justify-center items-center">
+						<h2 className="dark:text-white text-black font-sans text-4xl font-bold">Select a message</h2>
 						<p className="text-gray-400">
 							Choose from your existing conversations, start a new one by searching
 						</p>

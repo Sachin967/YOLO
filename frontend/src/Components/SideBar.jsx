@@ -5,7 +5,16 @@ import { useEffect, useState } from "react";
 import PostModal from "./Modals/PostModal";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { Popover, PopoverTrigger, PopoverContent, PopoverArrow, PopoverCloseButton, Avatar, useDisclosure, Box } from "@chakra-ui/react";
+import {
+	Popover,
+	PopoverTrigger,
+	PopoverContent,
+	PopoverArrow,
+	PopoverCloseButton,
+	Avatar,
+	useDisclosure,
+	Box
+} from "@chakra-ui/react";
 import { useLocation } from "react-router-dom";
 import { ChatState } from "../Context/ChatProvider";
 import { GoMoon } from "react-icons/go";
@@ -25,7 +34,7 @@ const SideBar = ({ userinfo }) => {
 	const isMessages = location.pathname.startsWith("/messages");
 	const isSearch = location.pathname.startsWith("/search");
 	const isBookmark = location.pathname.endsWith("/saved");
-	const { isOpen, onOpen, onClose } = useDisclosure()
+	const { isOpen, onOpen, onClose } = useDisclosure();
 	const { notify } = ChatState();
 	const [showNot, setshowNot] = useState(true);
 	const [notificationCount, setNotificationCount] = useState(0);
@@ -34,7 +43,7 @@ const SideBar = ({ userinfo }) => {
 	const dispatch = useDispatch();
 	const Navigate = useNavigate();
 	const HandleNotificationCount = () => {
-		setNotificationCount(0)
+		setNotificationCount(0);
 		setshowNot(false);
 	};
 	useEffect(() => {
@@ -52,7 +61,7 @@ const SideBar = ({ userinfo }) => {
 					setNotificationCount(1);
 
 					processedNotifications.add(data.notification._id);
-					console.log(processedNotifications)
+					console.log(processedNotifications);
 					console.log("New Notification:", data);
 				}
 			}
@@ -184,7 +193,33 @@ const SideBar = ({ userinfo }) => {
 							<Link
 								to={"/search"}
 								className="flex items-center p-2 my-5 text-black rounded-full dark:text-white hover:bg-zinc-200 dark:hover:bg-gray-700 group ms-16 ">
-								<svg aria-label="Search" className="dark:text-white text-black" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><title>Search</title><path d="M19 10.5A8.5 8.5 0 1 1 10.5 2a8.5 8.5 0 0 1 8.5 8.5Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="16.511" x2="22" y1="16.511" y2="22"></line></svg>
+								<svg
+									aria-label="Search"
+									className="dark:text-white text-black"
+									fill="currentColor"
+									height="24"
+									role="img"
+									viewBox="0 0 24 24"
+									width="24">
+									<title>Search</title>
+									<path
+										d="M19 10.5A8.5 8.5 0 1 1 10.5 2a8.5 8.5 0 0 1 8.5 8.5Z"
+										fill="none"
+										stroke="currentColor"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"></path>
+									<line
+										fill="none"
+										stroke="currentColor"
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										x1="16.511"
+										x2="22"
+										y1="16.511"
+										y2="22"></line>
+								</svg>
 								<span
 									className={
 										isSearch
@@ -301,7 +336,6 @@ const SideBar = ({ userinfo }) => {
 						</li>
 
 						<li className="my-6">
-
 							<Popover colorScheme="gray" placement="top">
 								<PopoverTrigger>
 									<button
@@ -316,9 +350,11 @@ const SideBar = ({ userinfo }) => {
 										</span>
 									</button>
 								</PopoverTrigger>
-								<PopoverContent className="rounded-3xl " style={{ backgroundColor: '#2b2a2a' }}>
+								<PopoverContent className="rounded-3xl " style={{ backgroundColor: "#2b2a2a" }}>
 									{/* <PopoverArrow /> */}
-									<Link to="/settings/change-password" className="text-white dark:hover:bg-zinc-700 dark:text-white">
+									<Link
+										to="/settings/change-password"
+										className="text-white dark:hover:bg-zinc-700 dark:text-white">
 										<div className="flex p-5">
 											<RiSettings5Line className="dark:text-white text-white text-2xl mr-4" />
 											Setting
@@ -332,7 +368,9 @@ const SideBar = ({ userinfo }) => {
 										<GoReport className="dark:text-white text-white text-2xl mr-4" />
 										<button className=" dark:text-white text-white">Report a Problem</button>
 									</div>
-									<button className="p-5 dark:text-white text-white hover:bg-zinc-700" onClick={() => handleLogout(dispatch, Navigate)}>
+									<button
+										className="p-5 dark:text-white text-white hover:bg-zinc-700"
+										onClick={() => handleLogout(dispatch, Navigate)}>
 										Logout
 									</button>
 								</PopoverContent>
@@ -341,12 +379,12 @@ const SideBar = ({ userinfo }) => {
 					</ul>
 
 					<div>
-						<button style={{ backgroundColor: 'rgb(147 51 234)' }}
+						<button
+							style={{ backgroundColor: "rgb(147 51 234)" }}
 							className="ml-[70px] mt-10  w-44 hover:bg-purple-800 text-white font-semibold rounded-full px-6 py-[15px] text-center me-2 mb-2 "
 							onClick={onOpen}>
 							POST
 						</button>
-
 					</div>
 				</div>
 			</aside>

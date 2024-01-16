@@ -22,8 +22,7 @@ const PostSchema = new mongoose.Schema(
 				createdAt: { type: Date, default: Date.now }
 			}
 		],
-		isListed: { type: Boolean, default: true },
-
+		isListed: { type: Boolean, default: true }
 	},
 
 	{ timestamps: true }

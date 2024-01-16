@@ -85,7 +85,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 		<Provider store={Store}>
 			<ChakraProvider theme={theme}>
 				<ThemeProvider>
-				<RouterProvider router={routes} />
+					<RouterProvider router={routes} />
 				</ThemeProvider>
 			</ChakraProvider>
 		</Provider>

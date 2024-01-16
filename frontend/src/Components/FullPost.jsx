@@ -62,7 +62,7 @@ const FullPost = ({
 		posts
 			.post("/postdetails", { postId })
 			.then((res) => {
-				console.log(res.data)
+				console.log(res.data);
 				const { post: post, userData } = res.data.response;
 				// Match user data for each post based on user IDs
 				const commentWithUserData = post.comments.map((comment) => {
@@ -109,7 +109,7 @@ const FullPost = ({
 	const containsPostId = post.some((p) => p._id === postId);
 	useEffect(() => {
 		const specificpost = post.find((p) => p._id === postId);
-	
+
 		setSpecificPost(specificpost);
 		extractUserData();
 	}, [postId, post, postuser]);
@@ -158,7 +158,7 @@ const FullPost = ({
 			.post("/addcomment", data)
 			.then((res) => {
 				if (res.data.status) {
-					setCom('')
+					setCom("");
 					SinglePostDetails();
 					showToast("success", "Comment added");
 				}
@@ -191,7 +191,7 @@ const FullPost = ({
 						console.error("Error:", error);
 					}
 				});
-		} catch (error) { }
+		} catch (error) {}
 	};
 	const formatDate = (dateString) => {
 		const options = {
@@ -235,7 +235,9 @@ const FullPost = ({
 												{userData?.username}
 											</Heading>
 										</a>
-										<h1 className="text-white  w-40">{specificPost?.location||poster?.location}</h1>
+										<h1 className="text-white  w-40">
+											{specificPost?.location || poster?.location}
+										</h1>
 									</div>
 									<FontAwesomeIcon
 										onClick={onBasicOpen}
@@ -245,7 +247,9 @@ const FullPost = ({
 								</div>
 								{/* Text content here */}
 								<div className="p-2 border-b border-zinc-700">
-									<Text className="font-poppins font-light text-lg">{specificPost?.textmedia||poster?.textmedia}</Text>
+									<Text className="font-poppins font-light text-lg">
+										{specificPost?.textmedia || poster?.textmedia}
+									</Text>
 								</div>
 								{/* Iterate through comments */}
 								{comments.length > 0 &&
@@ -345,8 +349,9 @@ const FullPost = ({
 							<div className="flex p-3 justify-between">
 								<FontAwesomeIcon
 									onClick={() => handleLike(postId)}
-									className={`text-3xl transition-transform cursor-pointer p-3 ${like ? "text-red-700 scale-125" : "text-gray-200"
-										}`}
+									className={`text-3xl transition-transform cursor-pointer p-3 ${
+										like ? "text-red-700 scale-125" : "text-gray-200"
+									}`}
 									icon={faHeart}
 								/>
 								{/* <FontAwesomeIcon className="text-2xl p-2" icon={faPaperPlane} /> */}
@@ -362,7 +367,10 @@ const FullPost = ({
 									)}
 								</div>
 							</div>
-							<Text className="font-semibold text-2xl dark:text-white text-black ml-8 mb-3"> {likeCount}</Text>
+							<Text className="font-semibold text-2xl dark:text-white text-black ml-8 mb-3">
+								{" "}
+								{likeCount}
+							</Text>
 							<div className="">{emojishow && <EmojiPicker onEmojiClick={addEmoji} />}</div>
 							<div className="flex p-3 border-t border-b border-3 border-zinc-700 justify-between items-center">
 								<FontAwesomeIcon

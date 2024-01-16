@@ -87,11 +87,11 @@ class PostService {
 					comment.userDetails = userDetail; // Associate user details with the post
 				}
 			});
-			const user =userData.map((obj)=>{
-				const {_id,...rest}=obj
-				return rest
-			})
-			console.log("user",user)
+			const user = userData.map((obj) => {
+				const { _id, ...rest } = obj;
+				return rest;
+			});
+			console.log("user", user);
 			// Return user data associated with comment users
 			return { post: post, userData: user };
 		} catch (error) {
@@ -194,7 +194,7 @@ class PostService {
 		try {
 			const res = await this.repositary.RemoveComment(commentId);
 			return res;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async ReportPost({ postId, username, reason }) {
@@ -211,23 +211,21 @@ class PostService {
 		} catch (error) {}
 	}
 
-	async FetchUserFromPosts(postId){
+	async FetchUserFromPosts(postId) {
 		try {
-			const {userId} = await this.repositary.FindUserId(postId)
-			console.log(userId)
-			const response = await RPCRequest('USER_RPC',{
-				type:"FETCH_USERS",
-				data:userId
-			})
-			const modifiedArray = response.map((obj) => {
-				const { _id, ...rest } = obj; 
-				return rest; 
+			const { userId } = await this.repositary.FindUserId(postId);
+			console.log(userId);
+			const response = await RPCRequest("USER_RPC", {
+				type: "FETCH_USERS",
+				data: userId
 			});
-			console.log("hi", modifiedArray)
-			return modifiedArray
-		} catch (error) {
-			
-		}
+			const modifiedArray = response.map((obj) => {
+				const { _id, ...rest } = obj;
+				return rest;
+			});
+			console.log("hi", modifiedArray);
+			return modifiedArray;
+		} catch (error) {}
 	}
 
 	async serveRPCRequest(payload) {
@@ -242,9 +240,9 @@ class PostService {
 				return this.repositary.FindUserPostAndLikes(data);
 				break;
 			case "SAVED_POSTS":
-				console.log(data)
-				return this.repositary.FetchSavedPosts(data)
-				break
+				console.log(data);
+				return this.repositary.FetchSavedPosts(data);
+				break;
 			case "UNLIST_POST":
 				return this.repositary.unListPost(data);
 				break;

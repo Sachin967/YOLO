@@ -84,7 +84,7 @@ export const fetchLikedPost = (userId, postId, setLiked) => {
 		});
 };
 
-export const handleLogout = (dispatch,Navigate) => {
+export const handleLogout = (dispatch, Navigate) => {
 	users.post("/logout").then((res) => {
 		if (res.status) {
 			dispatch(AuthActions.UserLogout());

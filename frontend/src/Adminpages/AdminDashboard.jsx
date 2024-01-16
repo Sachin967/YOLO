@@ -1,11 +1,11 @@
 import { Chart } from "primereact/chart";
 import { useEffect, useState } from "react";
-import { admin } from '../config/axios'
+import { admin } from "../config/axios";
 const AdminDashboard = () => {
 	const [douChartData, setDouChartData] = useState({});
 	const [pieChartData, setPieChartData] = useState({});
 	const [chartOptions, setChartOptions] = useState({});
-	const [totalUsers,setTotalUsers]=useState(0)
+	const [totalUsers, setTotalUsers] = useState(0);
 	const [count, setCount] = useState({
 		maleCount: 0,
 		femaleCount: 0,
@@ -17,34 +17,40 @@ const AdminDashboard = () => {
 		between25and30: 0
 	});
 	const [loading, setLoading] = useState(true);
-	const [averagePost,setAveragePost]=useState()
+	const [averagePost, setAveragePost] = useState();
 	const fetchPostData = () => {
-		admin.get('/userdashboard').then((res) => {
-			console.log(res)
-			if (res.data) {
-				setCount(res.data.response)
-				setAgeCount(res.data.resp)
-			}
-		}).catch((error) => {
-			console.log(error)
-		}).finally(() => {
-			setLoading(false)
-		})
-	}
+		admin
+			.get("/userdashboard")
+			.then((res) => {
+				console.log(res);
+				if (res.data) {
+					setCount(res.data.response);
+					setAgeCount(res.data.resp);
+				}
+			})
+			.catch((error) => {
+				console.log(error);
+			})
+			.finally(() => {
+				setLoading(false);
+			});
+	};
 	const averagePostsperWeek = () => {
-		admin.get('/averagepostcount').then((res) => {
-			if (res.data) {
-				setAveragePost(res.data.response)
-				console.log(res.data)
-			}
-		}).catch(err => console.log(err))
-	}
+		admin
+			.get("/averagepostcount")
+			.then((res) => {
+				if (res.data) {
+					setAveragePost(res.data.response);
+					console.log(res.data);
+				}
+			})
+			.catch((err) => console.log(err));
+	};
 	useEffect(() => {
-		setLoading(true)
-		fetchPostData()
-		averagePostsperWeek()
-	},[])
-
+		setLoading(true);
+		fetchPostData();
+		averagePostsperWeek();
+	}, []);
 
 	useEffect(() => {
 		// Calculate total users whenever count is updated
@@ -64,7 +70,7 @@ const AdminDashboard = () => {
 			}
 			const data = {
 				labels: ["Male", "Female", "Other"],
-				
+
 				datasets: [
 					{
 						label: "Count",
@@ -72,10 +78,15 @@ const AdminDashboard = () => {
 						backgroundColor: [
 							"rgba(255, 159, 64, 0.2)",
 							"rgba(75, 192, 192, 0.2)",
-							"rgba(54, 162, 235, 0.2)",
+							"rgba(54, 162, 235, 0.2)"
 							// "rgba(153, 102, 255, 0.2)"
 						],
-						borderColor: ["rgb(255, 159, 64)", "rgb(75, 192, 192)", "rgb(54, 162, 235)", "rgb(153, 102, 255)"],
+						borderColor: [
+							"rgb(255, 159, 64)",
+							"rgb(75, 192, 192)",
+							"rgb(54, 162, 235)",
+							"rgb(153, 102, 255)"
+						],
 						borderWidth: 1
 					}
 				]
@@ -89,10 +100,15 @@ const AdminDashboard = () => {
 						backgroundColor: [
 							"rgba(255, 159, 64, 0.2)",
 							"rgba(75, 192, 192, 0.2)",
-							"rgba(54, 162, 235, 0.2)",
+							"rgba(54, 162, 235, 0.2)"
 							// "rgba(153, 102, 255, 0.2)"
 						],
-						borderColor: ["rgb(255, 159, 64)", "rgb(75, 192, 192)", "rgb(54, 162, 235)", "rgb(153, 102, 255)"],
+						borderColor: [
+							"rgb(255, 159, 64)",
+							"rgb(75, 192, 192)",
+							"rgb(54, 162, 235)",
+							"rgb(153, 102, 255)"
+						],
 						borderWidth: 1
 					}
 				]
@@ -106,12 +122,11 @@ const AdminDashboard = () => {
 				}
 			};
 			setDouChartData(data);
-			setPieChartData(ageData)
+			setPieChartData(ageData);
 			setChartOptions(options);
 		}
 	}, [count, loading, ageCount]);
 	return (
-		
 		<div className="card flex flex-col justify-end">
 			<div className="flex justify-evenly  w-full">
 				<div className="w-60 h-36 my-5 rounded-lg bg-zinc-400">
@@ -129,8 +144,10 @@ const AdminDashboard = () => {
 			</div>
 			<div className="flex justify-evenly w-full">
 				<div className="w-[33%] h-[200px]">
-				<Chart type="doughnut" data={douChartData} options={chartOptions} />
-					<h1 className="text-lg text-white font-bold text-center" font>Age Groups</h1>
+					<Chart type="doughnut" data={douChartData} options={chartOptions} />
+					<h1 className="text-lg text-white font-bold text-center" font>
+						Age Groups
+					</h1>
 				</div>
 				<div className="w-[33%]  h-[200px]">
 					<Chart type="pie" data={pieChartData} options={chartOptions} />

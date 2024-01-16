@@ -54,7 +54,7 @@ const Notification = () => {
 		notifications
 			.get(`/notification/${userdetails._id}`)
 			.then((res) => {
-				console.log(res.data)
+				console.log(res.data);
 				setLoading(false);
 				if (res.data) {
 					const { notification, response } = res.data;
@@ -105,9 +105,9 @@ const Notification = () => {
 	const startOfWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay());
 	const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 	const todayNotifications = [];
-	const thisWeekNotifications = []
-	const thisMonthNotification = []
-	const earlierNotification = []
+	const thisWeekNotifications = [];
+	const thisMonthNotification = [];
+	const earlierNotification = [];
 
 	notify.forEach((notification) => {
 		const notificationDate = new Date(notification.createdAt);
@@ -125,22 +125,28 @@ const Notification = () => {
 		}
 	});
 
-	const handleConfirm=(not)=>{
-		notifications.post('/requestconfirm',{noti:not}).then(res=>{
-			if(res.data){
-				ShowNotifications()
-			}
-		}).catch(err=>console.log(err))
-	}
+	const handleConfirm = (not) => {
+		notifications
+			.post("/requestconfirm", { noti: not })
+			.then((res) => {
+				if (res.data) {
+					ShowNotifications();
+				}
+			})
+			.catch((err) => console.log(err));
+	};
 
 	const handleDelete = (not) => {
-		console.log(not)
-		notifications.delete(`/requestdelete/${not._id}`).then(res => {
-			if(res.data){
-				ShowNotifications()
-			}
-		}).catch(err => console.log(err))
-	}
+		console.log(not);
+		notifications
+			.delete(`/requestdelete/${not._id}`)
+			.then((res) => {
+				if (res.data) {
+					ShowNotifications();
+				}
+			})
+			.catch((err) => console.log(err));
+	};
 
 	const renderNotification = (not) => {
 		return (
@@ -215,11 +221,19 @@ const Notification = () => {
 								{" "}
 								<h2 className="text-lg me-5 dark:text-white text-black">
 									<span className="text-blue-400 me-3">@{not?.userDetail?.username}</span>
-								requested to follow you
+									requested to follow you
 								</h2>
 							</Link>
-							<button onClick={() => handleConfirm(not)} className=" ms-2 bg-blue-700 p-2 mr-3 rounded-lg dark:text-white text-black">Confirm</button>
-							<button onClick={() => handleDelete(not)} className="bg-gray-700 p-2 rounded-lg  dark:text-white text-black">Delete</button>
+							<button
+								onClick={() => handleConfirm(not)}
+								className=" ms-2 bg-blue-700 p-2 mr-3 rounded-lg dark:text-white text-black">
+								Confirm
+							</button>
+							<button
+								onClick={() => handleDelete(not)}
+								className="bg-gray-700 p-2 rounded-lg  dark:text-white text-black">
+								Delete
+							</button>
 						</>
 					)}
 					{not?.notificationType === "comment" && (
@@ -268,11 +282,12 @@ const Notification = () => {
 	};
 	return (
 		<>
-		
 			<div className="flex h-full">
 				<div className="ml-20 w-[694px] md:w-[1110px] lg:w-[750px] min-h-screen max-h-full sm:w-[980px] lg:ml-[320px] sm:ml-[55px] bg-white dark:bg-black">
 					<div className="p-4  max-w-[750px] ">
-						<h2 className="text-center font-sans font-bold text-3xl dark:text-white text-black">Notifications</h2>
+						<h2 className="text-center font-sans font-bold text-3xl dark:text-white text-black">
+							Notifications
+						</h2>
 						{loading && (
 							<div role="status" className="relative">
 								<svg

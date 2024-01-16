@@ -3,17 +3,17 @@ import { NOTIFICATION_BINDING_KEY, USER_BINDING_KEY } from "../config/index.js";
 import PostService from "../services/post-service.js";
 import { PublishMessage, RPCObserver } from "../utils/index.js";
 import { UserAuth } from "./middleware/auth.js";
-import express from 'express'
+import express from "express";
 // import { UserAuth } from "./middleware/auth.js";
 export const posts = (app, channel) => {
-	const router = express.Router()
+	const router = express.Router();
 
 	const service = new PostService();
 	RPCObserver("POST_RPC", service);
 
-	router.post("/addpost", upload.single('media'), async (req, res, next) => {
-		console.log(req.file)
-		const media = req.file.location
+	router.post("/addpost", upload.single("media"), async (req, res, next) => {
+		console.log(req.file);
+		const media = req.file.location;
 		const { userId, location, privacy, textmedia } = req.body;
 		try {
 			const response = await service.AddPost({ userId, location, textmedia, privacy, media });
@@ -63,28 +63,28 @@ export const posts = (app, channel) => {
 				PublishMessage(channel, NOTIFICATION_BINDING_KEY, JSON.stringify(payload));
 			}
 			return res.json({ status: true, reply });
-		} catch (error) { }
+		} catch (error) {}
 	});
 	router.get("/fetchUserPosts/:id", UserAuth, async (req, res) => {
 		try {
 			const { id } = req.params;
 			const posts = await service.FetchPostsofUser(id);
 			return res.json(posts);
-		} catch (error) { }
+		} catch (error) {}
 	});
 	router.post("/postdetails", UserAuth, async (req, res) => {
 		try {
 			const { postId } = req.body;
 			const response = await service.FetchPostDetail(postId);
-			const user = await service.FetchUserFromPosts(postId)
+			const user = await service.FetchUserFromPosts(postId);
 			res.json({ status: true, response, user });
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	router.put("/editpost/:postId", UserAuth, async (req, res) => {
 		try {
 			const { postId } = req.params;
-			const { textmedia, search } = req.body.requestData
+			const { textmedia, search } = req.body.requestData;
 			const editedPost = await service.EditPost({ postId, textmedia, search });
 			return res.json(editedPost);
 		} catch (error) {
@@ -99,7 +99,7 @@ export const posts = (app, channel) => {
 	});
 
 	router.delete("/deletecomment/:commentId", UserAuth, async (req, res) => {
-		console.log(req.params)
+		console.log(req.params);
 		const { commentId } = req.params;
 		const response = await service.deleteComment(commentId);
 		return res.json(response);
@@ -110,7 +110,7 @@ export const posts = (app, channel) => {
 			const { postId, username, reason } = req.body;
 			const reportedpost = await service.ReportPost({ postId, username, reason });
 			return res.json(reportedpost);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	router.post("/commentreply", UserAuth, async (req, res) => {
@@ -118,18 +118,18 @@ export const posts = (app, channel) => {
 			const { username, replyText, commentId } = req.body;
 			const resp = await service.AddCommentReply({ username, replyText, commentId });
 			return res.json(resp);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
-	router.get('/getusers/:postId', async (req, res) => {
+	router.get("/getusers/:postId", async (req, res) => {
 		try {
-			console.log(req.params)
-			const { postId } = req.params
-			const user = await service.FetchUserFromPosts(postId)
-			return res.json(user)
+			console.log(req.params);
+			const { postId } = req.params;
+			const user = await service.FetchUserFromPosts(postId);
+			return res.json(user);
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 		}
-	})
-	app.use('/posts', router)
+	});
+	app.use("/posts", router);
 };

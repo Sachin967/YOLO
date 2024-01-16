@@ -30,7 +30,7 @@ export const PublishMessage = async (channel, binding_key, message) => {
 };
 
 // subscribe messages
-export const SubscribeMessage = async (channel, service,io) => {
+export const SubscribeMessage = async (channel, service, io) => {
 	const appQueue = await channel.assertQueue(QUEUE_NAME);
 
 	channel.bindQueue(appQueue.queue, EXCHANGE_NAME, NOTIFICATION_BINDING_KEY);
@@ -39,7 +39,7 @@ export const SubscribeMessage = async (channel, service,io) => {
 		if (data.content) {
 			console.log("received data in notification");
 			console.log(data.content.toString());
-			service.SubscribeEvents(data.content.toString(), channel,io);
+			service.SubscribeEvents(data.content.toString(), channel, io);
 			channel.ack(data);
 		}
 	});

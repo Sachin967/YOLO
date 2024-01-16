@@ -57,10 +57,12 @@ export const CommentDeleteModal = ({ comment, onClose, isOpen, containsPostId, c
 									onReportOpen();
 									onClose();
 								}}
-									className="hover:bg-zinc-700 dark:text-white text-black text-lg hover:rounded-xl">
+								className="hover:bg-zinc-700 dark:text-white text-black text-lg hover:rounded-xl">
 								Report
 							</button>
-								<button onClick={onClose} className="hover:bg-zinc-700 dark:text-white text-black text-lg hover:rounded-xl">
+							<button
+								onClick={onClose}
+								className="hover:bg-zinc-700 dark:text-white text-black text-lg hover:rounded-xl">
 								Cancel
 							</button>
 							{/* <button className=""></button>  */}
