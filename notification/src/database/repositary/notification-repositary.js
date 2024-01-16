@@ -2,7 +2,6 @@ import { Notification } from "../model/notificationModel.js";
 class NotificationRepository {
 	async CreateNotification({ recipient, senderId, notificationType, entityId, entityType, image }, io) {
 		try {
-
 			const notification = new Notification({
 				recipientId: recipient,
 				senderId,
@@ -15,11 +14,10 @@ class NotificationRepository {
 
 			// Emit Socket.io event for new notification to connected clients
 			if (io) {
-
 				io.emit("newNotification", { notification: savedNotification });
 			}
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 		}
 	}
 
@@ -31,34 +29,33 @@ class NotificationRepository {
 				notificationType,
 				entityId,
 				entityType
-			})
-			 const noti=await notification.save();
-			await Notification.findByIdAndDelete(id)
-			return { status: 'success',noti }
+			});
+			const noti = await notification.save();
+			await Notification.findByIdAndDelete(id);
+			return { status: "success", noti };
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 		}
 	}
 
 	async DeleteNotificationById({ notId }) {
 		try {
-			return await Notification.findByIdAndDelete(notId)
-			
+			return await Notification.findByIdAndDelete(notId);
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 		}
 	}
 
 	async DeleteNotification({ recipient, senderId, notificationType }) {
 		try {
-			console.log('delete')
+			console.log("delete");
 			const result = await Notification.deleteMany({
 				recipientId: recipient,
 				senderId: senderId,
 				notificationType: notificationType
 			});
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 		}
 	}
 
@@ -66,7 +63,7 @@ class NotificationRepository {
 		try {
 			const notification = await Notification.find({ recipientId: id }).sort({ createdAt: -1 });
 			return notification;
-		} catch (error) { }
+		} catch (error) {}
 	}
 }
 

@@ -74,14 +74,14 @@ class UserRepositary {
 
 			// Token is valid and associated with the correct user
 			return { status: true, resetEntry };
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async updatePassword(userId, password, salt) {
 		try {
 			const user = await User.findByIdAndUpdate(userId, { password: password, salt: salt }, { new: true });
 			return { status: true, message: "Password Updated" };
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async FindByUsername({ username }) {
@@ -112,7 +112,7 @@ class UserRepositary {
 			});
 			console.log("search", users);
 			return users;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async IsBlocked(id) {
@@ -124,7 +124,7 @@ class UserRepositary {
 			} else {
 				return false;
 			}
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async updateUserVerification(id) {
@@ -154,15 +154,13 @@ class UserRepositary {
 
 	async FindNotFollowed(userId) {
 		try {
-			const user = await User.findById(userId)
+			const user = await User.findById(userId);
 			const userNotFollowing = await User.find({
 				_id: { $nin: [...user.following, userId] }
-			}).limit(5); 
-			console.log("fooooooo", userNotFollowing)
-			return userNotFollowing
-		} catch (error) {
-
-		}
+			}).limit(5);
+			console.log("fooooooo", userNotFollowing);
+			return userNotFollowing;
+		} catch (error) {}
 	}
 	// async fetchUsers(userIds) {
 	// 	try {
@@ -269,7 +267,7 @@ class UserRepositary {
 			);
 			await user.save();
 			return { status: "uploaded" };
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async AddProImage({ username, croppedImage }) {
@@ -300,7 +298,7 @@ class UserRepositary {
 			);
 			await user.save();
 			return { status: "uploaded" };
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async ListUsers() {
@@ -362,7 +360,7 @@ class UserRepositary {
 				user.followers.push(id);
 				await user.save();
 			}
-			console.log('Done')
+			console.log("Done");
 		} else {
 			curruser.following.splice(followingIndex, 1);
 			await curruser.save();
@@ -371,21 +369,17 @@ class UserRepositary {
 				user.followers.splice(followerIndex, 1);
 				await user.save();
 			}
-			console.log('gone')
+			console.log("gone");
 		}
 
 		const followRequestsIndex = user.followRequests.indexOf(id);
 		if (followRequestsIndex !== -1) {
-			await User.updateOne(
-				{ _id: userId },
-				{ $pull: { followRequests: id } }
-			);
-
+			await User.updateOne({ _id: userId }, { $pull: { followRequests: id } });
 		}
 	}
 
 	async DeleteRequest({ userId, id }) {
-		const user = await User.findById(userId)
+		const user = await User.findById(userId);
 		const followRequestsIndex = user.followRequests.indexOf(id);
 		if (followRequestsIndex !== -1) {
 			user.followRequests.splice(followRequestsIndex, 1);
@@ -398,53 +392,40 @@ class UserRepositary {
 			const user = await User.findOne({ _id: userId });
 			if (!user.followRequests) {
 				// If the field doesn't exist or is falsy, update the document
-				await User.findByIdAndUpdate(
-					userId,
-					{ followRequests: [] },
-					{ new: true }
-				);
+				await User.findByIdAndUpdate(userId, { followRequests: [] }, { new: true });
 			}
 			const followRequestsIndex = user.followRequests.indexOf(id);
 
 			if (followRequestsIndex === -1) {
 				user.followRequests.push(id);
 				await user.save();
-				return { status: 'requested' }
+				return { status: "requested" };
 			} else {
 				user.followRequests.splice(followRequestsIndex, 1);
 				await user.save();
-				return { status: 'removed' }
+				return { status: "removed" };
 			}
-
-		} catch (error) {
-
-		}
+		} catch (error) {}
 	}
 
 	async MakePrivateOrPublic({ isChecked, userId }) {
 		try {
 			const user = await User.findById(userId);
-			let updatedUser
+			let updatedUser;
 			if (!user.isPrivate) {
 				// If the field doesn't exist or is falsy, update the document
-				updatedUser = await User.findByIdAndUpdate(
-					userId,
-					{ isPrivate: false },
-					{ new: true }
-				);
+				updatedUser = await User.findByIdAndUpdate(userId, { isPrivate: false }, { new: true });
 			}
 			if (isChecked) {
-				const m = await User.findByIdAndUpdate(userId, { isPrivate: false }, { new: true })
-				console.log(m)
-				return { isPrivate: false }
+				const m = await User.findByIdAndUpdate(userId, { isPrivate: false }, { new: true });
+				console.log(m);
+				return { isPrivate: false };
 			} else {
-				const n = await User.findByIdAndUpdate(userId, { isPrivate: true }, { new: true })
-				console.log(n)
-				return { isPrivate: true }
+				const n = await User.findByIdAndUpdate(userId, { isPrivate: true }, { new: true });
+				console.log(n);
+				return { isPrivate: true };
 			}
-		} catch (error) {
-
-		}
+		} catch (error) {}
 	}
 
 	async ReportingUser({ userId, id, reason }) {
@@ -458,21 +439,21 @@ class UserRepositary {
 			}
 			const user = await User.findOneAndUpdate({ _id: userId }, { $addToSet: { reports: { reporterId: id, reason } } });
 			return { message: "Report added successfully" };
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async FindFollowing({ id }) {
 		try {
 			const user = await User.findById(id).populate("following", "_id username name propic");
 			return user;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async FindFollowers({ id }) {
 		try {
 			const user = await User.findById(id).populate("followers", "_id username name propic");
 			return user;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async SavingPost({ userId, postId }) {
@@ -488,7 +469,7 @@ class UserRepositary {
 				const savedpost = await user.save();
 				return { status: "removed", savedpost };
 			}
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async fetchSavedPosts({ id }) {
@@ -496,7 +477,7 @@ class UserRepositary {
 			const post = await User.findOne({ _id: id });
 			const postIds = post.bookmarks;
 			return postIds;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async FindFollowersorFollowing(id) {
@@ -510,20 +491,18 @@ class UserRepositary {
 				console.log("User not found");
 				return null;
 			}
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async CountUserbyGender() {
 		try {
-			console.log('user')
-			const maleCount = await User.find({ gender: 'Male' }).countDocuments()
-			const femaleCount = await User.find({ gender: 'Female' }).countDocuments()
-			const otherCount = await User.find({ gender: 'Other' }).countDocuments()
-			console.log(maleCount)
-			return { maleCount, femaleCount, otherCount }
-		} catch (error) {
-
-		}
+			console.log("user");
+			const maleCount = await User.find({ gender: "Male" }).countDocuments();
+			const femaleCount = await User.find({ gender: "Female" }).countDocuments();
+			const otherCount = await User.find({ gender: "Other" }).countDocuments();
+			console.log(maleCount);
+			return { maleCount, femaleCount, otherCount };
+		} catch (error) {}
 	}
 
 	async CountUserbyAge() {
@@ -537,33 +516,28 @@ class UserRepositary {
 			Age20.setFullYear(currentDate.getFullYear() - 20);
 			Age25.setFullYear(currentDate.getFullYear() - 25);
 			Age30.setFullYear(currentDate.getFullYear() - 30);
-			console.log(Age15)
+			console.log(Age15);
 			const between15and20 = await User.find({
 				dateOfBirth: {
 					$lte: Age15,
 					$gte: Age20
 				}
-			}).countDocuments()
+			}).countDocuments();
 			const between20and25 = await User.find({
 				dateOfBirth: {
 					$lte: Age20,
 					$gte: Age25
 				}
-			}).countDocuments()
+			}).countDocuments();
 			const between25and30 = await User.find({
 				dateOfBirth: {
 					$lte: Age25,
 					$gte: Age30
 				}
-			}).countDocuments()
-			return { between15and20, between20and25, between25and30 }
-		} catch (error) {
-
-		}
+			}).countDocuments();
+			return { between15and20, between20and25, between25and30 };
+		} catch (error) {}
 	}
-
 }
-
-
 
 export default UserRepositary;

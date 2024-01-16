@@ -37,8 +37,8 @@ function PostModal({ isOpen, onClose }) {
 	const [emojishow, setEmojishow] = useState(false);
 	const [selectedImage, setSelectedImage] = useState(null);
 	const { userdetails } = useSelector((state) => state.auth);
-	const [location, setLocation] = useState()
-	const [places, setPlaces] = useState([])
+	const [location, setLocation] = useState();
+	const [places, setPlaces] = useState([]);
 	const id = userdetails._id;
 	const openEmoji = () => {
 		setEmojishow((prevEmojiShow) => !prevEmojiShow);
@@ -60,8 +60,8 @@ function PostModal({ isOpen, onClose }) {
 		e.preventDefault();
 
 		if (!selectedImage) {
-			showToast('warning', 'Photo required for posting')
-			return
+			showToast("warning", "Photo required for posting");
+			return;
 		}
 		setLoading(true);
 		const byteCharacters = atob(selectedImage.split(",")[1]);
@@ -75,7 +75,7 @@ function PostModal({ isOpen, onClose }) {
 		const file = new File([blob], "cropped_image.jpeg", { type: "image/jpeg" }); // Adjust the name and type
 		const formData = new FormData();
 		formData.append("textmedia", text);
-		formData.append('location', location)
+		formData.append("location", location);
 		formData.append("userId", id);
 		formData.append("media", file);
 		posts
@@ -84,7 +84,7 @@ function PostModal({ isOpen, onClose }) {
 				console.log(res);
 				if (res.data.data.status) {
 					console.log(res.data.data.message);
-					location.reload()
+					location.reload();
 					setLoading(false);
 					showToast("success", "Post added");
 					onClose();
@@ -209,10 +209,14 @@ function PostModal({ isOpen, onClose }) {
 				show={isOpen}
 				position="top-center"
 				onClose={onClose}>
-				<div className="" onClick={(e) => {
-					e.stopPropagation()
-				}}>
-					<Modal.Header className="dark:bg-black bg-white  border-white"><h1 className="font-bold ms-56">Create new post</h1></Modal.Header>
+				<div
+					className=""
+					onClick={(e) => {
+						e.stopPropagation();
+					}}>
+					<Modal.Header className="dark:bg-black bg-white  border-white">
+						<h1 className="font-bold ms-56">Create new post</h1>
+					</Modal.Header>
 					{loading && (
 						<div
 							role="status"
@@ -278,26 +282,43 @@ function PostModal({ isOpen, onClose }) {
 									rows="2"
 									placeholder="Write a caption..."></textarea>
 								<div>
-
-									<input onChange={(e) => {
-										handleLocationAPI(e)
-									}} className="bg-zinc-900 w-full  rounded-lg border-none" placeholder="Add location" type="text" value={location} />
-									<div style={{ position: 'relative' }}>
-										{places.length > 0 && location !== '' && (
-											<div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 999 }}>
+									<input
+										onChange={(e) => {
+											handleLocationAPI(e);
+										}}
+										className="bg-zinc-900 w-full  rounded-lg border-none"
+										placeholder="Add location"
+										type="text"
+										value={location}
+									/>
+									<div style={{ position: "relative" }}>
+										{places.length > 0 && location !== "" && (
+											<div
+												style={{
+													position: "absolute",
+													top: 0,
+													left: 0,
+													right: 0,
+													bottom: 0,
+													zIndex: 999
+												}}>
 												{/* Box with places */}
-												<Box className="bg-neutral-800 border-b border-black rounded-lg" display={"inline-flex"} flexWrap={"wrap"} mt={2}>
+												<Box
+													className="bg-neutral-800 border-b border-black rounded-lg"
+													display={"inline-flex"}
+													flexWrap={"wrap"}
+													mt={2}>
 													{places.map((place) => (
-
 														<div
 															onClick={() => {
 																// setSpecificPost({ ...specificPost, location: place.text });
 																setLocation(place.text);
 																setPlaces([]); // Clear the places array after selecting a place
 															}}
-															className='flex w-full cursor-pointer ms-2 p-1 rounded-lg'
-														>
-															<h2 className="mt-5 me-2 text-lg text-black font-bold">{place?.text}</h2>
+															className="flex w-full cursor-pointer ms-2 p-1 rounded-lg">
+															<h2 className="mt-5 me-2 text-lg text-black font-bold">
+																{place?.text}
+															</h2>
 														</div>
 													))}
 												</Box>
@@ -312,11 +333,9 @@ function PostModal({ isOpen, onClose }) {
 								onClick={openEmoji}
 								style={{ color: "#ffffff" }}
 							/>
-
 						</Modal.Body>
 						<div className="flex justify-around items-center dark:bg-black bg-white border-0 p-3">
-
-							<Button  type="submit">Post</Button>
+							<Button type="submit">Post</Button>
 						</div>
 						{/* <Modal.Footer className="flex justify-around items-center bg-black border-0">
 
@@ -324,9 +343,10 @@ function PostModal({ isOpen, onClose }) {
 					</form>
 				</div>
 				{emojishow && (
-					<div onClick={(e) => {
-						e.stopPropagation()
-					}}
+					<div
+						onClick={(e) => {
+							e.stopPropagation();
+						}}
 						className="fixed transform -translate-x-1/2 -translate-y-1/2 z-50"
 						style={{ top: selectedImage ? "530px" : "300px", right: "100px" }}>
 						<EmojiPicker onEmojiClick={addEmoji} />

@@ -17,42 +17,48 @@ class NotificationService {
 				data: senderId
 			});
 			return { notification, response };
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async ConfirmRequest({ noti }) {
 		try {
 			const payload = {
-				event: 'REQUEST_CONFIRMED',
+				event: "REQUEST_CONFIRMED",
 				data: {
 					userId: noti.recipientId,
 					id: noti.senderId
 				}
-			}
-			const resp = await this.repository.CreateNotificationAndDeleteRequest({ id: noti._id, recipient: noti.recipientId, senderId: noti.senderId, notificationType: 'follow', entityId: noti.entityId, entityType: noti.entityType })
-			return { resp, payload }
+			};
+			const resp = await this.repository.CreateNotificationAndDeleteRequest({
+				id: noti._id,
+				recipient: noti.recipientId,
+				senderId: noti.senderId,
+				notificationType: "follow",
+				entityId: noti.entityId,
+				entityType: noti.entityType
+			});
+			return { resp, payload };
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 		}
 	}
 
 	async DeleteRequest({ notId }) {
 		try {
-			const notification = await this.repository.DeleteNotificationById({ notId })
+			const notification = await this.repository.DeleteNotificationById({ notId });
 			const payload = {
-				event: 'REQUEST_DELETED',
+				event: "REQUEST_DELETED",
 				data: {
 					userId: notification.recipientId,
 					id: notification.senderId
 				}
-			}
+			};
 
-			return { status: 'Deleted', payload }
+			return { status: "Deleted", payload };
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 		}
 	}
-
 
 	async SubscribeEvents(payload, channel, io) {
 		payload = JSON.parse(payload);
@@ -69,7 +75,7 @@ class NotificationService {
 				this.repository.DeleteNotification({
 					recipient,
 					senderId,
-					notificationType,
+					notificationType
 				});
 				break;
 			case "FOLLOW_REQUESTED":
@@ -78,13 +84,13 @@ class NotificationService {
 			case "FOLLOW_REMOVED":
 				this.repository.CreateNotification({ recipient, senderId, notificationType, entityId, entityType, image });
 				break;
-			case 'POSTS_COMMENTED':
+			case "POSTS_COMMENTED":
 				this.repository.CreateNotification({ recipient, senderId, notificationType, entityId, entityType, image }, io);
 			case "POSTS_UNLIKED":
 				this.repository.DeleteNotification({
 					recipient,
 					senderId,
-					notificationType,
+					notificationType
 				});
 			default:
 				break;

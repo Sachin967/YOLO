@@ -89,8 +89,8 @@ class UserService {
 						isPrivate: existingUser.isPrivate
 					});
 				} else {
-					console.log('ivide')
-					return { data: { status: false, msg: "Incorrect password" } }
+					console.log("ivide");
+					return { data: { status: false, msg: "Incorrect password" } };
 				}
 			}
 			return FormateData(null);
@@ -210,22 +210,20 @@ class UserService {
 			let userPassword = await GeneratePassword(password, salt);
 			const Password = await this.repositary.updatePassword(userId, userPassword, salt);
 			return Password;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async ConfirmPasswordAndChangeIt({ currentPassword, newPassword, id }) {
 		try {
-			const user = await this.repositary.FindUserById(id)
+			const user = await this.repositary.FindUserById(id);
 			const validPassword = await ValidatePassword(currentPassword, user.salt, user.password);
 			if (validPassword) {
-				const changepassword = await this.repositary.updatePassword(id, newPassword, user.salt)
-				return changepassword
+				const changepassword = await this.repositary.updatePassword(id, newPassword, user.salt);
+				return changepassword;
 			} else {
-				return { status: 'false', message: 'The password you entered was incorrect.' }
+				return { status: "false", message: "The password you entered was incorrect." };
 			}
-		} catch (error) {
-
-		}
+		} catch (error) {}
 	}
 
 	async EditUser({ id, name, bio, location, day, month, year }) {
@@ -258,25 +256,23 @@ class UserService {
 
 	async FetchNotfollowedusers(userId) {
 		try {
-			const usernotfollowed = await this.repositary.FindNotFollowed(userId)
-			return usernotfollowed
-		} catch (error) {
-
-		}
+			const usernotfollowed = await this.repositary.FindNotFollowed(userId);
+			return usernotfollowed;
+		} catch (error) {}
 	}
 
 	async UploadCoverImage({ username, croppedImage }) {
 		try {
 			const res = await this.repositary.AddCoverImage({ username, croppedImage });
 			return res;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async UploadProfileImage({ username, croppedImage }) {
 		try {
 			const res = await this.repositary.AddProImage({ username, croppedImage });
 			return res;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async UpdateFollow({ userId, id }) {
@@ -344,9 +340,7 @@ class UserService {
 				};
 				return { resp, payload };
 			}
-		} catch (error) {
-
-		}
+		} catch (error) {}
 	}
 
 	async FindUser({ keyword }, req) {
@@ -354,7 +348,7 @@ class UserService {
 			const users = await this.repositary.FindUsersbyRegex(keyword);
 			const filteredUsers = users.filter((user) => user._id.toString() !== req.user._id.toString());
 			return filteredUsers;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async ResendOtp(id) {
@@ -362,35 +356,35 @@ class UserService {
 			const otp = generateOTP();
 			const updatedUser = await this.repositary.updateOtp(id, otp);
 			return updatedUser;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async FetchFollowing({ id }) {
 		try {
 			const following = await this.repositary.FindFollowing({ id });
 			return following;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async FetchFollowers({ id }) {
 		try {
 			const followers = await this.repositary.FindFollowers({ id });
 			return followers;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async FetchFollowersorFollowing(id) {
 		try {
 			const followers = await this.repositary.FindFollowersorFollowing(id);
 			return followers;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async SavePost({ postId, userId }) {
 		try {
 			const post = await this.repositary.SavingPost({ userId, postId });
 			return post;
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async ReportUser({ userId, id, reason }) {
@@ -417,16 +411,14 @@ class UserService {
 			console.log(userIds);
 			const users = await this.repositary.FindUsersById(userIds);
 			return { users, response };
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async ManagePrivateAndPublic({ isChecked, userId }) {
 		try {
-			const response = await this.repositary.MakePrivateOrPublic({ isChecked, userId })
-			return response
-		} catch (error) {
-
-		}
+			const response = await this.repositary.MakePrivateOrPublic({ isChecked, userId });
+			return response;
+		} catch (error) {}
 	}
 
 	async SubscribeEvents(payload, channel) {
@@ -441,20 +433,20 @@ class UserService {
 					break;
 				case "REPORT_USERPOST":
 					this.repositary.ReportUser(data);
-					break
+					break;
 				case "REQUEST_CONFIRMED":
-					console.log(data)
+					console.log(data);
 					this.repositary.ManageFollowRequest(data);
-					this.repositary.DeleteRequest(data)
-					break
+					this.repositary.DeleteRequest(data);
+					break;
 				case "REQUEST_DELETED":
-					console.log(data)
-					this.repositary.DeleteRequest(data)
-					break
+					console.log(data);
+					this.repositary.DeleteRequest(data);
+					break;
 				default:
 					break;
 			}
-		} catch (error) { }
+		} catch (error) {}
 	}
 
 	async serveRPCRequest(payload) {

@@ -48,12 +48,11 @@ const PostList = () => {
 			</>
 		);
 	};
-	const showLocaleDate=(post)=>{
-
+	const showLocaleDate = (post) => {
 		const dateObject = new Date(post.createdAt);
 		const formattedDate = dateObject.toLocaleDateString();
-		return	<h1>{formattedDate}</h1>
-	}
+		return <h1>{formattedDate}</h1>;
+	};
 
 	const ShowReportLength = (post) => {
 		return <h1 className="text-black text-start"> {post?.reported?.length}</h1>;

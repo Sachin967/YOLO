@@ -1,4 +1,4 @@
-import Admin from '../model/adminModel.js'
+import Admin from "../model/adminModel.js";
 
 class AdminRepositary {
   async AdminCreate({ email, adminpass, salt }) {
@@ -7,21 +7,21 @@ class AdminRepositary {
         email,
         password: adminpass,
         salt,
-      })
-      const result = await admin.save()
-      return result
+      });
+      const result = await admin.save();
+      return result;
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
   async FindAdmin(email) {
     try {
-      const existingAdmin = await Admin.findOne({ email })
-      return existingAdmin
+      const existingAdmin = await Admin.findOne({ email });
+      return existingAdmin;
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 }
 
-export default AdminRepositary
+export default AdminRepositary;

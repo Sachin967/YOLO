@@ -1,15 +1,15 @@
 import UserService from "../services/user-service.js";
 // import nodemailer from "nodemailer";
 // import { GMAIL, PASS } from "../config/index.js";
-import { UserAuth } from "./middleware/auth.js"; 
+import { UserAuth } from "./middleware/auth.js";
 import { PublishMessage, RPCObserver, SubscribeMessage, sendOTP } from "../utils/index.js";
 import { NOTIFICATION_BINDING_KEY } from "../config/index.js";
-import express from 'express'
+import express from "express";
 export const user = (app, channel) => {
 	const service = new UserService();
 	SubscribeMessage(channel, service);
 	RPCObserver("USER_RPC", service);
-	const router = express.Router()
+	const router = express.Router();
 	router.post("/register", async (req, res, next) => {
 		const { name, username, email, password, day, month, year, gender } = req.body;
 		try {
@@ -33,7 +33,7 @@ export const user = (app, channel) => {
 			const { id } = req.params;
 			const getUsers = await service.FetchFollowersorFollowing(id);
 			return res.json(getUsers);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	router.post("/verifyOtp", async (req, res, next) => {
@@ -52,21 +52,19 @@ export const user = (app, channel) => {
 		}
 	});
 
-	router.get('/notfollowers/:userId', async (req, res, next) => {
+	router.get("/notfollowers/:userId", async (req, res, next) => {
 		try {
-			const { userId } = req.params
-			const fetchNotfollowed = await service.FetchNotfollowedusers(userId)
-			return res.json(fetchNotfollowed)
-		} catch (error) {
-
-		}
-	})
+			const { userId } = req.params;
+			const fetchNotfollowed = await service.FetchNotfollowedusers(userId);
+			return res.json(fetchNotfollowed);
+		} catch (error) {}
+	});
 
 	router.post("/login", async (req, res, next) => {
 		const { query, password } = req.body;
 		try {
 			const { data } = await service.SignIn({ query, password }, res);
-			console.log('kola', data)
+			console.log("kola", data);
 			return res.json(data);
 		} catch (error) {
 			console.log(error);
@@ -103,7 +101,7 @@ export const user = (app, channel) => {
 			const { token } = req.params;
 			const validate = await service.repositary.validateResetToken(token);
 			return res.json(validate);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	router.post("/changepassword", async (req, res) => {
@@ -111,19 +109,17 @@ export const user = (app, channel) => {
 			const { userId, password } = req.body;
 			const response = await service.ChangePassword(userId, password);
 			return res.json(response);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
-	router.put('/password', UserAuth, async (req, res) => {
+	router.put("/password", UserAuth, async (req, res) => {
 		try {
-			const { currentPassword, newPassword } = req.body
-			const id = req.user._id
-			const response = await service.ConfirmPasswordAndChangeIt({ currentPassword, newPassword, id })
-			return res.json(response)
-		} catch (error) {
-
-		}
-	})
+			const { currentPassword, newPassword } = req.body;
+			const id = req.user._id;
+			const response = await service.ConfirmPasswordAndChangeIt({ currentPassword, newPassword, id });
+			return res.json(response);
+		} catch (error) {}
+	});
 
 	router.post("/logout", async (req, res, next) => {
 		try {
@@ -143,7 +139,7 @@ export const user = (app, channel) => {
 			const user = await service.ResendOtp(id);
 			const otpResponse = await sendOTP(user.email, user.Otp);
 			res.json(otpResponse);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	router.get("/profile/:username", async (req, res, next) => {
@@ -187,7 +183,7 @@ export const user = (app, channel) => {
 
 			const editedUser = await service.EditUser({ id, name, bio, location, day, month, year });
 			return res.json(editedUser);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	router.get("/fetchfollowers/:id", async (req, res, next) => {
@@ -195,7 +191,7 @@ export const user = (app, channel) => {
 			const { id } = req.params;
 			const fetchfollowers = await service.FetchFollowers({ id });
 			return res.json(fetchfollowers);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	router.get("/fetchfollowing/:id", async (req, res, next) => {
@@ -203,7 +199,7 @@ export const user = (app, channel) => {
 			const { id } = req.params;
 			const fetchfollowing = await service.FetchFollowing({ id });
 			return res.json(fetchfollowing);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	router.post("/follow-unfollow", async (req, res, next) => {
@@ -214,21 +210,19 @@ export const user = (app, channel) => {
 				PublishMessage(channel, NOTIFICATION_BINDING_KEY, JSON.stringify(payload));
 			}
 			res.json(resp);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
-	router.post('/followrequest', async (req, res, next) => {
+	router.post("/followrequest", async (req, res, next) => {
 		try {
-			const { userId, id } = req.body
-			const { resp, payload } = await service.SendFollowRequest({ userId, id })
+			const { userId, id } = req.body;
+			const { resp, payload } = await service.SendFollowRequest({ userId, id });
 			if (payload && Object.keys(payload).length !== 0) {
 				PublishMessage(channel, NOTIFICATION_BINDING_KEY, JSON.stringify(payload));
 			}
 			res.json(resp);
-		} catch (error) {
-
-		}
-	})
+		} catch (error) {}
+	});
 
 	router.get("/users/:search", UserAuth, async (req, res, next) => {
 		try {
@@ -237,7 +231,7 @@ export const user = (app, channel) => {
 			const user = await service.FindUser({ keyword }, req);
 			res.json(user);
 			console.log(user);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	router.get("/savedpost/:id", async (req, res, next) => {
@@ -245,7 +239,7 @@ export const user = (app, channel) => {
 			const { id } = req.params;
 			const savedposts = await service.GetSavedPost({ id });
 			return res.json(savedposts);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	router.post("/savepost", async (req, res, next) => {
@@ -253,7 +247,7 @@ export const user = (app, channel) => {
 			const { postId, userId } = req.body;
 			const savepost = await service.SavePost({ postId, userId });
 			return res.json(savepost);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
 	router.post("/reportuser", UserAuth, async (req, res, next) => {
@@ -270,24 +264,19 @@ export const user = (app, channel) => {
 	router.get(`/getuser/:userId`, async (req, res, next) => {
 		try {
 			const { userId } = req.params;
-			console.log(req.params)
+			console.log(req.params);
 			const user = await service.repositary.FindUserById(userId);
 			return res.json(user);
-		} catch (error) { }
+		} catch (error) {}
 	});
 
-
-
-	router.put('/makeprivate/:userId', async (req, res, next) => {
+	router.put("/makeprivate/:userId", async (req, res, next) => {
 		try {
 			const { userId } = req.params;
-			const { isChecked } = req.body
-			const makeprivate = await service.ManagePrivateAndPublic({ isChecked, userId })
-			return res.json(makeprivate)
-		} catch (error) {
-
-		}
-	})
-	app.use("/users", router)
-
+			const { isChecked } = req.body;
+			const makeprivate = await service.ManagePrivateAndPublic({ isChecked, userId });
+			return res.json(makeprivate);
+		} catch (error) {}
+	});
+	app.use("/users", router);
 };

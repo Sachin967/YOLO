@@ -6,32 +6,35 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Error403 } from "../Commonfunctions";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { Skeleton } from 'primereact/skeleton';
+import { Skeleton } from "primereact/skeleton";
 import Suggesions from "../Components/Suggesions";
 const Home = () => {
-	const [loading, setLoading] = useState(true)
+	const [loading, setLoading] = useState(true);
 	const [postsData, setPostsData] = useState([]);
 	const showToast = useCustomToast();
 	const dispatch = useDispatch();
 	const Navigate = useNavigate();
 	const [page, setPage] = useState(1);
-	const [notfollowers, setNotfollowers] = useState([])
+	const [notfollowers, setNotfollowers] = useState([]);
 	const { userdetails } = useSelector((state) => state.auth);
 	const NotFollowers = () => {
-		users.get(`/notfollowers/${userdetails._id}`).then(res => {
-			if (res.data) {
-				setNotfollowers(res.data)
-			}
-		}).catch(err => console.log(err))
-	}
+		users
+			.get(`/notfollowers/${userdetails._id}`)
+			.then((res) => {
+				if (res.data) {
+					setNotfollowers(res.data);
+				}
+			})
+			.catch((err) => console.log(err));
+	};
 
 	useEffect(() => {
 		ShowPosts();
-		NotFollowers()
+		NotFollowers();
 	}, []);
 	console.log(postsData);
 	const ShowPosts = () => {
-		setLoading(false)
+		setLoading(false);
 		posts
 			.get(`/seeposts?page=${page}&limit=5`)
 			.then((res) => {

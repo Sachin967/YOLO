@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { APP_SECRET, EXCHANGE_NAME, POST_BINDING_KEY, QUEUE_NAME, MESSAGE_BROKER_URL } from "../config/index.js";
-import { v4 as uuid4 } from "uuid";	
+import { v4 as uuid4 } from "uuid";
 import amqplib from "amqplib";
 export const FormateData = async (data) => {
 	if (data) {
@@ -10,20 +10,18 @@ export const FormateData = async (data) => {
 	}
 };
 
-export const UserisBlocked=async(req)=>{
+export const UserisBlocked = async (req) => {
 	try {
-			const { userJwt } = req.cookies;
-			const decoded = jwt.verify(userJwt, APP_SECRET);
-			const { _id } = decoded;
-			const isBlocked = await RPCRequest("USER_RPC", {
-				type: "CHECK_IS_BLOCKED",
-				data: _id
-			});
-			return isBlocked
-	} catch (error) {
-		
-	}
-}
+		const { userJwt } = req.cookies;
+		const decoded = jwt.verify(userJwt, APP_SECRET);
+		const { _id } = decoded;
+		const isBlocked = await RPCRequest("USER_RPC", {
+			type: "CHECK_IS_BLOCKED",
+			data: _id
+		});
+		return isBlocked;
+	} catch (error) {}
+};
 
 export const ValidateSignature = async (req) => {
 	try {
@@ -36,7 +34,6 @@ export const ValidateSignature = async (req) => {
 		return false;
 	}
 };
-
 
 let amqplibConnection = null;
 const getChannel = async () => {

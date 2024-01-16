@@ -33,7 +33,7 @@ const UsersProfile = () => {
 	const [post, setPosts] = useState([]);
 	const [likedPost, setLikedPost] = useState({});
 	const [follow, setFollow] = useState(false);
-	const [reqested, setRequested] = useState(false)
+	const [reqested, setRequested] = useState(false);
 	const [hoveredPostId, setHoveredPostId] = useState(null);
 	const [activeTab, setActiveTab] = useState(0);
 	const { username } = useParams();
@@ -53,16 +53,16 @@ const UsersProfile = () => {
 	const [likeCount, setLikeCount] = useState();
 	const [like, setLiked] = useState(false);
 	const [savepost, setSavePost] = useState(false);
-	const [isPrivate, setIsPrivate] = useState(false)
+	const [isPrivate, setIsPrivate] = useState(false);
 	const isEmpty = (user) => {
 		return Object.keys(user).length === 0;
 	};
 	useEffect(() => {
 		// Update follow state when the user object is available
-		const emp= isEmpty(user)
-console.log('kk')
-		if(!emp){
-			console.log('hii')
+		const emp = isEmpty(user);
+		console.log("kk");
+		if (!emp) {
+			console.log("hii");
 			setFollow(user?.followers.includes(userdetails._id));
 			setRequested(user?.followRequests.includes(userdetails._id));
 		}
@@ -86,7 +86,7 @@ console.log('kk')
 				.then((res) => {
 					if (res.data) {
 						setUser(res.data.user);
-						setIsPrivate(res.data.user.isPrivate)
+						setIsPrivate(res.data.user.isPrivate);
 						setPosts(res.data.response.posts);
 						setLikedPost(res.data.response.likedposts);
 					}
@@ -153,7 +153,6 @@ console.log('kk')
 					console.error("Error:", error);
 				}
 			});
-
 	};
 
 	const SendFollowRequest = (userId) => {
@@ -179,7 +178,7 @@ console.log('kk')
 					console.error("Error:", error);
 				}
 			});
-	}
+	};
 
 	useEffect(() => {
 		if (isCurrentUser) {
@@ -199,7 +198,7 @@ console.log('kk')
 			{/* <Heading className="text-white ml-[360px] py-2 " size={"md"}>
 				{user?.name}
 			</Heading> */}
-{console.log(follow)}
+			{console.log(follow)}
 			<div className="flex md:w-[1110px] lg:w-[1090px] pb-16  sm:w-[980px] lg:ml-[320px] sm:ml-[55px] dark:bg-black bg-white relative">
 				<div className="flex items-start justify-center  h-[450px] rounded dark:bg-black bg-white ">
 					<img
@@ -211,7 +210,7 @@ console.log('kk')
 						}
 						alt=""
 					/>
-				
+
 					<div className="absolute top-[320px] left-[150px] transform -translate-x-1/2">
 						<Avatar size={"2xl"} src={user?.propic?.url} />
 					</div>
@@ -226,30 +225,35 @@ console.log('kk')
 								</Text>
 							</Link>
 						</div>
-						{isPrivate && !follow ? <button
-							onClick={() => SendFollowRequest(user._id)}
-							className={
-								reqested
-									? "text-gray-600 border border-gray-600 h-9 w-24 bg-white dark:bg-black rounded-3xl"
-									: "text-green-600 border border-green-600 h-9 w-24 bg-white dark:bg-black rounded-3xl"
-							}>
-							{reqested ? "Requested" : "Follow"}
-						</button> : <button
-							onClick={() => FollowUsers(user._id)}
-							className={
-								follow
-									? "text-red-600 border border-red-600 h-9 w-24 bg-white dark:bg-black rounded-3xl"
-									: "text-green-600 border border-green-600 h-9 w-24 bg-white dark:bg-black rounded-3xl"
-							}>
-							{follow ? "Unfollow" : "Follow"}
-						</button>}
+						{isPrivate && !follow ? (
+							<button
+								onClick={() => SendFollowRequest(user._id)}
+								className={
+									reqested
+										? "text-gray-600 border border-gray-600 h-9 w-24 bg-white dark:bg-black rounded-3xl"
+										: "text-green-600 border border-green-600 h-9 w-24 bg-white dark:bg-black rounded-3xl"
+								}>
+								{reqested ? "Requested" : "Follow"}
+							</button>
+						) : (
+							<button
+								onClick={() => FollowUsers(user._id)}
+								className={
+									follow
+										? "text-red-600 border border-red-600 h-9 w-24 bg-white dark:bg-black rounded-3xl"
+										: "text-green-600 border border-green-600 h-9 w-24 bg-white dark:bg-black rounded-3xl"
+								}>
+								{follow ? "Unfollow" : "Follow"}
+							</button>
+						)}
 
-
-						{follow && <button
-							onClick={() => HandleMessageClick(user._id)}
-							className=" dark:text-white text-black h-9 w-24 bg-zinc-700 hover:bg-zinc-800  rounded-3xl">
-							Message
-						</button>}
+						{follow && (
+							<button
+								onClick={() => HandleMessageClick(user._id)}
+								className=" dark:text-white text-black h-9 w-24 bg-zinc-700 hover:bg-zinc-800  rounded-3xl">
+								Message
+							</button>
+						)}
 						<FontAwesomeIcon
 							onClick={onOptionOpen}
 							className="cursor-pointer p-1 dark:text-white text-black rounded-full"
@@ -276,124 +280,137 @@ console.log('kk')
 						</button>
 					</div>
 					<Text className="p-1 pt-4 dark:text-white text-black text-base ">{user?.bio}</Text>
-					<FollowersModal userId={user._id} onFollowersClose={onFollowersClose} isFollowersOpen={isFollowersOpen} />
-					<FollowingModal userId={user._id} onFollowingClose={onFollowingClose} isFollowingOpen={isFollowingOpen} />
+					<FollowersModal
+						userId={user._id}
+						onFollowersClose={onFollowersClose}
+						isFollowersOpen={isFollowersOpen}
+					/>
+					<FollowingModal
+						userId={user._id}
+						onFollowingClose={onFollowingClose}
+						isFollowingOpen={isFollowingOpen}
+					/>
 				</div>
 			</div>
 
-			{isPrivate && !follow ? <><div className="ml-[380px] border border-gray-600 w-[1000px] h-60 flex justify-center items-center">
-				<div className="dark:text-white text-black text-center">
-
-					<h1>This Account is Private</h1>
-					<h1 className="">Follow to see their photos and videos.</h1>
-				</div>
-			</div></> : <Tabs className="ml-[320px] h-screen bg-white dark:bg-black" isFitted>
-				<TabList mb="1em">
-					<Tab
-						className="text-lg"
-						style={{
-							color: activeTab === 0 ? "rgb(147, 51, 234)" : "white",
-							borderBottom: activeTab === 0 ? "4px solid rgb(147, 51, 234)" : "1px solid black"
-						}}
-						onClick={() => setActiveTab(0)}>
-						Posts
-					</Tab>
-					<Tab
-						className="text-lg"
-						style={{
-							color: activeTab === 1 ? "rgb(147, 51, 234)" : "white",
-							borderBottom: activeTab === 1 ? "4px solid rgb(147, 51, 234)" : "1px solid black"
-						}}
-						onClick={() => setActiveTab(1)}>
-						Likes
-					</Tab>
-				</TabList>
-				<TabPanels>
-					<TabPanel>
-						<div className="flex flex-wrap ">
-							{post.map((p) => (
-								<div
-									onClick={onOpenPostModal}
-									key={p._id} // Assuming 'postId' is a unique identifier for each p
-									className="w-full sm:w-1/2 md:w-1/3 lg:w-1/3 px-2 mb-4 relative"
-									onMouseEnter={() => setHoveredPostId(p._id)}
-									onMouseLeave={() => setHoveredPostId(null)}>
-									<img src={p?.media} alt={`p-${p._id}`} className="w-full" />
-									{/* {/* Overlay for Like and Comment counts  */}
-									{hoveredPostId === p._id && (
-										<div className="absolute inset-0 flex items-center justify-center  dark:bg-black bg-w bg-opacity-75 dark:bg-opacity-50 text-white px-2 py-1 rounded">
-											<span className="pr-8">
-												{" "}
-												<FontAwesomeIcon className="pr-2" icon={faHeart} />
-												{p?.likes?.length}
-											</span>
-											<FullPost
-												postId={p?._id}
-												handleLike={likeFunction}
-												like={like}
-												isPostModalOpen={isPostModalOpen}
-												onClosePostModal={onClosePostModal}
-												likeCount={likeCount}
-												poster={p}
-												postuser={generatePostUserFunction(p?._id)}
-												savepost={savepost}
-												PostSave={PostSave}
-											/>
-											<span>
-												{" "}
-												<FontAwesomeIcon className="pr-2" icon={faComment} />
-												{p?.comments?.length}
-											</span>
-										</div>
-									)}
-								</div>
-							))}
+			{isPrivate && !follow ? (
+				<>
+					<div className="ml-[380px] border border-gray-600 w-[1000px] h-60 flex justify-center items-center">
+						<div className="dark:text-white text-black text-center">
+							<h1>This Account is Private</h1>
+							<h1 className="">Follow to see their photos and videos.</h1>
 						</div>
-					</TabPanel>
-					<TabPanel>
-						<div className="flex flex-wrap">
-							{likedPost.length > 0 &&
-								likedPost.map((post) => (
+					</div>
+				</>
+			) : (
+				<Tabs className="ml-[320px] h-screen bg-white dark:bg-black" isFitted>
+					<TabList mb="1em">
+						<Tab
+							className="text-lg"
+							style={{
+								color: activeTab === 0 ? "rgb(147, 51, 234)" : "white",
+								borderBottom: activeTab === 0 ? "4px solid rgb(147, 51, 234)" : "1px solid black"
+							}}
+							onClick={() => setActiveTab(0)}>
+							Posts
+						</Tab>
+						<Tab
+							className="text-lg"
+							style={{
+								color: activeTab === 1 ? "rgb(147, 51, 234)" : "white",
+								borderBottom: activeTab === 1 ? "4px solid rgb(147, 51, 234)" : "1px solid black"
+							}}
+							onClick={() => setActiveTab(1)}>
+							Likes
+						</Tab>
+					</TabList>
+					<TabPanels>
+						<TabPanel>
+							<div className="flex flex-wrap ">
+								{post.map((p) => (
 									<div
-										onClick={onPostModalOpen}
-										key={post?._id} // Assuming 'postId' is a unique identifier for each post
+										onClick={onOpenPostModal}
+										key={p._id} // Assuming 'postId' is a unique identifier for each p
 										className="w-full sm:w-1/2 md:w-1/3 lg:w-1/3 px-2 mb-4 relative"
-										onMouseEnter={() => setHoveredPostId(post?._id)}
+										onMouseEnter={() => setHoveredPostId(p._id)}
 										onMouseLeave={() => setHoveredPostId(null)}>
-										<img src={post?.media} alt={`post-${post?._id}`} className="w-full" />
-										{/* {/* Overlay for Like and Comment counts   */}
-										{hoveredPostId === post?._id && (
-											<div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-black bg-opacity-75 text-white px-2 py-1 rounded">
+										<img src={p?.media} alt={`p-${p._id}`} className="w-full" />
+										{/* {/* Overlay for Like and Comment counts  */}
+										{hoveredPostId === p._id && (
+											<div className="absolute inset-0 flex items-center justify-center  dark:bg-black bg-w bg-opacity-75 dark:bg-opacity-50 text-white px-2 py-1 rounded">
 												<span className="pr-8">
 													{" "}
 													<FontAwesomeIcon className="pr-2" icon={faHeart} />
-													{post?.likes?.length}
+													{p?.likes?.length}
 												</span>
 												<FullPost
-													postId={post?._id}
+													postId={p?._id}
 													handleLike={likeFunction}
 													like={like}
-													isPostModalOpen={isModalPostOpen}
-													onClosePostModal={onPostModalClose}
+													isPostModalOpen={isPostModalOpen}
+													onClosePostModal={onClosePostModal}
 													likeCount={likeCount}
-													poster={post}
-													postuser={generatePostUserFunction(post?._id)}
+													poster={p}
+													postuser={generatePostUserFunction(p?._id)}
 													savepost={savepost}
 													PostSave={PostSave}
 												/>
 												<span>
 													{" "}
 													<FontAwesomeIcon className="pr-2" icon={faComment} />
-													{post?.comments?.length}
+													{p?.comments?.length}
 												</span>
 											</div>
 										)}
 									</div>
 								))}
-						</div>
-					</TabPanel>
-				</TabPanels>
-			</Tabs>}
+							</div>
+						</TabPanel>
+						<TabPanel>
+							<div className="flex flex-wrap">
+								{likedPost.length > 0 &&
+									likedPost.map((post) => (
+										<div
+											onClick={onPostModalOpen}
+											key={post?._id} // Assuming 'postId' is a unique identifier for each post
+											className="w-full sm:w-1/2 md:w-1/3 lg:w-1/3 px-2 mb-4 relative"
+											onMouseEnter={() => setHoveredPostId(post?._id)}
+											onMouseLeave={() => setHoveredPostId(null)}>
+											<img src={post?.media} alt={`post-${post?._id}`} className="w-full" />
+											{/* {/* Overlay for Like and Comment counts   */}
+											{hoveredPostId === post?._id && (
+												<div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-black bg-opacity-75 text-white px-2 py-1 rounded">
+													<span className="pr-8">
+														{" "}
+														<FontAwesomeIcon className="pr-2" icon={faHeart} />
+														{post?.likes?.length}
+													</span>
+													<FullPost
+														postId={post?._id}
+														handleLike={likeFunction}
+														like={like}
+														isPostModalOpen={isModalPostOpen}
+														onClosePostModal={onPostModalClose}
+														likeCount={likeCount}
+														poster={post}
+														postuser={generatePostUserFunction(post?._id)}
+														savepost={savepost}
+														PostSave={PostSave}
+													/>
+													<span>
+														{" "}
+														<FontAwesomeIcon className="pr-2" icon={faComment} />
+														{post?.comments?.length}
+													</span>
+												</div>
+											)}
+										</div>
+									))}
+							</div>
+						</TabPanel>
+					</TabPanels>
+				</Tabs>
+			)}
 			<Modal theme={modalTheme} onClick={onOptionClose} isOpen={isOptionOpen} onClose={onOptionClose}>
 				<ModalOverlay />
 				<ModalContent

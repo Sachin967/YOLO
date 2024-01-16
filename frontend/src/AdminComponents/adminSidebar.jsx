@@ -26,15 +26,14 @@ const Navbar = () => {
 	};
 
 	const menuItems = [
-		{ icon: < MdDashboard  size={25} className="mr-4" />, text: "Dashboard", link: "/admin/" },
+		{ icon: <MdDashboard size={25} className="mr-4" />, text: "Dashboard", link: "/admin/" },
 		{ icon: <TbTruckDelivery size={25} className="mr-4" />, text: "Users", link: "/admin/users" },
 		{ icon: <MdFavorite size={25} className="mr-4" />, text: "Flagged Posts", link: "/admin/posts" },
 		{ icon: <FaWallet size={25} className="mr-4" />, text: "Problems" }
 	];
 
 	return (
-		<div
-			className="max-w-[1640px] mx-auto bg-zinc-800 flex justify-between items-center p-4 shadow-sm">
+		<div className="max-w-[1640px] mx-auto bg-zinc-800 flex justify-between items-center p-4 shadow-sm">
 			{/* Left side */}
 			<div className="flex items-center">
 				<div onClick={() => setNav(!nav)} className="text-gray-400 cursor-pointer">

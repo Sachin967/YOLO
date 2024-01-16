@@ -8,23 +8,23 @@ export default defineConfig({
 		port: 3000,
 		proxy: {
 			"/api1": {
-				target: "http://localhost:7100",
+				target: "http://apiyolo.sachinms.fyi/users",
 				changeOrigin: true
 			},
 			"/api2": {
-				target: "http://localhost:7000",
+				target: "http://apiyolo.sachinms.fyi/posts",
 				changeOrigin: true
 			},
 			"/api3": {
-				target: "http://localhost:8000",
+				target: "http://apiyolo.sachinms.fyi/messaging",
 				changeOrigin: true
 			},
 			"/api4": {
-				target: "http://localhost:9000",
+				target: "http://apiyolo.sachinms.fyi/notification",
 				changeOrigin: true
 			},
 			"/api5": {
-				target: "http://localhost:7300",
+				target: "http://apiyolo.sachinms.fyi/admin",
 				changeOrigin: true
 			}
 		}

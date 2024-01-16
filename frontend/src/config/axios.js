@@ -1,5 +1,12 @@
 import axios from "axios";
-import { ADMIN_SERVICE, MAPBOX, MESSAGE_SERVICE, NOTIFICATION_SERVICE, POST_SERVICE, USER_SERVICE } from "../constants/constant.js";
+import {
+	ADMIN_SERVICE,
+	MAPBOX,
+	MESSAGE_SERVICE,
+	NOTIFICATION_SERVICE,
+	POST_SERVICE,
+	USER_SERVICE
+} from "../constants/constant.js";
 
 function createAxiosInstance(baseURL, withCredentials = false) {
 	return axios.create({

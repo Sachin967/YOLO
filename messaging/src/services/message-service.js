@@ -146,7 +146,7 @@ class MessageService {
 
 	async FetchMessages({ userId, chatId }) {
 		try {
-			const {message,chat} = await this.repository.FindMessages(chatId);
+			const { message, chat } = await this.repository.FindMessages(chatId);
 			const user = chat?.users;
 			console.log("oooo", userId);
 			console.log("UUU", user);

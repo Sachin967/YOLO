@@ -34,12 +34,12 @@ spec:
           #     valueFrom:
           #       secretKeyRef:
           #         name: my-secrets
-          #         key: app-secret 
+          #         key: app-secret
           #   - name: GMAIL
           #     valueFrom:
           #       secretKeyRef:
           #         name: my-secrets
-          #         key: gmail     
+          #         key: gmail
           #   - name: PASS
           #     valueFrom:
           #       secretKeyRef:

@@ -1,1 +1,1 @@
-export {dBConnection} from './connection.js'
+export { dBConnection } from "./connection.js";

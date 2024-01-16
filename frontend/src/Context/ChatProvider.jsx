@@ -20,7 +20,8 @@ const ChatProvider = ({ children }) => {
 	return (
 		<ChatContext.Provider
 			value={{
-				recentSearches, setRecentSearches,
+				recentSearches,
+				setRecentSearches,
 				fetchAgain,
 				setFetchAgain,
 				notify,

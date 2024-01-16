@@ -68,7 +68,7 @@ const ShareModal = ({ onClose, isOpen, post }) => {
 	return (
 		<Modal onClose={onClose} size={"xl"} isOpen={isOpen}>
 			<ModalOverlay />
-			<ModalContent >
+			<ModalContent>
 				<ModalHeader className="text-center w-full text-white border-b">Share</ModalHeader>
 				<ModalCloseButton />
 				<ModalBody>

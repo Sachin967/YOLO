@@ -2,14 +2,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import logo from '../../public/yolo2.png'
+import logo from "../../public/yolo2.png";
 const VideoRoom = () => {
 	const { userId } = useParams();
 	const [element, setElement] = useState(null);
 	const containerRef = useRef(null);
-	const Navigate = useNavigate()
+	const Navigate = useNavigate();
 
-	const {userdetails}=useSelector((state)=>state.auth)
+	const { userdetails } = useSelector((state) => state.auth);
 
 	useEffect(() => {
 		setElement(containerRef.current);
@@ -28,11 +28,11 @@ const VideoRoom = () => {
 			const zc = ZegoUIKitPrebuilt.create(kitToken);
 			zc.joinRoom({
 				container: element,
-				onLeaveRoom:()=>{
-					Navigate(`/messages`)
+				onLeaveRoom: () => {
+					Navigate(`/messages`);
 				},
 				showPreJoinView: false,
-				 branding: {
+				branding: {
 					logoURL: logo
 				},
 				scenario: {

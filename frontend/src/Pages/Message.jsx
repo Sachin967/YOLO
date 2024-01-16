@@ -16,7 +16,7 @@ const Message = () => {
 			messaging
 				.get(`/fetchchat/${userdetails._id}`)
 				.then((res) => {
-					console.log(res)
+					console.log(res);
 					setPeopleMessaged(res.data.chatData);
 					setpeople(res.data.users);
 				})

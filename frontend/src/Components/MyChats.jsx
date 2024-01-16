@@ -107,7 +107,9 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 						className={`flex w-full ${isSelected ? "dark:bg-neutral-800 bg-zinc-400" : ""}`}
 						key={chat._id}>
 						<Avatar className="m-5" src={updatedImage || chat?.groupImage?.url} />
-						<h2 className="mt-5 me-2 text-lg dark:text-white text-black font-bold">{updatedName || chat?.chatName}</h2>
+						<h2 className="mt-5 me-2 text-lg dark:text-white text-black font-bold">
+							{updatedName || chat?.chatName}
+						</h2>
 					</div>
 
 					{/* <h2 className="mt-5 me-2 text-xl">@{chat?.username}</h2> */}
@@ -123,7 +125,9 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 							className={`flex w-full ${isSelected ? "dark:bg-neutral-800 bg-zinc-400" : ""}`}
 							key={chat._id}>
 							<Avatar className="m-5" src={otherUser?.propic?.url} />
-							<h2 className="mt-5 me-2 text-lg dark:text-white text-black font-bold">{otherUser?.name}</h2>
+							<h2 className="mt-5 me-2 text-lg dark:text-white text-black font-bold">
+								{otherUser?.name}
+							</h2>
 							<h2 className="mt-5 me-2 text-lg text-gray-400 font-normal">@{otherUser?.username}</h2>
 						</div>
 					</>

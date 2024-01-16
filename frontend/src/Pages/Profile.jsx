@@ -142,7 +142,9 @@ const Profile = () => {
 						{/* Edit Profile button */}
 						<div className="flex items-center space-x-10 mb-4">
 							<div>
-								<Text className=" dark:text-white text-black text-2xl font-bold py-1">{user?.name}</Text>
+								<Text className=" dark:text-white text-black text-2xl font-bold py-1">
+									{user?.name}
+								</Text>
 								<Link to={`/${user?.username}`}>
 									{" "}
 									<Text className=" text-gray-400 text-xl rounded-full bg-neutral-700 font-thin">
@@ -172,7 +174,9 @@ const Profile = () => {
 								<span className="dark:text-white text-black">{user?.following?.length}</span> Following
 							</button>
 						</div>
-						<Text className="pr-36  text-xl rounded-full dark:text-white text-black font-thin">{user?.bio}</Text>
+						<Text className="pr-36  text-xl rounded-full dark:text-white text-black font-thin">
+							{user?.bio}
+						</Text>
 					</div>
 				</div>
 				<FollowersModal

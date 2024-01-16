@@ -91,7 +91,9 @@ const Bookmark = () => {
 					{savedpost.length < 1 && (
 						<>
 							<div className="m-48 min-h-screen">
-								<h1 className="text-center text-4xl font-semibold dark:text-white text-black">Save posts for later </h1>
+								<h1 className="text-center text-4xl font-semibold dark:text-white text-black">
+									Save posts for later{" "}
+								</h1>
 								<p className="text-center text-xl p-5  font-thin dark:text-white text-black">
 									Bookmark posts to easily find them again in the future.
 								</p>
