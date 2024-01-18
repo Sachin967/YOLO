@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: admin
+  name: messaging
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: admin
+      app: messaging
   template:
     metadata:
       labels:
-        app: admin
+        app: messaging
     spec:
       containers:
-        - name: admin
-          image: sachin967/admin
+        - name: messaging
+          image: sachin967/messaging
           ports:
-            - containerPort: 7300
+            - containerPort: 8000
           # env:
           #   - name: PORT
-          #     value: 7300
+          #     value: 8000
           #   - name: MONGODB_URL
           #     valueFrom:
           #       secretKeyRef:
@@ -35,3 +35,15 @@ spec:
           #       secretKeyRef:
           #         name: my-secrets
           #         key: app-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: messaging
+spec:
+  ports:
+    - port: 8000
+      protocol: TCP
+      targetPort: 8000
+  selector:
+    app: messaging

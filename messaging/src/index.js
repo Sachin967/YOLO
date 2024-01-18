@@ -17,7 +17,7 @@ const StartServer = async () => {
 	const io = new Server(server, {
 		pingTimeout: 60000,
 		cors: {
-			origin: "http://localhost:3000"
+			origin: ["http://localhost:3000","https://yolo.sachinms.fyi"]
 			// credentials: true,
 		}
 	});

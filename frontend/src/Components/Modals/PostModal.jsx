@@ -84,7 +84,6 @@ function PostModal({ isOpen, onClose }) {
 				console.log(res);
 				if (res.data.data.status) {
 					console.log(res.data.data.message);
-					location.reload();
 					setLoading(false);
 					showToast("success", "Post added");
 					onClose();

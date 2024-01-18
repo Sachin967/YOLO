@@ -1,25 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: users
+  name: admin
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: users
+      app: admin
   template:
     metadata:
       labels:
-        app: users
+        app: admin
     spec:
       containers:
-        - name: users
-          image: sachin967/users
+        - name: admin
+          image: sachin967/admin
           ports:
-            - containerPort: 7100
+            - containerPort: 7300
           # env:
           #   - name: PORT
-          #     value: 7100
+          #     value: 7300
           #   - name: MONGODB_URL
           #     valueFrom:
           #       secretKeyRef:
@@ -35,13 +35,18 @@ spec:
           #       secretKeyRef:
           #         name: my-secrets
           #         key: app-secret
-          #   - name: GMAIL
-          #     valueFrom:
-          #       secretKeyRef:
-          #         name: my-secrets
-          #         key: gmail
-          #   - name: PASS
-          #     valueFrom:
-          #       secretKeyRef:
-          #         name: my-secrets
-          #         key: pass
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin
+spec:
+  ports:
+    - port: 7300
+      protocol: TCP
+      targetPort: 7300
+  selector:
+    app: admin
