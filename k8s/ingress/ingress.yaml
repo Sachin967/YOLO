@@ -9,14 +9,24 @@ metadata:
           nginx.ingress.kubernetes.io/proxy-body-size: '50m'
 spec:
      tls:
-        - hosts:
-          - yolo.sachinms.fyi
-          secretName: yolo-tls
+          - hosts:
+                 - yolo.sachinms.fyi
+                 - yolo.client.sachinms.fyi
+            secretName: yolo-tls
      rules:
+          - host: yolo.client.sachinms.fyi
+            http:
+                paths:
+                      - path: /
+                        pathType: Prefix
+                        backend:
+                              service: 
+                                  name: client-srv
+                                  port: 
+                                       number: 80
           - host: yolo.sachinms.fyi
             http:
                  paths:
-
                       - path: /notification/?(.*)
                         pathType: Prefix
                         backend:

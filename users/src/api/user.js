@@ -29,7 +29,6 @@ export const user = (app, channel) => {
 
 	router.get(`/searchuser/:id`, async (req, res, next) => {
 		try {
-			console.log(req.params);
 			const { id } = req.params;
 			const getUsers = await service.FetchFollowersorFollowing(id);
 			return res.json(getUsers);
@@ -64,7 +63,6 @@ export const user = (app, channel) => {
 		const { query, password } = req.body;
 		try {
 			const { data } = await service.SignIn({ query, password }, res);
-			console.log("kola", data);
 			return res.json(data);
 		} catch (error) {
 			console.log(error);
@@ -73,7 +71,6 @@ export const user = (app, channel) => {
 	});
 	router.post("/googleauth", async (req, res, next) => {
 		const { name, email } = req.body;
-		console.log(req.body);
 		try {
 			const { data } = await service.GoogleAuth({ name, email }, res);
 			return res.json(data);
@@ -84,7 +81,6 @@ export const user = (app, channel) => {
 	});
 
 	router.post("/sendemail", async (req, res, next) => {
-		console.log(req.body);
 		const { email } = req.body;
 		try {
 			const user = await service.repositary.FindUser(email);
@@ -177,8 +173,6 @@ export const user = (app, channel) => {
 	router.put("/editprofile/:id", async (req, res, next) => {
 		try {
 			const { id } = req.params;
-			console.log(req.params);
-			console.log(req.body);
 			const { name, bio, location, day, month, year } = req.body.updatedUser;
 
 			const editedUser = await service.EditUser({ id, name, bio, location, day, month, year });
@@ -227,10 +221,8 @@ export const user = (app, channel) => {
 	router.get("/users/:search", UserAuth, async (req, res, next) => {
 		try {
 			const keyword = req.params.search;
-			console.log(keyword);
 			const user = await service.FindUser({ keyword }, req);
 			res.json(user);
-			console.log(user);
 		} catch (error) {}
 	});
 
@@ -252,7 +244,6 @@ export const user = (app, channel) => {
 
 	router.post("/reportuser", UserAuth, async (req, res, next) => {
 		try {
-			console.log(req.body);
 			const { userId, reason } = req.body;
 			const id = req.user._id;
 			const reportUser = await service.ReportUser({ userId, id, reason });
@@ -264,7 +255,6 @@ export const user = (app, channel) => {
 	router.get(`/getuser/:userId`, async (req, res, next) => {
 		try {
 			const { userId } = req.params;
-			console.log(req.params);
 			const user = await service.repositary.FindUserById(userId);
 			return res.json(user);
 		} catch (error) {}

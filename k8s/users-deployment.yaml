@@ -47,7 +47,6 @@ spec:
           #         key: pass
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:

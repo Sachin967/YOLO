@@ -14,7 +14,7 @@ build:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: 'src/**/*.js'
+          - src: "src/**/*.js"
             dest: .
     - image: sachin967/notification
       context: notification
@@ -22,15 +22,15 @@ build:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: 'src/**/*.js'
+          - src: "src/**/*.js"
             dest: .
-    - image: sacin967/messaging 
+    - image: sacin967/messaging
       context: messaging
       docker:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: 'src/**/*.js'
+          - src: "src/**/*.js"
             dest: .
     - image: sachin967/posts
       context: posts
@@ -38,7 +38,7 @@ build:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: 'src/**/*.js'
+          - src: "src/**/*.js"
             dest: .
     - image: sachin967/admin
       context: admin
@@ -46,7 +46,7 @@ build:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: 'src/**/*.js'
+          - src: "src/**/*.js"
             dest: .
     - image: sachin967/frontend
       context: frontend
@@ -54,5 +54,5 @@ build:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: 'src/**/*.js'
+          - src: "src/**/*.js"
             dest: .

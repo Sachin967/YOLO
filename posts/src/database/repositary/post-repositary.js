@@ -107,7 +107,6 @@ class PostRepositary {
 	async ModifyPost({ postId, textmedia, search }) {
 		try {
 			const post = await Post.findByIdAndUpdate({ _id: postId }, { textmedia, location: search }, { new: true });
-			console.log(post);
 			return post;
 		} catch (error) {
 			console.log(error);
@@ -128,7 +127,6 @@ class PostRepositary {
 
 	async RemoveComment(commentId) {
 		try {
-			console.log(commentId);
 			const comment = await Comment.findOneAndDelete({ _id: commentId });
 			if (!comment) {
 				return { status: "Comment not found" };
@@ -177,7 +175,6 @@ class PostRepositary {
 
 	async FetchSavedPosts(postIds) {
 		try {
-			console.log("l", postIds);
 			const posts = await Post.find({ _id: { $in: postIds } });
 			return posts;
 		} catch (error) {}
@@ -231,7 +228,6 @@ class PostRepositary {
 			]);
 
 			if (result.length > 0) {
-				console.log(result[0].average);
 				return result[0].average;
 			} else {
 				console.log("No posts found");

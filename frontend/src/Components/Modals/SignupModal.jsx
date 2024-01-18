@@ -60,11 +60,11 @@ const SignupModal = ({ onClose, isOpen, handleChange, formstate, showToast }) =>
 					console.log(response.status);
 					const { Id } = response.data;
 					if (response.status === 200) {
-						console.log(response)
+						console.log(response);
 						Navigate(`/verifyOtp/${Id}`);
 					}
 				})
-				.catch((err) => console.log(err.message));
+				.catch((err) => console.log(err));
 		} else {
 		}
 	};

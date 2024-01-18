@@ -403,12 +403,9 @@ class UserService {
 				type: "SAVED_POSTS",
 				data: postIds
 			});
-			// console.log("qp"+response)
 			const userIds = response.map((post) => {
-				console.log("pppp" + post._id);
 				return post.userId;
 			});
-			console.log(userIds);
 			const users = await this.repositary.FindUsersById(userIds);
 			return { users, response };
 		} catch (error) {}
@@ -435,12 +432,10 @@ class UserService {
 					this.repositary.ReportUser(data);
 					break;
 				case "REQUEST_CONFIRMED":
-					console.log(data);
 					this.repositary.ManageFollowRequest(data);
 					this.repositary.DeleteRequest(data);
 					break;
 				case "REQUEST_DELETED":
-					console.log(data);
 					this.repositary.DeleteRequest(data);
 					break;
 				default:

@@ -57,7 +57,6 @@ spec:
           #       key: s3-secret-key
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -69,4 +68,3 @@ spec:
       targetPort: 7000
   selector:
     app: posts
-

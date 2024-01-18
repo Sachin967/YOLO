@@ -97,7 +97,6 @@ class UserRepositary {
 	async FindwithUserNames(usernames) {
 		try {
 			const users = await User.find({ username: { $in: usernames } });
-			console.log("Mine" + users);
 			return users;
 		} catch (error) {
 			throw new Error("Error fetching users by usernames: " + error.message);
@@ -106,11 +105,9 @@ class UserRepositary {
 
 	async FindUsersbyRegex(keyword) {
 		try {
-			console.log(keyword, "keyword");
 			const users = await User.find({
 				$or: [{ name: { $regex: keyword, $options: "i" } }, { username: { $regex: keyword, $options: "i" } }]
 			});
-			console.log("search", users);
 			return users;
 		} catch (error) {}
 	}
@@ -118,7 +115,6 @@ class UserRepositary {
 	async IsBlocked(id) {
 		try {
 			const user = await User.findById(id);
-			console.log(user);
 			if (user.isBlocked) {
 				return true;
 			} else {
@@ -158,7 +154,6 @@ class UserRepositary {
 			const userNotFollowing = await User.find({
 				_id: { $nin: [...user.following, userId] }
 			}).limit(5);
-			console.log("fooooooo", userNotFollowing);
 			return userNotFollowing;
 		} catch (error) {}
 	}
@@ -181,7 +176,6 @@ class UserRepositary {
 	// }
 	async fetchUsers(userIds) {
 		try {
-			console.log(userIds);
 
 			if (userIds && typeof userIds === "object") {
 				const { userId, loggedInUserId } = userIds;
@@ -193,14 +187,11 @@ class UserRepositary {
 			}
 
 			if (!Array.isArray(userIds)) {
-				console.log("notarray");
 				const user = await User.findById(userIds);
-				console.log(user);
 				return user ? [user] : [];
 			}
 
 			const users = await User.find({ _id: { $in: userIds } });
-			console.log("User", users);
 			return users;
 		} catch (error) {
 			console.log(error);
@@ -231,7 +222,6 @@ class UserRepositary {
 		try {
 			const dob = new Date(year, month - 1, day);
 			const user = await User.findByIdAndUpdate({ _id: id }, { name, bio, location, dateOfBirth: dob }, { new: true });
-			console.log(user.dateOfBirth);
 			return user;
 		} catch (error) {
 			console.log(error);
@@ -418,11 +408,9 @@ class UserRepositary {
 			}
 			if (isChecked) {
 				const m = await User.findByIdAndUpdate(userId, { isPrivate: false }, { new: true });
-				console.log(m);
 				return { isPrivate: false };
 			} else {
 				const n = await User.findByIdAndUpdate(userId, { isPrivate: true }, { new: true });
-				console.log(n);
 				return { isPrivate: true };
 			}
 		} catch (error) {}
@@ -496,11 +484,9 @@ class UserRepositary {
 
 	async CountUserbyGender() {
 		try {
-			console.log("user");
 			const maleCount = await User.find({ gender: "Male" }).countDocuments();
 			const femaleCount = await User.find({ gender: "Female" }).countDocuments();
 			const otherCount = await User.find({ gender: "Other" }).countDocuments();
-			console.log(maleCount);
 			return { maleCount, femaleCount, otherCount };
 		} catch (error) {}
 	}
@@ -516,7 +502,6 @@ class UserRepositary {
 			Age20.setFullYear(currentDate.getFullYear() - 20);
 			Age25.setFullYear(currentDate.getFullYear() - 25);
 			Age30.setFullYear(currentDate.getFullYear() - 30);
-			console.log(Age15);
 			const between15and20 = await User.find({
 				dateOfBirth: {
 					$lte: Age15,
