@@ -15,7 +15,7 @@ spec:
       containers:
         - name: client
           image: sachin967/frontend
---- 
+---
 apiVersion: v1
 kind: Service
 metadata:

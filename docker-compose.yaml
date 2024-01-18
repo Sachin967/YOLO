@@ -1,60 +1,67 @@
-version: '3'
+version: "3"
 services:
-    client:
-     build:
-          dockerfile: Dockerfile
-          context: ./frontend
-     container_name: client
-     ports:
-          - 3000:3000
-     restart: always
-    users:
-     build:
-          dockerfile: Dockerfile
-          context: ./users
-     container_name: users
-     ports:
-          - 7100:7100
-     restart: always
-     env_file:
-          - ./users/.env
-    posts:
-     build:
-          dockerfile: Dockerfile
-          context: ./posts
-     container_name: posts
-     ports:
-          - 7000:7000
-     restart: always
-     env_file:
-          - ./posts/.env
-    messaging:
-     build:
-          dockerfile: Dockerfile
-          context: ./messaging
-     container_name: messaging
-     ports:
-          - 8000:8000
-     restart: always
-     env_file:
-          - ./messaging/.env
-    notification:
-     build:
-          dockerfile: Dockerfile
-          context: ./notification
-     container_name: notification
-     ports:
-          - 9000:9000
-     restart: always
-     env_file:
-          - ./notification/.env
-    admin:
-     build:
-          dockerfile: Dockerfile
-          context: ./admin
-     container_name: admin
-     ports:
-          - 7300:7300
-     restart: always
-     env_file:
-          - ./admin/.env
+  mongodb:
+    image: mongo
+    ports:
+      - "27018:27017"
+    container_name: mongodb
+    volumes:
+      - ./db/:/data/db
+  client:
+    build:
+      dockerfile: Dockerfile
+      context: ./frontend
+    container_name: client
+    ports:
+      - 3000:3000
+    restart: always
+  users:
+    build:
+      dockerfile: Dockerfile
+      context: ./users
+    container_name: users
+    ports:
+      - 7100:7100
+    restart: always
+    env_file:
+      - ./users/.env
+  posts:
+    build:
+      dockerfile: Dockerfile
+      context: ./posts
+    container_name: posts
+    ports:
+      - 7000:7000
+    restart: always
+    env_file:
+      - ./posts/.env
+  messaging:
+    build:
+      dockerfile: Dockerfile
+      context: ./messaging
+    container_name: messaging
+    ports:
+      - 8000:8000
+    restart: always
+    env_file:
+      - ./messaging/.env
+  notification:
+    build:
+      dockerfile: Dockerfile
+      context: ./notification
+    container_name: notification
+    ports:
+      - 9000:9000
+    restart: always
+    env_file:
+      - ./notification/.env
+  admin:
+    build:
+      dockerfile: Dockerfile
+      context: ./admin
+    container_name: admin
+    ports:
+      - 7300:7300
+    restart: always
+    env_file:
+      - ./admin/.env

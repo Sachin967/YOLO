@@ -62,7 +62,7 @@ export const message = (app) => {
 	router.post("/message", UserAuth, async (req, res, next) => {
 		try {
 			const { content, chatId } = req.body;
-			console.log(req.body)
+			console.log(req.body);
 			const userId = req.user._id;
 			const savemessage = await service.SendMessage({ content, chatId, userId });
 			res.json(savemessage);
