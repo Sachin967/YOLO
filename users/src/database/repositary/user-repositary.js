@@ -176,7 +176,6 @@ class UserRepositary {
 	// }
 	async fetchUsers(userIds) {
 		try {
-
 			if (userIds && typeof userIds === "object") {
 				const { userId, loggedInUserId } = userIds;
 				if (userId && loggedInUserId) {

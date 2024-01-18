@@ -41,7 +41,7 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 				.catch((err) => {
 					console.log(err);
 				});
-		} catch (error) { }
+		} catch (error) {}
 	};
 	const handleAccessChat = (chat) => {
 		if (!chat.isGroupChat) {
