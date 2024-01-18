@@ -57,9 +57,10 @@ const SignupModal = ({ onClose, isOpen, handleChange, formstate, showToast }) =>
 			users
 				.post("/register", formstate, { withCredentials: true })
 				.then((response) => {
-					console.log(response);
+					console.log(response.status);
 					const { Id } = response.data;
-					if (response.statusText == "OK") {
+					if (response.status === 200) {
+						console.log(response)
 						Navigate(`/verifyOtp/${Id}`);
 					}
 				})
