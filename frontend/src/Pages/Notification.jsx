@@ -52,7 +52,7 @@ const Notification = () => {
 
 	const ShowNotifications = () => {
 		notifications
-			.get(`/notification/${userdetails._id}`)
+			.get(`/${userdetails._id}`)
 			.then((res) => {
 				console.log(res.data);
 				setLoading(false);

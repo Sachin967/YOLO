@@ -12,7 +12,6 @@ export const posts = (app, channel) => {
 	RPCObserver("POST_RPC", service);
 
 	router.post("/addpost", upload.single("media"), async (req, res, next) => {
-		console.log(req.file);
 		const media = req.file.location;
 		const { userId, location, privacy, textmedia } = req.body;
 		try {
@@ -33,7 +32,6 @@ export const posts = (app, channel) => {
 	});
 	router.post("/likepost", UserAuth, async (req, res, next) => {
 		try {
-			console.log(req.body);
 			const { userId, postId } = req.body;
 			const { resp, payload } = await service.LikePost(userId, postId);
 			if (payload && Object.keys(payload).length !== 0) {
@@ -99,7 +97,6 @@ export const posts = (app, channel) => {
 	});
 
 	router.delete("/deletecomment/:commentId", UserAuth, async (req, res) => {
-		console.log(req.params);
 		const { commentId } = req.params;
 		const response = await service.deleteComment(commentId);
 		return res.json(response);
@@ -123,7 +120,6 @@ export const posts = (app, channel) => {
 
 	router.get("/getusers/:postId", async (req, res) => {
 		try {
-			console.log(req.params);
 			const { postId } = req.params;
 			const user = await service.FetchUserFromPosts(postId);
 			return res.json(user);

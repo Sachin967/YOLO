@@ -91,7 +91,6 @@ class PostService {
 				const { _id, ...rest } = obj;
 				return rest;
 			});
-			console.log("user", user);
 			// Return user data associated with comment users
 			return { post: post, userData: user };
 		} catch (error) {
@@ -214,7 +213,6 @@ class PostService {
 	async FetchUserFromPosts(postId) {
 		try {
 			const { userId } = await this.repositary.FindUserId(postId);
-			console.log(userId);
 			const response = await RPCRequest("USER_RPC", {
 				type: "FETCH_USERS",
 				data: userId
@@ -223,7 +221,6 @@ class PostService {
 				const { _id, ...rest } = obj;
 				return rest;
 			});
-			console.log("hi", modifiedArray);
 			return modifiedArray;
 		} catch (error) {}
 	}
@@ -240,7 +237,6 @@ class PostService {
 				return this.repositary.FindUserPostAndLikes(data);
 				break;
 			case "SAVED_POSTS":
-				console.log(data);
 				return this.repositary.FetchSavedPosts(data);
 				break;
 			case "UNLIST_POST":

@@ -6,7 +6,7 @@ export const notification = (app, channel, io) => {
 	const router = express.Router();
 	const service = new NotificationService();
 	SubscribeMessage(channel, service, io);
-	router.get("/notification/:id", async (req, res, next) => {
+	router.get("/:id", async (req, res, next) => {
 		try {
 			console.log(req.params);
 			const { id } = req.params;
@@ -15,7 +15,7 @@ export const notification = (app, channel, io) => {
 		} catch (error) {}
 	});
 
-	router.post("/notification/requestconfirm", async (req, res, next) => {
+	router.post("/requestconfirm", async (req, res, next) => {
 		try {
 			const { noti } = req.body;
 			console.log(noti);
@@ -27,7 +27,7 @@ export const notification = (app, channel, io) => {
 		}
 	});
 
-	router.delete("/notification/requestdelete/:notId", async (req, res, next) => {
+	router.delete("/requestdelete/:notId", async (req, res, next) => {
 		try {
 			const { notId } = req.params;
 			const { status, payload } = await service.DeleteRequest({ notId });

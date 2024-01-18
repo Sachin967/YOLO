@@ -41,7 +41,7 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 				.catch((err) => {
 					console.log(err);
 				});
-		} catch (error) {}
+		} catch (error) { }
 	};
 	const handleAccessChat = (chat) => {
 		if (!chat.isGroupChat) {
@@ -116,7 +116,7 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 				</>
 			);
 		} else {
-			const otherUser = people.find((user) => chat.users.includes(user._id) && user._id !== userdetails._id);
+			const otherUser = people?.find((user) => chat.users.includes(user._id) && user._id !== userdetails._id);
 			if (otherUser) {
 				return (
 					<>
@@ -181,7 +181,7 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 			className={
 				setSelectedUsers
 					? "hidden lg:block lg:ml-[320px] overflow-y-auto dark:bg-black bg-white max-h-screen"
-					: " w-[694px] md:w-[1110px] lg:w-[450px]  min-h-screen sm:w-[980px] lg:ml-[320px] sm:ml-[105px] dark:bg-black bg-white overflow-y-auto max-h-screen"
+					: " w-[694px] md:w-[1110px] lg:w-[440px]  min-h-screen sm:w-[980px] lg:ml-[320px] sm:ml-[105px] dark:bg-black bg-white overflow-y-auto max-h-screen"
 			}>
 			<div className="flex sm:ml-[270px] lg:ml-0  justify-between items-center">
 				<h2 className="text-2xl text-black dark:text-white font-bold p-3">Messages</h2>
@@ -199,22 +199,22 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 						d="M12.202 3.203H5.25a3 3 0 0 0-3 3V18.75a3 3 0 0 0 3 3h12.547a3 3 0 0 0 3-3v-6.952"
 						fill="none"
 						stroke="currentColor"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"></path>
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						strokeWidth="2"></path>
 					<path
 						d="M10.002 17.226H6.774v-3.228L18.607 2.165a1.417 1.417 0 0 1 2.004 0l1.224 1.225a1.417 1.417 0 0 1 0 2.004Z"
 						fill="none"
 						stroke="currentColor"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"></path>
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						strokeWidth="2"></path>
 					<line
 						fill="none"
 						stroke="currentColor"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						stroke-width="2"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+						strokeWidth="2"
 						x1="16.848"
 						x2="20.076"
 						y1="3.924"
