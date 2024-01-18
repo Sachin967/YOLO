@@ -7,14 +7,6 @@ services:
     container_name: mongodb
     volumes:
       - ./db/:/data/db
-  client:
-    build:
-      dockerfile: Dockerfile
-      context: ./frontend
-    container_name: client
-    ports:
-      - 3000:3000
-    restart: always
   users:
     build:
       dockerfile: Dockerfile
