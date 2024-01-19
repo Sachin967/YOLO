@@ -11,7 +11,7 @@ const expressApp = async (app, channel) => {
       allowedHeaders: ["Content-Type", "Authorization"],
       credentials: true,
       exposedHeaders: ["Custom-Header"],
-    })
+    }),
   );
 
   admin(app, channel);

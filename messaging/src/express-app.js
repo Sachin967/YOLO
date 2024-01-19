@@ -12,7 +12,7 @@ const expressApp = async (app) => {
 			methods: ["GET", "POST", "PUT", "DELETE"],
 			allowedHeaders: ["Content-Type", "Authorization"],
 			credentials: true,
-			exposedHeaders: ["Custom-Header"],
+			exposedHeaders: ["Custom-Header"]
 		})
 	);
 

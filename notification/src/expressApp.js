@@ -11,7 +11,7 @@ const expressApp = async (app, channel, io) => {
 			methods: ["GET", "POST", "PUT", "DELETE"],
 			allowedHeaders: ["Content-Type", "Authorization"],
 			credentials: true,
-			exposedHeaders: ["Custom-Header"],
+			exposedHeaders: ["Custom-Header"]
 		})
 	);
 
