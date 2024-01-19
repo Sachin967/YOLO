@@ -8,11 +8,14 @@ const expressApp = async (app) => {
 	app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 	app.use(
 		cors({
-			origin: ["http://localhost:3000", "https://yolo.dsrtdhea0ztnv.amplifyapp.com"],
-			methods: ["GET", "POST", "PUT", "DELETE"], // Add the allowed methods
-			allowedHeaders: ["Content-Type", "Authorization"] // Add acredentials: true
+			origin: ["http://localhost:3000", "https://yolomedia.sachinms.fyi"],
+			methods: ["GET", "POST", "PUT", "DELETE"],
+			allowedHeaders: ["Content-Type", "Authorization"],
+			credentials: true,
+			exposedHeaders: ["Custom-Header"]
 		})
 	);
+
 	app.use(ErrorHandler);
 	message(app);
 };
