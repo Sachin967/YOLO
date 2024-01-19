@@ -1,7 +1,7 @@
 import { users } from "./config/axios";
 import { AuthActions } from "./store/Authslice";
 export const Error403 = (error, showToast, dispatch, Navigate) => {
-	console.log(error)
+	console.log(error);
 	showToast("error", error.response.data.message);
 	setTimeout(() => {
 		users.post("/logout").then((res) => {

@@ -75,7 +75,7 @@ export const fetchLikedPost = (userId, postId, setLiked) => {
 			setLiked(isPostLiked);
 		})
 		.catch((error) => {
-			if (error.response &&error.response.status === 403) {
+			if (error.response && error.response.status === 403) {
 				// Handle 403 Forbidden error
 				Error403(error, showToast, dispatch, Navigate);
 			} else {

@@ -6,7 +6,7 @@ const expressApp = async (app, channel) => {
   app.use(express.urlencoded({ extended: true, limit: "1mb" }));
   app.use(
     cors({
-      origin: ["http://localhost:3000", "https://yolomedia.sachinms.fyi"],
+      origin: ["http://localhost:4000", "https://yolomedia.sachinms.fyi"],
       methods: ["GET", "POST", "PUT", "DELETE"],
       allowedHeaders: ["Content-Type", "Authorization"],
       credentials: true,
