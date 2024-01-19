@@ -6,7 +6,7 @@ const expressApp = async (app, channel) => {
   app.use(express.urlencoded({ extended: true, limit: "1mb" }));
   app.use(
     cors({
-      origin: ["http://localhost:3000", "https://yolo.client.sachinms.fyi"],
+      origin: ["http://localhost:3000", "https://yolo.dsrtdhea0ztnv.amplifyapp.com"],
       methods: ["GET", "POST", "PUT", "DELETE"], // Add the allowed methods
       allowedHeaders: ["Content-Type", "Authorization"], // Add allowed headers
       credentials: true, // Enable credentials (if needed)

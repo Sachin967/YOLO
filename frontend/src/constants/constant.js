@@ -43,11 +43,11 @@ export const yearOptions = Array.from({ length: currentYear - 1900 + 1 }, (_, i)
 
 export { reportingReasons, reportUser };
 
-const USER_SERVICE = "https://yolo.sachinms.fyi/users";
-const POST_SERVICE = "https://yolo.sachinms.fyi/posts";
-const MESSAGE_SERVICE = "https://yolo.sachinms.fyi/messaging";
-const NOTIFICATION_SERVICE = "https://yolo.sachinms.fyi/notification";
-const ADMIN_SERVICE = "https://yolo.sachinms.fyi/admin";
+const USER_SERVICE = "http://yolo.sachinms.fyi/users";
+const POST_SERVICE = "http://yolo.sachinms.fyi/posts";
+const MESSAGE_SERVICE = "http://yolo.sachinms.fyi/messaging";
+const NOTIFICATION_SERVICE = "http://yolo.sachinms.fyi/notification";
+const ADMIN_SERVICE = "http://yolo.sachinms.fyi/admin";
 const MAPBOX = "https://api.mapbox.com/geocoding/v5/mapbox.places";
 
 // const USER_SERVICE = "http://localhost:7100/users";
