@@ -8,8 +8,8 @@ import { mapbox, posts } from "../../config/axios.js";
 import { Avatar, Box } from "@chakra-ui/react";
 import useCustomToast from "../../config/toast.js";
 import React, { useRef } from "react";
- import 'cropperjs/dist/cropper.css';
-import Cropper from 'cropperjs';
+import "cropperjs/dist/cropper.css";
+import Cropper from "cropperjs";
 import { useNavigate } from "react-router-dom";
 function PostModal({ isOpen, onClose }) {
 	const imageRef = useRef(null);
@@ -125,7 +125,6 @@ function PostModal({ isOpen, onClose }) {
 						console.error("Error in crop function:", error);
 					}
 				}
-
 			});
 
 			URL.revokeObjectURL(imageURL); // Clean up the object URL
