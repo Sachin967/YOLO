@@ -31,5 +31,18 @@ export default defineConfig({
 	},
 	preview: {
 		port: 3000
-	}
+	},
+	build: {
+		cssCodeSplit: false,
+		publicDir: 'public',
+		assetsDir: 'assets',
+		terserOptions: {
+			compress: {
+				drop_console: true,
+			},
+		},
+		sourcemap: false,
+	},
+	base: '/',
+	mode: 'production',
 });

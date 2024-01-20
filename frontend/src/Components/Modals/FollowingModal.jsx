@@ -38,7 +38,7 @@ const FollowingModal = ({ onFollowingClose, isFollowingOpen, userId }) => {
 					user.name.toLowerCase().includes(search?.toLowerCase()) ||
 					user.username.toLowerCase().includes(search?.toLowerCase())
 				);
-		  })
+			})
 		: following;
 	return (
 		<Modal onClose={onFollowingClose} size="sm" isOpen={isFollowingOpen}>
