@@ -8,24 +8,9 @@ import { mapbox, posts } from "../../config/axios.js";
 import { Avatar, Box } from "@chakra-ui/react";
 import useCustomToast from "../../config/toast.js";
 import React, { useRef } from "react";
-import Cropper from "cropperjs";
-import "cropperjs/dist/cropper.css";
+ import 'cropperjs/dist/cropper.css';
+import Cropper from 'cropperjs';
 import { useNavigate } from "react-router-dom";
-// import { text } from "@fortawesome/fontawesome-svg-core";
-// const [croppedImage, setCroppedImage] = useState(null);
-// const handleFileChange = (e) => {
-// 	const file = e.target.files[0];
-// 	if (file) {
-// 		setFileToBase(file);
-// 	}
-// };
-// const setFileToBase = (file) => {
-// 	const reader = new FileReader();
-// 	reader.readAsDataURL(file);
-// 	reader.onloadend = () => {
-// 		setSelectedImage(reader.result);
-// 	};
-// };
 function PostModal({ isOpen, onClose }) {
 	const imageRef = useRef(null);
 	let cropper;
@@ -47,7 +32,6 @@ function PostModal({ isOpen, onClose }) {
 	const addEmoji = (selectedEmoji) => {
 		setText((prevText) => prevText + selectedEmoji.emoji);
 	};
-
 	useEffect(() => {
 		if (selectedImage) {
 			setModalHeight("auto"); // Adjust according to your header/footer height
@@ -98,56 +82,6 @@ function PostModal({ isOpen, onClose }) {
 				}
 			});
 	};
-
-	// const onSelectFile = (e) => {
-	// 	 const file = e.target.files[0];
-	// 		const imageURL = URL.createObjectURL(file);
-
-	// 		imageRef.current.src=imageURL
-	// 		const image = new Image();
-	// 		image.src = imageRef;
-
-	// 		image.onload = () => {
-	// 			 cropper = new Cropper(imageRef, {
-	// 				aspectRatio: 4 / 5
-	// 				// Other configuration options
-	// 			});
-
-	// 			const croppedCanvas = cropper.getCroppedCanvas();
-	// 			const croppedImage = croppedCanvas.toDataURL("image/jpeg");
-
-	// 			setSelectedImage(croppedImage);
-
-	// 			URL.revokeObjectURL(imageURL); // Clean up the object URL
-	// 		};
-	// };
-	// const onSelectFile = (e) => {
-	// 	const file = e.target.files[0];
-	// 	const imageURL = URL.createObjectURL(file);
-
-	// 	const image = new Image();
-	// 	image.onload = () => {
-	// 		imageRef.current.src = imageURL; // Setting the source for the displayed image
-
-	// 		const cropper = new Cropper(imageRef.current, {
-	// 			aspectRatio: 4 / 5,
-	// 			// Other configuration options
-	// 			ready() {
-	// 				const croppedCanvas = cropper.getCroppedCanvas();
-	// 				if (croppedCanvas) {
-	// 					const croppedImage = croppedCanvas.toDataURL("image/jpeg");
-	// 					setSelectedImage(croppedImage);
-	// 				} else {
-	// 					console.error("Failed to get cropped canvas.");
-	// 				}
-	// 			}
-	// 		});
-
-	// 		URL.revokeObjectURL(imageURL); // Clean up the object URL
-	// 	};
-
-	// 	image.src = imageURL;
-	// };
 	const handleLocationAPI = (e) => {
 		const updatedSearch = e.target.value;
 		setLocation(updatedSearch);
@@ -168,11 +102,9 @@ function PostModal({ isOpen, onClose }) {
 				});
 		}
 	};
-
 	const onSelectFile = (e) => {
 		const file = e.target.files[0];
 		const imageURL = URL.createObjectURL(file);
-
 		const image = new Image();
 		image.onload = () => {
 			imageRef.current.src = imageURL; // Setting the source for the displayed image
@@ -181,22 +113,25 @@ function PostModal({ isOpen, onClose }) {
 				aspectRatio: 4 / 5,
 				// Other configuration options
 				crop() {
-					const croppedCanvas = cropper.getCroppedCanvas();
-					if (croppedCanvas) {
-						const newCroppedImage = croppedCanvas.toDataURL("image/jpeg");
-						setSelectedImage(newCroppedImage);
-					} else {
-						console.error("Failed to get cropped canvas.");
+					try {
+						const croppedCanvas = cropper.getCroppedCanvas();
+						if (croppedCanvas) {
+							const newCroppedImage = croppedCanvas.toDataURL("image/jpeg");
+							setSelectedImage(newCroppedImage);
+						} else {
+							console.error("Failed to get cropped canvas.");
+						}
+					} catch (error) {
+						console.error("Error in crop function:", error);
 					}
 				}
+
 			});
 
 			URL.revokeObjectURL(imageURL); // Clean up the object URL
 		};
-
 		image.src = imageURL;
 	};
-
 	return (
 		<>
 			<Modal
@@ -310,7 +245,6 @@ function PostModal({ isOpen, onClose }) {
 													{places.map((place) => (
 														<div
 															onClick={() => {
-																// setSpecificPost({ ...specificPost, location: place.text });
 																setLocation(place.text);
 																setPlaces([]); // Clear the places array after selecting a place
 															}}
@@ -336,9 +270,6 @@ function PostModal({ isOpen, onClose }) {
 						<div className="flex justify-around items-center dark:bg-black bg-white border-0 p-3">
 							<Button type="submit">Post</Button>
 						</div>
-						{/* <Modal.Footer className="flex justify-around items-center bg-black border-0">
-
-						</Modal.Footer> */}
 					</form>
 				</div>
 				{emojishow && (
@@ -355,5 +286,4 @@ function PostModal({ isOpen, onClose }) {
 		</>
 	);
 }
-
 export default PostModal;

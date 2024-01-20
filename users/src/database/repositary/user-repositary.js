@@ -483,9 +483,11 @@ class UserRepositary {
 
 	async CountUserbyGender() {
 		try {
+			console.log('hii')
 			const maleCount = await User.find({ gender: "Male" }).countDocuments();
 			const femaleCount = await User.find({ gender: "Female" }).countDocuments();
 			const otherCount = await User.find({ gender: "Other" }).countDocuments();
+			console.log(maleCount)
 			return { maleCount, femaleCount, otherCount };
 		} catch (error) {}
 	}

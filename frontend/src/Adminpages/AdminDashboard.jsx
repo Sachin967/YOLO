@@ -1,6 +1,6 @@
-import { Chart } from "primereact/chart";
 import { useEffect, useState } from "react";
 import { admin } from "../config/axios";
+import { Chart } from "primereact/chart";
 const AdminDashboard = () => {
 	const [douChartData, setDouChartData] = useState({});
 	const [pieChartData, setPieChartData] = useState({});

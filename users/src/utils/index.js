@@ -156,7 +156,7 @@ export const RPCObserver = async (RPC_QUEUE_NAME, service) => {
 	channel.consume(
 		RPC_QUEUE_NAME,
 		async (msg) => {
-			// console.log("Received message:", msg);
+			console.log("Received message:", msg);
 			if (msg.content) {
 				// DB Operation
 				const payload = JSON.parse(msg.content.toString());

@@ -34,15 +34,15 @@ export default defineConfig({
 	},
 	build: {
 		cssCodeSplit: false,
-		publicDir: 'public',
-		assetsDir: 'assets',
+		publicDir: "public",
+		assetsDir: "assets",
 		terserOptions: {
 			compress: {
-				drop_console: true,
-			},
+				drop_console: true
+			}
 		},
-		sourcemap: false,
+		sourcemap: false
 	},
-	base: '/',
-	mode: 'production',
+	base: "/",
+	mode: "production"
 });
