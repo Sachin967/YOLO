@@ -8,19 +8,22 @@ import { mapbox, posts } from "../../config/axios.js";
 import { Avatar, Box } from "@chakra-ui/react";
 import useCustomToast from "../../config/toast.js";
 import React, { useRef } from "react";
-import "cropperjs/dist/cropper.css";
-import Cropper from "cropperjs";
 import { useNavigate } from "react-router-dom";
+import Cropper from "cropperjs";
+import 'cropperjs/dist/cropper.css';
 function PostModal({ isOpen, onClose }) {
+	let cropper
+	const cropperRef = useRef(null);
+	const [imageUrl, setImageUrl] = useState('');
 	const imageRef = useRef(null);
-	let cropper;
+	const inputRef = useRef(null);
 	const showToast = useCustomToast();
 	const dispatch = useDispatch();
 	const Navigate = useNavigate();
 	const [modalHeight, setModalHeight] = useState("auto");
 	const [text, setText] = useState("");
 	const [emojishow, setEmojishow] = useState(false);
-	const [selectedImage, setSelectedImage] = useState(null);
+	const [selectedImage, setSelectedImage] = useState('');
 	const { userdetails } = useSelector((state) => state.auth);
 	const [location, setLocation] = useState();
 	const [places, setPlaces] = useState([]);
@@ -32,13 +35,38 @@ function PostModal({ isOpen, onClose }) {
 	const addEmoji = (selectedEmoji) => {
 		setText((prevText) => prevText + selectedEmoji.emoji);
 	};
+
 	useEffect(() => {
-		if (selectedImage) {
-			setModalHeight("auto"); // Adjust according to your header/footer height
-		} else {
-			setModalHeight("auto");
+		if (imageUrl) {
+			cropperRef.current = new Cropper(imageRef.current, {
+				aspectRatio: 4 / 5,
+				viewMode: 2,
+				autoCropArea: 1,
+				crop: () => {
+			
+					const croppedImage = cropperRef.current.getCroppedCanvas().toDataURL('image/jpeg');
+					// Use the croppedImage URL as needed (e.g., save it, display it, etc.)
+					setSelectedImage(croppedImage)
+				},
+			});
 		}
-	}, [selectedImage]);
+		return () => {
+			if (cropperRef.current) {
+				cropperRef.current.destroy();
+			}
+		};
+	}, [imageUrl]);
+
+	const handleFileChange = (e) => {
+		const file = e.target.files[0];
+
+		if (file) {
+			const objectUrl = URL.createObjectURL(file);
+			setImageUrl(objectUrl);
+		}
+	};
+
+
 
 	const handlePost = (e) => {
 		e.preventDefault();
@@ -102,35 +130,7 @@ function PostModal({ isOpen, onClose }) {
 				});
 		}
 	};
-	const onSelectFile = (e) => {
-		const file = e.target.files[0];
-		const imageURL = URL.createObjectURL(file);
-		const image = new Image();
-		image.onload = () => {
-			imageRef.current.src = imageURL; // Setting the source for the displayed image
 
-			const cropper = new Cropper(imageRef.current, {
-				aspectRatio: 4 / 5,
-				// Other configuration options
-				crop() {
-					try {
-						const croppedCanvas = cropper.getCroppedCanvas();
-						if (croppedCanvas) {
-							const newCroppedImage = croppedCanvas.toDataURL("image/jpeg");
-							setSelectedImage(newCroppedImage);
-						} else {
-							console.error("Failed to get cropped canvas.");
-						}
-					} catch (error) {
-						console.error("Error in crop function:", error);
-					}
-				}
-			});
-
-			URL.revokeObjectURL(imageURL); // Clean up the object URL
-		};
-		image.src = imageURL;
-	};
 	return (
 		<>
 			<Modal
@@ -174,8 +174,8 @@ function PostModal({ isOpen, onClose }) {
 					)}
 					<form onSubmit={handlePost}>
 						<Modal.Body className="bg-white dark:bg-black">
-							<div className="w-1/2 h-auto mx-auto p-2">
-								<img ref={imageRef} className="max-w-[300px] max-h-[375px]" />
+							<div className="w-1/2 h-auto mx-auto p-4">
+								<img ref={imageRef} src={imageUrl} className="max-w-full" />
 							</div>
 							<label for="file-upload" className="mr-3">
 								<svg
@@ -201,11 +201,12 @@ function PostModal({ isOpen, onClose }) {
 								accept="image/*, video/*"
 								className="hidden"
 								multiple
-								onChange={onSelectFile}
+								onChange={handleFileChange}
+								ref={inputRef}
 								name="media"
 							/>
 							<div className="relative mb-5 flex items-center max-w-full">
-								<Avatar size={"sm"} src="https://bit.ly/dan-abramov" />
+								<Avatar size={"sm"} src={userdetails.propic.url} />
 								<textarea
 									name="textmedia"
 									value={text}
@@ -285,4 +286,5 @@ function PostModal({ isOpen, onClose }) {
 		</>
 	);
 }
+
 export default PostModal;

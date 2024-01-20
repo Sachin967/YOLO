@@ -30,6 +30,7 @@ const AddCoverPicModal = ({ isOpen, onClose, username, showUserProfile, isCoverP
 		const reader = new FileReader();
 		reader.onload = () => {
 			if (imageRef.current && reader.result) {
+				console.log(reader.result)
 				imageRef.current.src = reader.result;
 				cropper = new Cropper(imageRef.current, {
 					// Configure cropper options here
@@ -81,7 +82,7 @@ const AddCoverPicModal = ({ isOpen, onClose, username, showUserProfile, isCoverP
 				<ModalContent style={{ height: "700px", width: "600px", position: "relative" }}>
 					<ModalHeader className="text-center text-black dark:text-white">Edit Cover Pic</ModalHeader>
 					<ModalCloseButton className="absolute top-0 left-0" />
-					<button onClick={uploadPic} className="absolute text-black dark:text-white top-2 right-5">
+					<button onClick={uploadPic} className="absolute text-white top-2 right-5">
 						Apply
 					</button>
 					{loading && (
