@@ -30,7 +30,7 @@ const AddCoverPicModal = ({ isOpen, onClose, username, showUserProfile, isCoverP
 		const reader = new FileReader();
 		reader.onload = () => {
 			if (imageRef.current && reader.result) {
-				console.log(reader.result)
+				console.log(reader.result);
 				imageRef.current.src = reader.result;
 				cropper = new Cropper(imageRef.current, {
 					// Configure cropper options here

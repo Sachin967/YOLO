@@ -10,11 +10,11 @@ import useCustomToast from "../../config/toast.js";
 import React, { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Cropper from "cropperjs";
-import 'cropperjs/dist/cropper.css';
+import "cropperjs/dist/cropper.css";
 function PostModal({ isOpen, onClose }) {
-	let cropper
+	let cropper;
 	const cropperRef = useRef(null);
-	const [imageUrl, setImageUrl] = useState('');
+	const [imageUrl, setImageUrl] = useState("");
 	const imageRef = useRef(null);
 	const inputRef = useRef(null);
 	const showToast = useCustomToast();
@@ -23,7 +23,7 @@ function PostModal({ isOpen, onClose }) {
 	const [modalHeight, setModalHeight] = useState("auto");
 	const [text, setText] = useState("");
 	const [emojishow, setEmojishow] = useState(false);
-	const [selectedImage, setSelectedImage] = useState('');
+	const [selectedImage, setSelectedImage] = useState("");
 	const { userdetails } = useSelector((state) => state.auth);
 	const [location, setLocation] = useState();
 	const [places, setPlaces] = useState([]);
@@ -43,11 +43,10 @@ function PostModal({ isOpen, onClose }) {
 				viewMode: 2,
 				autoCropArea: 1,
 				crop: () => {
-			
-					const croppedImage = cropperRef.current.getCroppedCanvas().toDataURL('image/jpeg');
+					const croppedImage = cropperRef.current.getCroppedCanvas().toDataURL("image/jpeg");
 					// Use the croppedImage URL as needed (e.g., save it, display it, etc.)
-					setSelectedImage(croppedImage)
-				},
+					setSelectedImage(croppedImage);
+				}
 			});
 		}
 		return () => {
@@ -65,8 +64,6 @@ function PostModal({ isOpen, onClose }) {
 			setImageUrl(objectUrl);
 		}
 	};
-
-
 
 	const handlePost = (e) => {
 		e.preventDefault();
