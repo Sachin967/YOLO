@@ -17,7 +17,11 @@ const reportUser = [
 	{ value: 3, label: "It maybe under the age of 13" }
 ];
 
-export const ENDPOINT = "http://localhost:8000";
+export const MESSENDPOINT = "https://yolo.sachinms.fyi/messaging";
+// export const MESSENDPOINT = 'http://localhost:8000'
+
+// export const NOTENDPOINT = "http://localhost:9000";
+export const NOTENDPOINT = "https://yolo.sachinms.fyi/notification";
 
 export const dayOptions = Array.from({ length: 31 }, (_, i) => i + 1);
 
@@ -43,17 +47,17 @@ export const yearOptions = Array.from({ length: currentYear - 1900 + 1 }, (_, i)
 
 export { reportingReasons, reportUser };
 
-const USER_SERVICE = "https://yolo.sachinms.fyi/users";
-const POST_SERVICE = "https://yolo.sachinms.fyi/posts";
-const MESSAGE_SERVICE = "https://yolo.sachinms.fyi/messaging";
-const NOTIFICATION_SERVICE = "https://yolo.sachinms.fyi/notification";
-const ADMIN_SERVICE = "https://yolo.sachinms.fyi/admin";
-const MAPBOX = "https://api.mapbox.com/geocoding/v5/mapbox.places";
-
-// const USER_SERVICE = "http://localhost:7100/users";
-// const POST_SERVICE = "http://localhost:7000/posts";
-// const MESSAGE_SERVICE = "http://localhost:8000/messaging";
-// const NOTIFICATION_SERVICE = "http://localhost:9000/notification";
-// const ADMIN_SERVICE = "http://localhost:7300/admin";
+// const USER_SERVICE = "https://yolo.sachinms.fyi/users";
+// const POST_SERVICE = "https://yolo.sachinms.fyi/posts";
+// const MESSAGE_SERVICE = "https://yolo.sachinms.fyi/messaging";
+// const NOTIFICATION_SERVICE = "https://yolo.sachinms.fyi/notification";
+// const ADMIN_SERVICE = "https://yolo.sachinms.fyi/admin";
 // const MAPBOX = "https://api.mapbox.com/geocoding/v5/mapbox.places";
+
+const USER_SERVICE = "http://localhost:7100/users";
+const POST_SERVICE = "http://localhost:7000/posts";
+const MESSAGE_SERVICE = "http://localhost:8000/messaging";
+const NOTIFICATION_SERVICE = "http://localhost:9000/notification";
+const ADMIN_SERVICE = "http://localhost:7300/admin";
+const MAPBOX = "https://api.mapbox.com/geocoding/v5/mapbox.places";
 export { USER_SERVICE, POST_SERVICE, MESSAGE_SERVICE, NOTIFICATION_SERVICE, ADMIN_SERVICE, MAPBOX };

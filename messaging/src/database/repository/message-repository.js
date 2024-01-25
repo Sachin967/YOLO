@@ -13,6 +13,14 @@ class MessageRepository {
 		} catch (error) {}
 	}
 
+	async UpdateMessages({ chatId, userId }) {
+		console.log("hhhhhhhhhh", chatId);
+		await Message.updateMany({ chatId: chatId, readBy: { $ne: userId } }, { $addToSet: { readBy: userId } });
+		const updatedMessages = await Message.find({ chatId: chatId });
+		console.log(updatedMessages);
+		return updatedMessages;
+	}
+
 	async CreatNormalChat({ loggedInUserId, userId }) {
 		try {
 			const chat = await Chat.create({
@@ -29,6 +37,7 @@ class MessageRepository {
 			const chats = await Chat.find({ users: { $elemMatch: { $eq: userId } } })
 				.populate("latestMessage")
 				.sort({ updatedAt: -1 });
+			console.log(chats[0]);
 			return chats;
 		} catch (error) {
 			console.log(error);
@@ -120,16 +129,12 @@ class MessageRepository {
 	async FindGroupChat(id) {
 		try {
 			const chats = await Chat.find({ isGroupChat: true });
-			const chatsWithOtherUsers = chats.reduce((result, chat) => {
-				if (chat.users.includes(id)) {
-					const otherUsers = chat.users.filter((userId) => userId !== id);
-					result.push({ chat, otherUsers });
-				}
-				return result;
-			}, []);
-
-			return chatsWithOtherUsers;
-		} catch (error) {}
+			const userChats = chats.filter((chat) => chat.users.includes(id));
+			return userChats;
+		} catch (error) {
+			console.error(error);
+			throw error; // Rethrow the error if you want to propagate it
+		}
 	}
 }
 export default MessageRepository;

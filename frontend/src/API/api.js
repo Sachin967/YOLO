@@ -8,7 +8,6 @@ export const SavePost = async ({ postId, id }) => {
 	return users
 		.post(`/savepost`, { userId: id, postId: postId })
 		.then((res) => {
-			console.log(res);
 			if (res.data.status === "saved") {
 				// setSavePost(true);
 				return true;
@@ -21,22 +20,28 @@ export const SavePost = async ({ postId, id }) => {
 };
 
 export const fetchSavedPost = async (setSavedPost, id) => {
-	users
-		.get(`/savedpost/${id}`)
-		.then((res) => {
-			if (res.data) {
-				console.log(res.data);
-				const { users, response } = res.data;
-				const postsWithUserData = response.map((post) => {
-					const userDetail = users.find((user) => {
-						return user._id === post.userId;
-					});
-					return { ...post, userDetail };
-				});
-				setSavedPost(postsWithUserData);
-			}
-		})
-		.catch((err) => console.log(err));
+	const p = await users.get(`/savedpost/${id}`);
+	const postIds = p?.data;
+	if (postIds.length > 0) {
+		const post = await posts.get(`/getposts/${postIds}`);
+		console.log(post?.data);
+		const pos = post?.data;
+		const userIds = pos.map((po) => {
+			return po.userId;
+		});
+		const str = userIds.join(",");
+		const us = await users.get(`/getusers/${str}`);
+		const postsWithUserData = pos.map((p) => {
+			console.log(p);
+			const userDetail = us?.data.find((user) => {
+				return user._id === p.userId;
+			});
+			return { ...p, userDetail };
+		});
+		setSavedPost(postsWithUserData);
+	} else {
+		setSavedPost([]);
+	}
 };
 
 export const handleLike = async (id, _id, setLikeCount, setLiked, fetchLikedPost, showToast, dispatch, Navigate) => {
@@ -91,4 +96,15 @@ export const handleLogout = (dispatch, Navigate) => {
 			Navigate("/login");
 		}
 	});
+};
+
+export const NotFollowers = (id, setNotfollowers) => {
+	users
+		.get(`/notfollowers/${id}`)
+		.then((res) => {
+			if (res.data) {
+				setNotfollowers(res.data);
+			}
+		})
+		.catch((err) => console.log(err));
 };

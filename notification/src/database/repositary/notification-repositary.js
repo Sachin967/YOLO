@@ -14,7 +14,7 @@ class NotificationRepository {
 
 			// Emit Socket.io event for new notification to connected clients
 			if (io) {
-				io.emit("newNotification", { notification: savedNotification });
+				io.to(recipient).emit("newNotification");
 			}
 		} catch (error) {
 			console.log(error);
@@ -46,7 +46,7 @@ class NotificationRepository {
 		}
 	}
 
-	async DeleteNotification({ recipient, senderId, notificationType }) {
+	async DeleteNotification({ recipient, senderId, notificationType }, io) {
 		try {
 			console.log("delete");
 			const result = await Notification.deleteMany({
@@ -54,6 +54,7 @@ class NotificationRepository {
 				senderId: senderId,
 				notificationType: notificationType
 			});
+			io.to(recipient).emit("deletedNotification");
 		} catch (error) {
 			console.log(error);
 		}
@@ -64,6 +65,20 @@ class NotificationRepository {
 			const notification = await Notification.find({ recipientId: id }).sort({ createdAt: -1 });
 			return notification;
 		} catch (error) {}
+	}
+
+	async SetReadTrue(recipientId) {
+		try {
+			const isRead = await Notification.updateMany({ recipientId }, { $set: { isRead: true } });
+			return true;
+		} catch (error) {
+			console.log(error);
+		}
+	}
+
+	async CountUnreadNotification(userId) {
+		const count = await Notification.find({ recipientId: userId, isRead: false }).countDocuments();
+		return count;
 	}
 }
 

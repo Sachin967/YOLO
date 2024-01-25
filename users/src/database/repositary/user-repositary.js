@@ -116,9 +116,9 @@ class UserRepositary {
 		try {
 			const user = await User.findById(id);
 			if (user.isBlocked) {
-				return true;
+				return { status: true };
 			} else {
-				return false;
+				return { status: false };
 			}
 		} catch (error) {}
 	}
@@ -156,46 +156,6 @@ class UserRepositary {
 			}).limit(5);
 			return userNotFollowing;
 		} catch (error) {}
-	}
-	// async fetchUsers(userIds) {
-	// 	try {
-	// 		console.log(userIds)
-	// 		const { userId, id } = userIds;
-	// 		if (userId && id) {
-	// 			const user1 = await User.findById(userId);
-	// 			const user2 = await User.findById(id);
-
-	// 			return { user1, user2 };
-	// 		}
-	// 		const users = await User.find({ _id: { $in: userIds } });
-	// 		console.log(users)
-	// 		return users;
-	// 	} catch (error) {
-	// 		console.log(error);
-	// 	}
-	// }
-	async fetchUsers(userIds) {
-		try {
-			if (userIds && typeof userIds === "object") {
-				const { userId, loggedInUserId } = userIds;
-				if (userId && loggedInUserId) {
-					const user1 = await User.findById(userId);
-					const user2 = await User.findById(loggedInUserId);
-					return { user1, user2 };
-				}
-			}
-
-			if (!Array.isArray(userIds)) {
-				const user = await User.findById(userIds);
-				return user ? [user] : [];
-			}
-
-			const users = await User.find({ _id: { $in: userIds } });
-			return users;
-		} catch (error) {
-			console.log(error);
-			return [];
-		}
 	}
 
 	async FindUsersById(data) {
@@ -400,16 +360,14 @@ class UserRepositary {
 	async MakePrivateOrPublic({ isChecked, userId }) {
 		try {
 			const user = await User.findById(userId);
-			let updatedUser;
 			if (!user.isPrivate) {
-				// If the field doesn't exist or is falsy, update the document
-				updatedUser = await User.findByIdAndUpdate(userId, { isPrivate: false }, { new: true });
+				await User.findByIdAndUpdate(userId, { isPrivate: false }, { new: true });
 			}
 			if (isChecked) {
-				const m = await User.findByIdAndUpdate(userId, { isPrivate: false }, { new: true });
+				await User.findByIdAndUpdate(userId, { isPrivate: false }, { new: true });
 				return { isPrivate: false };
 			} else {
-				const n = await User.findByIdAndUpdate(userId, { isPrivate: true }, { new: true });
+				await User.findByIdAndUpdate(userId, { isPrivate: true }, { new: true });
 				return { isPrivate: true };
 			}
 		} catch (error) {}

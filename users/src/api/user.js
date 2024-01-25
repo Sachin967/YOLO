@@ -1,8 +1,6 @@
 import UserService from "../services/user-service.js";
-// import nodemailer from "nodemailer";
-// import { GMAIL, PASS } from "../config/index.js";
 import { UserAuth } from "./middleware/auth.js";
-import { PublishMessage, RPCObserver, SubscribeMessage, sendOTP } from "../utils/index.js";
+import { GenerateSignature, PublishMessage, RPCObserver, SubscribeMessage, sendOTP } from "../utils/index.js";
 import { NOTIFICATION_BINDING_KEY } from "../config/index.js";
 import express from "express";
 export const user = (app, channel) => {
@@ -53,6 +51,7 @@ export const user = (app, channel) => {
 
 	router.get("/notfollowers/:userId", async (req, res, next) => {
 		try {
+			console.log("notfollowers", req.cookies);
 			const { userId } = req.params;
 			const fetchNotfollowed = await service.FetchNotfollowedusers(userId);
 			return res.json(fetchNotfollowed);
@@ -123,6 +122,10 @@ export const user = (app, channel) => {
 				httpOnly: true,
 				expires: new Date(0)
 			});
+			res.cookie("refreshToken", "", {
+				httpOnly: true,
+				expires: new Date(0)
+			});
 			res.status(200).json({ status: true, message: "Logged out" });
 		} catch (error) {
 			console.log(error);
@@ -183,7 +186,7 @@ export const user = (app, channel) => {
 	router.get("/fetchfollowers/:id", async (req, res, next) => {
 		try {
 			const { id } = req.params;
-			const fetchfollowers = await service.FetchFollowers({ id });
+			const fetchfollowers = await service.repositary.FindFollowers({ id });
 			return res.json(fetchfollowers);
 		} catch (error) {}
 	});
@@ -191,7 +194,7 @@ export const user = (app, channel) => {
 	router.get("/fetchfollowing/:id", async (req, res, next) => {
 		try {
 			const { id } = req.params;
-			const fetchfollowing = await service.FetchFollowing({ id });
+			const fetchfollowing = await service.repositary.FindFollowing({ id });
 			return res.json(fetchfollowing);
 		} catch (error) {}
 	});
@@ -229,7 +232,7 @@ export const user = (app, channel) => {
 	router.get("/savedpost/:id", async (req, res, next) => {
 		try {
 			const { id } = req.params;
-			const savedposts = await service.GetSavedPost({ id });
+			const savedposts = await service.repositary.fetchSavedPosts({ id });
 			return res.json(savedposts);
 		} catch (error) {}
 	});
@@ -237,7 +240,7 @@ export const user = (app, channel) => {
 	router.post("/savepost", async (req, res, next) => {
 		try {
 			const { postId, userId } = req.body;
-			const savepost = await service.SavePost({ postId, userId });
+			const savepost = await service.repositary.SavingPost({ postId, userId });
 			return res.json(savepost);
 		} catch (error) {}
 	});
@@ -246,7 +249,7 @@ export const user = (app, channel) => {
 		try {
 			const { userId, reason } = req.body;
 			const id = req.user._id;
-			const reportUser = await service.ReportUser({ userId, id, reason });
+			const reportUser = await service.repositary.ReportingUser({ userId, id, reason });
 			return res.json(reportUser);
 		} catch (error) {
 			console.log(error);
@@ -260,13 +263,51 @@ export const user = (app, channel) => {
 		} catch (error) {}
 	});
 
+	router.get(`/getusers/:userIds`, async (req, res, next) => {
+		try {
+			const userIds = req.params.userIds.split(",");
+			const user = await service.repositary.FindUsersById(userIds);
+			return res.json(user);
+		} catch (error) {}
+	});
+
+	router.get(`/usersget/:usernames`, async (req, res, next) => {
+		try {
+			const usernames = req.params.usernames.split(",");
+			console.log(usernames);
+			const user = await service.repositary.FindwithUserNames(usernames);
+			return res.json(user);
+		} catch (error) {}
+	});
+
 	router.put("/makeprivate/:userId", async (req, res, next) => {
 		try {
 			const { userId } = req.params;
 			const { isChecked } = req.body;
-			const makeprivate = await service.ManagePrivateAndPublic({ isChecked, userId });
+			const makeprivate = await service.repositary.MakePrivateOrPublic({ isChecked, userId });
 			return res.json(makeprivate);
 		} catch (error) {}
 	});
+
+	router.get("/checkisblocked/:userId", async (req, res, next) => {
+		try {
+			const { userId } = req.params;
+
+			const isBlocked = await service.repositary.IsBlocked(userId);
+			// console.log('isBlocked',isBlocked)
+			return res.json(isBlocked);
+		} catch (error) {}
+	});
+
+	router.post("/generatetoken", async (req, res, next) => {
+		try {
+			console.log(req.body);
+			const { newPayload } = req.body;
+			const generate = await GenerateSignature(res, newPayload);
+			console.log("generate", generate);
+			return res.json(true);
+		} catch (error) {}
+	});
+
 	app.use("/users", router);
 };

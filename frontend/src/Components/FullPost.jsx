@@ -58,30 +58,38 @@ const FullPost = ({
 	const Navigate = useNavigate();
 	const [comments, setComment] = useState([]);
 	const [commentId, setCommentId] = useState("");
-	const SinglePostDetails = () => {
-		posts
-			.post("/postdetails", { postId })
-			.then((res) => {
-				console.log(res.data);
-				const { post: post, userData } = res.data.response;
-				// Match user data for each post based on user IDs
-				const commentWithUserData = post.comments.map((comment) => {
+	const SinglePostDetails = async () => {
+		try {
+			const response = await posts.post("/postdetails", { postId });
+			const { post, usernames } = response.data.response;
+			const username = usernames.join(",");
+			console.log(username);
+			const user = await users.get(`/usersget/${username}`);
+			console.log(user);
+			const userData = user.data.map((u) => {
+				const { _id, ...datawithoutid } = u;
+				return datawithoutid;
+			});
+			// Match user data for each post based on user IDs
+			const commentWithUserData = await Promise.all(
+				post.comments.map(async (comment) => {
 					const userDetail = userData.find((user) => {
-						return user?.username.toLowerCase() == comment?.username.toLowerCase();
+						return user?.username.toLowerCase() === comment?.username.toLowerCase();
 					});
 					console.log(userDetail);
 					return { ...comment, ...userDetail };
-				});
-				setComment(commentWithUserData);
-			})
-			.catch((error) => {
-				if (error.response && error.response.status === 403) {
-					// Handle 403 Forbidden error
-					Error403(error, showToast, dispatch, Navigate);
-				} else {
-					console.error("Error:", error);
-				}
-			});
+				})
+			);
+
+			setComment(commentWithUserData);
+		} catch (error) {
+			if (error.response && error.response.status === 403) {
+				// Handle 403 Forbidden error
+				Error403(error, showToast, dispatch, Navigate);
+			} else {
+				console.error("Error:", error);
+			}
+		}
 	};
 
 	const FetchPosts = () => {
@@ -173,6 +181,9 @@ const FullPost = ({
 			});
 	};
 	const ReplyComment = (id) => {
+		console.log(id);
+		console.log(replyText);
+		console.log(usrname);
 		try {
 			posts
 				.post("/commentreply", { commentId: id, replyText, username: usrname })
@@ -218,9 +229,9 @@ const FullPost = ({
 				size="full"
 				isOpen={isPostModalOpen}>
 				<ModalOverlay bg="rgba(0, 0, 0, 0.7)" />
-				<ModalContent style={{ backgroundColor: "rgba(0, 0, 0, 0.15)" }}>
+				<ModalContent style={{ backgroundColor: "rgb(255, 255, 255)" }}>
 					<ModalHeader bg="black" className="px-0 bg-transparent py-0">
-						<ModalCloseButton className="hover:text-white" />
+						<ModalCloseButton className="text-white " />
 					</ModalHeader>
 					<ModalBody bg={"black"} className="flex  bg-transparent justify-center relative">
 						<img className="w-[550px]  mr-60 h-[687px]" src={poster?.media} alt="" />
@@ -251,6 +262,7 @@ const FullPost = ({
 										{specificPost?.textmedia || poster?.textmedia}
 									</Text>
 								</div>
+								{console.log(comments)}
 								{/* Iterate through comments */}
 								{comments.length > 0 &&
 									comments?.map((comment) => (
@@ -283,6 +295,7 @@ const FullPost = ({
 													<PopoverContent style={{ backgroundColor: "#262626" }}>
 														<PopoverArrow />
 														<PopoverCloseButton />
+														{console.log(comment)}
 														<textarea
 															value={
 																replyText.startsWith(`@${comment?.username}`)
@@ -347,15 +360,21 @@ const FullPost = ({
 						<div className=" w-[351px]  border-l border-t border-zinc-700 absolute bottom-0 right-0">
 							{" "}
 							<div className="flex p-3 justify-between">
-								<FontAwesomeIcon
-									onClick={() => handleLike(postId)}
-									className={`text-3xl transition-transform cursor-pointer p-3 ${
-										like ? "text-red-700 scale-125" : "text-gray-200"
-									}`}
-									icon={faHeart}
-								/>
-								{/* <FontAwesomeIcon className="text-2xl p-2" icon={faPaperPlane} /> */}
-								{/* <FontAwesomeIcon className="text-2xl p-2" icon={faBookmark} /> */}
+								<div className="flex">
+									<FontAwesomeIcon
+										onClick={() => handleLike(postId)}
+										className={`text-3xl transition-transform cursor-pointer p-3 ${
+											like ? "text-red-700 scale-125" : "text-gray-200"
+										}`}
+										icon={faHeart}
+									/>
+									{likeCount > 0 && (
+										<Text className="font-semibold text-2xl dark:text-white text-black p-2">
+											{" "}
+											{likeCount}
+										</Text>
+									)}
+								</div>
 								<div onClick={() => PostSave(postId)} className="inline-block">
 									{savepost ? (
 										<ImBookmark
@@ -367,15 +386,11 @@ const FullPost = ({
 									)}
 								</div>
 							</div>
-							<Text className="font-semibold text-2xl dark:text-white text-black ml-8 mb-3">
-								{" "}
-								{likeCount}
-							</Text>
 							<div className="">{emojishow && <EmojiPicker onEmojiClick={addEmoji} />}</div>
 							<div className="flex p-3 border-t border-b border-3 border-zinc-700 justify-between items-center">
 								<FontAwesomeIcon
 									onClick={openEmoji}
-									className="p-2 text-2xl dark:text-white text-black"
+									className="p-2 text-2xl text-white"
 									icon={faFaceSurprise}
 								/>
 								<textarea

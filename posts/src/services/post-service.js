@@ -1,5 +1,5 @@
 import PostRepositary from "../database/repositary/post-repositary.js";
-import { FormateData, PublishMessage, RPCRequest } from "../utils/index.js";
+import { FormateData } from "../utils/index.js";
 
 class PostService {
 	constructor() {
@@ -16,7 +16,7 @@ class PostService {
 				media
 			});
 			if (post) {
-				return FormateData({ status: true, message: "Post added" });
+				return { status: true, message: "Post added" };
 			}
 		} catch (error) {
 			console.log(error);
@@ -26,31 +26,7 @@ class PostService {
 		try {
 			const skip = (page - 1) * limit;
 			const Posts = await this.repositary.FindPosts({ skip, limit });
-			const postUserIds = Posts.map((post) => post.userId);
-			const batchSize = 50;
-			const batches = [];
-
-			for (let i = 0; i < postUserIds.length; i += batchSize) {
-				batches.push(postUserIds.slice(i, i + batchSize));
-			}
-			const userData = [];
-
-			for (const batch of batches) {
-				const batchUserData = await RPCRequest("USER_RPC", {
-					type: "FETCH_USERS",
-					data: batch
-				});
-				userData.push(...batchUserData);
-			}
-			// Associating user details with respective posts
-			Posts.forEach((post) => {
-				const userDetail = userData.find((user) => user.id === post.userId);
-				if (userDetail) {
-					post.userDetails = userDetail; // Associating user details with the post
-				}
-			});
-
-			return { posts: Posts, userData: userData };
+			return { posts: Posts };
 		} catch (error) {
 			console.log(error);
 			throw error;
@@ -60,39 +36,8 @@ class PostService {
 	async FetchPostDetail(postId) {
 		try {
 			const post = await this.repositary.FindPostById(postId);
-
-			// Extracting usernames from comments
 			const usernames = post.comments.map((comment) => comment.username);
-
-			// Batching the usernames for RPC request
-			const batchSize = 100;
-			const batches = [];
-			for (let i = 0; i < usernames.length; i += batchSize) {
-				batches.push(usernames.slice(i, i + batchSize));
-			}
-
-			const userData = [];
-
-			// Making RPC calls to fetch user data in batches
-			for (const batch of batches) {
-				const batchUserData = await RPCRequest("USER_RPC", {
-					type: "FETCH_USERS_BY_USERNAME",
-					data: batch
-				});
-				userData.push(...batchUserData);
-			}
-			post.comments.forEach((comment) => {
-				const userDetail = userData.find((user) => user.username === comment.username);
-				if (userDetail) {
-					comment.userDetails = userDetail; // Associate user details with the post
-				}
-			});
-			const user = userData.map((obj) => {
-				const { _id, ...rest } = obj;
-				return rest;
-			});
-			// Return user data associated with comment users
-			return { post: post, userData: user };
+			return { post: post, usernames };
 		} catch (error) {
 			console.log(error);
 		}
@@ -140,7 +85,7 @@ class PostService {
 
 	async FetchLikedPost(userId) {
 		try {
-			const likedPosts = this.repositary.LikedPosts(userId);
+			const likedPosts = await this.repositary.LikedPosts(userId);
 			return likedPosts;
 		} catch (error) {
 			console.log(error);
@@ -213,32 +158,15 @@ class PostService {
 	async FetchUserFromPosts(postId) {
 		try {
 			const { userId } = await this.repositary.FindUserId(postId);
-			const response = await RPCRequest("USER_RPC", {
-				type: "FETCH_USERS",
-				data: userId
-			});
-			const modifiedArray = response.map((obj) => {
-				const { _id, ...rest } = obj;
-				return rest;
-			});
-			return modifiedArray;
+			return userId;
 		} catch (error) {}
 	}
 
 	async serveRPCRequest(payload) {
 		const { type, data } = payload;
 		switch (type) {
-			case "LIST_POSTS":
-				return this.repositary.FindPosts();
-				break;
 			case "LIST_REPORTED_POSTS":
 				return this.repositary.FindReportedPost();
-			case "USER_POSTS_LIKES":
-				return this.repositary.FindUserPostAndLikes(data);
-				break;
-			case "SAVED_POSTS":
-				return this.repositary.FetchSavedPosts(data);
-				break;
 			case "UNLIST_POST":
 				return this.repositary.unListPost(data);
 				break;

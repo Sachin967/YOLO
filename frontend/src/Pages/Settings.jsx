@@ -14,7 +14,7 @@ const Settings = () => {
 
 	return (
 		<div className="flex">
-			<div className="ml-80 w-[430px] h-screen border-r flex flex-col">
+			<div className="ml-80 w-[430px] h-screen border-r flex flex-col dark:bg-black">
 				<h1 className="text-2xl dark:text-white text-black font-bold p-3">Settings</h1>
 				<div className="flex mt-3 flex-col w-full">
 					<Link
@@ -34,7 +34,7 @@ const Settings = () => {
 					</Link>
 				</div>
 			</div>
-			<div className="flex-grow">
+			<div className="flex-grow  dark:bg-black">
 				{isChangePassword && <ChangePassword />}
 				{isAccountPrivacy && <AccountPrivacy />}
 				{isDeactivateAccount && <DeactivateAccount />}

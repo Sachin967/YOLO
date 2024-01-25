@@ -26,7 +26,6 @@ const GroupChatModal = ({ isOpen, onClose, filteredUsers, FetchChats }) => {
 	const [search, setSearch] = useState("");
 	const { userdetails } = useSelector((state) => state.auth);
 	const showToast = useCustomToast();
-	const [chats, setChats] = useState([]);
 	const filter = filteredUsers.filter((user) => {
 		const hasName =
 			user?.name && user.name !== userdetails.name && user.name.toLowerCase().includes(search.toLowerCase());
@@ -66,8 +65,7 @@ const GroupChatModal = ({ isOpen, onClose, filteredUsers, FetchChats }) => {
 					users: JSON.stringify(selectedUsers.filter((user) => user._id))
 				})
 				.then((res) => {
-					if (res.data) {
-						setChats(res.data);
+					if (res.data.status) {
 						FetchChats();
 						onClose();
 						showToast("success", "Group Created");
@@ -80,9 +78,10 @@ const GroupChatModal = ({ isOpen, onClose, filteredUsers, FetchChats }) => {
 	};
 	return (
 		<Modal onClose={onClose} size={"md"} isOpen={isOpen}>
-			<ModalOverlay />
+			<ModalOverlay style={{ backgroundColor: "rgba(34, 34, 34, 0.7)" }} />
 			<ModalContent>
 				<ModalHeader
+					className="text-black"
 					fontSize={"35px"}
 					fontFamily={"Work sans"}
 					textColor={"whitesmoke"}

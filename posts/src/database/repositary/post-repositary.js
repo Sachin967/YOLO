@@ -187,6 +187,7 @@ class PostRepositary {
 				{ $push: { replies: { username, replyText } } },
 				{ new: true }
 			);
+			console.log(comment);
 			return comment;
 		} catch (error) {}
 	}

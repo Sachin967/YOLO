@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { users } from "../config/axios";
 import { useNavigate } from "react-router-dom";
 import { Avatar } from "@chakra-ui/react";
 import { ChatState } from "../Context/ChatProvider";
 import { MdClear } from "react-icons/md";
+import Suggesions from "../Components/Suggesions";
+import { useSelector } from "react-redux";
+import { NotFollowers } from "../API/api";
 const Search = () => {
 	const [search, setSearch] = useState("");
-	const { recentSearches, setRecentSearches } = ChatState();
+	const { recentSearches, setRecentSearches, notfollowers, setNotfollowers } = ChatState();
+	const { userdetails } = useSelector((state) => state.auth);
 	const [user, setUser] = useState([]);
 	const Navigate = useNavigate();
 	const handleInputChange = (e) => {
@@ -43,6 +47,11 @@ const Search = () => {
 		const updatedsearch = recentSearches.filter((user) => user._id !== u._id);
 		setRecentSearches(updatedsearch);
 	};
+
+	useEffect(() => {
+		NotFollowers(userdetails._id, setNotfollowers);
+	}, []);
+
 	return (
 		<div className="h-screen flex">
 			<div className="ml-20 w-[694px] relative md:w-[1110px] lg:w-[750px] min-h-screen max-h-full sm:w-[980px] lg:ml-[320px] sm:ml-[55px] bg-white dark:bg-black">
@@ -152,7 +161,7 @@ const Search = () => {
 					)}{" "}
 				</div>
 			</div>
-			<div className="sm:block hidden w-[370px] border-l border-gray-700 dark:bg-black bg-white"></div>
+			<Suggesions notfollowers={notfollowers} />
 		</div>
 	);
 };

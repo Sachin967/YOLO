@@ -2,9 +2,26 @@ import { USER_BINDING_KEY } from "../config/index.js";
 import NotificationService from "../services/notification-service.js";
 import { PublishMessage, SubscribeMessage } from "../utils/index.js";
 import express from "express";
-export const notification = (app, channel, io) => {
+import { Server } from "socket.io";
+export const notification = (app, channel, server) => {
 	const router = express.Router();
 	const service = new NotificationService();
+	const io = new Server(server, {
+		pingTimeout: 60000,
+		cors: {
+			origin: ["http://localhost:4000", "https://yolomedia.sachinms.fyi"],
+			methods: ["GET", "POST"],
+			allowedHeaders: ["Content-Type", "Authorization"],
+			credentials: true // If you're using cookies or authorization headers
+		}
+	});
+	io.on("connection", (socket) => {
+		console.log("connected to socket.io");
+		socket.on("suitup", (userData) => {
+			socket.join(userData._id);
+			socket.emit("connected");
+		});
+	});
 	SubscribeMessage(channel, service, io);
 	router.get("/:id", async (req, res, next) => {
 		try {
@@ -36,6 +53,22 @@ export const notification = (app, channel, io) => {
 		} catch (error) {
 			console.log(error);
 		}
+	});
+
+	router.post("/notificationread", async (req, res) => {
+		try {
+			const { recipientId } = req.body;
+			const isRead = await service.repository.SetReadTrue(recipientId);
+			return res.json(isRead);
+		} catch (error) {}
+	});
+
+	router.get("/unreadnotification/:userId", async (req, res) => {
+		try {
+			const { userId } = req.params;
+			const count = await service.repository.CountUnreadNotification(userId);
+			return res.json(count);
+		} catch (error) {}
 	});
 	app.use("/notification", router);
 };

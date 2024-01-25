@@ -7,16 +7,20 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpFromBracket } from "@fortawesome/free-solid-svg-icons";
 import { ImBookmark } from "react-icons/im";
 import { GrBookmark } from "react-icons/gr";
-import { SavePost, fetchSavedPost } from "../API/api";
+import { NotFollowers, SavePost, fetchSavedPost } from "../API/api";
 import { ChatState } from "../Context/ChatProvider";
+import { Link } from "react-router-dom";
+import Suggesions from "../Components/Suggesions";
 const Bookmark = () => {
 	const [saved, setSaved] = useState(false);
-	const { savedpost, setSavedPost } = ChatState();
+	const { savedpost, setSavedPost, notfollowers, setNotfollowers } = ChatState();
+	const { userdetails } = useSelector((state) => state.auth);
 	useEffect(() => {
 		fetchSavedPost(setSavedPost, userdetails._id);
+		NotFollowers(userdetails._id, setNotfollowers);
 	}, []);
-	const { userdetails } = useSelector((state) => state.auth);
 	const id = userdetails._id;
+
 	const PostSave = async (postId) => {
 		try {
 			const fetchedPosts = await SavePost({ postId, id });
@@ -26,65 +30,48 @@ const Bookmark = () => {
 			console.log(error);
 		}
 	};
-	// const fetchSavedPost = () => {
-	// 	users
-	// 		.get(`/savedpost/${userdetails._id}`)
-	// 		.then((res) => {
-	// 			if (res.data) {
-	// 				console.log(res.data);
-	// 				const { users, response } = res.data;
-	// 				const postsWithUserData = response.map((post) => {
-	// 					const userDetail = users.find((user) => {
-	// 					return	user._id === post.userId;
-	// 					});
-	// 					return { ...post, userDetail };
-	// 				});
-	// 				setSavedPost(postsWithUserData);
-	// 			}
-	// 		})
-	// 		.catch((err) => console.log(err));
-	// };
-	return (
-		<div className="flex h-full">
-			<div className="ml-12 w-[694px] md:w-[1110px] lg:w-[750px] min-h-screen max-h-full sm:w-[980px] lg:ml-[320px] sm:ml-[55px] bg-white dark:bg-black">
-				<h2 className="text-center dark:text-white text-black text-xl font-semibold">Saved Posts</h2>
-				{/* <h2>Saved Posts</h2> */}
 
-				<div className="p-4 border-r border-b border-gray-700  dark:border-gray-700 max-w-[750px] ">
+	return (
+		<div className="flex justify-end h-full">
+			<div className="ml-12 w-[694px] md:w-[1110px] lg:w-[750px] min-h-screen max-h-full sm:w-[980px]  sm:ml-[55px] bg-white dark:bg-black">
+				<h2 className="text-center dark:text-white text-black text-3xl font-bold">Saved Posts</h2>
+
+				<div className="p-4  border-b border-gray-700  dark:border-gray-700 max-w-[750px] ">
 					{savedpost?.map((post) => (
-						<div className=" max-h-full pt-5 pb-11  dark:bg-black bg-white  border-b border-gray-500">
-							<Flex flex="1" gap="4" alignItems="center" flexWrap="wrap">
-								<a href={`/${post.userDetail.username}`}>
-									{" "}
-									<Avatar
-										src={post?.userDetail?.propic?.url}
-										name="Segun Adebayo"
-										className="mb-[610px]"
-									/>
-								</a>
-								<Box>
-									<a href={`/${post.userDetail.username}`}>
-										<Heading className="dark:text-white text-black" size="sm">
+						<div className="pt-5 pb-11  dark:bg-black bg-white  border-b border-gray-500">
+							<div className="flex justify-between items-start px-32">
+								<div className="flex justify-start">
+									<Link to={`/${post.userDetail.username}`}>
+										{" "}
+										<Avatar src={post?.userDetail?.propic?.url} name="Segun Adebayo" className="" />
+									</Link>
+
+									<Link className="pl-5" to={`/${post.userDetail.username}`}>
+										<Heading className="dark:text-white text-black mb-2" size="sm">
 											{post?.userDetail?.name}
 										</Heading>
-									</a>
-									<a href={`/${post.userDetail.username}`}>
 										<a className="text-gray-500">@{post.userDetail.username}</a>
-									</a>
-									<Text className="dark:text-white text-black mt-5">{post?.textmedia}</Text>
-									{post?.media && (
-										<Image
-											// onClick={handleClick}
-											className="rounded-3xl w-[480px] h-[600px]"
-											objectFit="cover"
-											src={post?.media}
-											alt="Chakra UI"
-										/>
-									)}
-								</Box>
-								<div onClick={() => PostSave(post?._id)} className="inline-block">
+									</Link>
+								</div>
+
+								<div onClick={() => PostSave(post?._id)}>
 									<ImBookmark className="cursor-pointer scale-105 h-14 w-14 p-3 transition-transform text-blue-500" />
 								</div>
+								{/* <Link to={`/${post.userDetail.username}`}>
+									
+								</Link> */}
+							</div>
+							<Text className="dark:text-white px-32 text-black mt-2">{post?.textmedia}</Text>
+							<Flex className="flex justify-center pt-5">
+								{post?.media && (
+									<Image
+										// onClick={handleClick}
+										className="rounded-3xl w-[480px] h-[600px]"
+										objectFit="cover"
+										src={post?.media}
+										alt="Chakra UI"
+									/>
+								)}
 							</Flex>
 						</div>
 					))}
@@ -102,7 +89,7 @@ const Bookmark = () => {
 					)}
 				</div>
 			</div>
-			<div className="w-[370px] border-l border-gray-700 bg-white dark:bg-black"></div>
+			<Suggesions notfollowers={notfollowers} />
 		</div>
 	);
 };

@@ -1,10 +1,43 @@
 import MessageService from "../services/message-service.js";
 import { UserAuth } from "./middleware/auth.js";
 import express from "express";
-export const message = (app) => {
+import { Server } from "socket.io";
+export const message = (app, server) => {
 	const router = express.Router();
-
 	const service = new MessageService();
+	const io = new Server(server, {
+		pingTimeout: 60000,
+		cors: {
+			origin: ["http://localhost:4000", "https://yolomedia.sachinms.fyi"]
+			// credentials: true,
+		}
+	});
+	io.on("connection", (socket) => {
+		console.log("connected to socket.io");
+		socket.on("setup", (userData) => {
+			socket.join(userData._id);
+			socket.emit("connected");
+		});
+		socket.on("join chat", (room) => {
+			socket.join(room);
+			console.log("user joined room:" + room);
+		});
+		socket.on("typing", (room) => socket.in(room).emit("typing"));
+		socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
+		socket.on("new message", (newMessageReceived) => {
+			var chat = newMessageReceived.chatId;
+			if (!chat.users) return console.log("chat.users not defined");
+			chat.users.forEach((user) => {
+				if (user == newMessageReceived.senderId) return;
+				socket.in(user).emit("message received", newMessageReceived);
+			});
+		});
+		socket.off("setup", () => {
+			console.log("USER DISCONNECTED");
+			socket.leave(userData._id);
+		});
+	});
+
 	router.get("/fetchchat/:id", async (req, res, next) => {
 		try {
 			const { id } = req.params;
@@ -81,6 +114,15 @@ export const message = (app) => {
 			const { id } = req.params;
 			const getChats = await service.FetchGroupChats(id);
 			return res.json(getChats);
+		} catch (error) {}
+	});
+
+	router.post("/readmessage/:chatId", UserAuth, async (req, res, next) => {
+		try {
+			const { chatId } = req.params;
+			const userId = req.user._id;
+			const updateMessage = await service.repository.UpdateMessages({ chatId, userId });
+			return res.json(updateMessage);
 		} catch (error) {}
 	});
 	app.use("/messaging", router);

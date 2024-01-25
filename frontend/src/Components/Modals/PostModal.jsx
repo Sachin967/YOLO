@@ -90,9 +90,7 @@ function PostModal({ isOpen, onClose }) {
 		posts
 			.post("/addpost", formData)
 			.then((res) => {
-				console.log(res);
 				if (res.data.status) {
-					console.log(res.data.message);
 					setLoading(false);
 					showToast("success", "Post added");
 					onClose();

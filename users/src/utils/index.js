@@ -1,6 +1,15 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { APP_SECRET, EXCHANGE_NAME, MESSAGE_BROKER_URL, QUEUE_NAME, GMAIL, PASS, USER_BINDING_KEY } from "../config/index.js";
+import {
+	APP_SECRET,
+	EXCHANGE_NAME,
+	MESSAGE_BROKER_URL,
+	QUEUE_NAME,
+	GMAIL,
+	PASS,
+	USER_BINDING_KEY,
+	REFRESH_SECRET
+} from "../config/index.js";
 import { v4 as uuid4 } from "uuid";
 import nodemailer from "nodemailer";
 import amqplib from "amqplib";
@@ -17,18 +26,43 @@ export const ValidatePassword = async (enteredPassword, salt, savedPassword) => 
 	return (await GeneratePassword(enteredPassword, salt)) === savedPassword;
 };
 
+// export const GenerateSignature = async (res, payload) => {
+// 	try {
+// 		const token = await jwt.sign(payload, APP_SECRET, { expiresIn: "30d" });
+// 		// Set the JWT token as a cookie
+// 		res.cookie("userJwt", token, {
+// 			httpOnly: false,
+// 			secure: process.env.NODE_ENV !== "dev",
+// 			sameSite: "Strict",
+// 			maxAge: 30 * 24 * 60 * 60 * 1000
+// 		});
+
+// 		return token;
+// 	} catch (error) {
+// 		console.log(error);
+// 		return error;
+// 	}
+// };
 export const GenerateSignature = async (res, payload) => {
 	try {
-		const token = await jwt.sign(payload, APP_SECRET, { expiresIn: "30d" });
-		// Set the JWT token as a cookie
-		res.cookie("userJwt", token, {
-			httpOnly: false,
-			secure: process.env.NODE_ENV !== "dev",
-			sameSite: "Strict",
-			maxAge: 30 * 24 * 60 * 60 * 1000
+		const accessToken = await jwt.sign(payload, APP_SECRET, { expiresIn: "5m" });
+
+		const refreshToken = await jwt.sign(payload, REFRESH_SECRET, { expiresIn: "30d" });
+
+		res.cookie("userJwt", accessToken, {
+			httpOnly: true,
+			secure: true,
+			sameSite: "None", // Set SameSite to None for cross-origin requests
+			maxAge: 5 * 60 * 1000 // 5 minutes
 		});
 
-		return token;
+		res.cookie("refreshToken", refreshToken, {
+			httpOnly: true,
+			secure: true,
+			sameSite: "None", // Set SameSite to None for cross-origin requests
+			maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+		});
+		return { accessToken, refreshToken };
 	} catch (error) {
 		console.log(error);
 		return error;
@@ -37,8 +71,9 @@ export const GenerateSignature = async (res, payload) => {
 
 export const ValidateSignature = async (req) => {
 	try {
-		const signature = req.get("Authorization");
-		const payload = await jwt.verify(signature.split(" ")[1], APP_SECRET);
+		console.log(req.cookies);
+		const accessToken = req.cookies.userJwt;
+		const payload = await jwt.verify(accessToken, APP_SECRET);
 		req.user = payload;
 		return true;
 	} catch (error) {
@@ -46,6 +81,18 @@ export const ValidateSignature = async (req) => {
 		return false;
 	}
 };
+
+// export const ValidateSignature = async (req) => {
+// 	try {
+// 		const signature = req.get("Authorization");
+// 		const payload = await jwt.verify(signature.split(" ")[1], APP_SECRET);
+// 		req.user = payload;
+// 		return true;
+// 	} catch (error) {
+// 		console.log(error);
+// 		return false;
+// 	}
+// };
 
 export const FormateData = async (data) => {
 	if (data) {
@@ -156,10 +203,10 @@ export const RPCObserver = async (RPC_QUEUE_NAME, service) => {
 	channel.consume(
 		RPC_QUEUE_NAME,
 		async (msg) => {
-			console.log("Received message:", msg);
 			if (msg.content) {
 				// DB Operation
 				const payload = JSON.parse(msg.content.toString());
+				console.log(payload);
 				const response = await service.serveRPCRequest(payload);
 				channel.sendToQueue(msg.properties.replyTo, Buffer.from(JSON.stringify(response)), {
 					correlationId: msg.properties.correlationId

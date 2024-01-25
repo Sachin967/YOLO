@@ -60,7 +60,7 @@ const PostView = ({ post, ShowPosts, fetchData }) => {
 	};
 	return (
 		<>
-			<div className="pl-14  border-b border-gray-700 sm:ml-80 lg:ml-0 dark:border-gray-700 max-w-[750px] ">
+			<div className="pl-[72px]  border-b border-gray-700 sm:ml-80 lg:ml-0 dark:border-gray-700 max-w-[750px] ">
 				<div className="flex items-center justify-center h-[550px]  sm:h-[750px]  rounded bg-white dark:bg-black ">
 					<Flex className="flex-0 sm:flex-1" gap="4" alignItems="center" flexWrap="wrap">
 						<Link className="h-1 sm:h-[720px]" to={`/${username}`}>
@@ -89,7 +89,7 @@ const PostView = ({ post, ShowPosts, fetchData }) => {
 									alt="Chakra UI"
 								/>
 							)}
-							<div className="flex justify-around w-full">
+							<div className="flex justify-between w-full">
 								<div
 									className="cursor-pointer"
 									style={{ position: "relative" }}
@@ -116,7 +116,7 @@ const PostView = ({ post, ShowPosts, fetchData }) => {
 								<div>
 									<button onClick={handleCommentClick}>
 										<FontAwesomeIcon
-											className="text-3xl p-4 text-gray-200  hover:text-blue-500"
+											className="text-3xl p-4 dark:text-white   hover:text-blue-700"
 											icon={faComment}
 										/>
 										<div className="relative bottom-11 left-[40px]">
@@ -127,8 +127,8 @@ const PostView = ({ post, ShowPosts, fetchData }) => {
 										</div>
 									</button>
 								</div>
-								<div className="cursor-pointer p-4" onClick={onShareOpen}>
-									<FontAwesomeIcon icon={faArrowUpFromBracket} className="text-3xl  text-gray-300" />
+								<div className="cursor-pointer p-4 dark:text-white text-black " onClick={onShareOpen}>
+									<FontAwesomeIcon icon={faArrowUpFromBracket} className="text-3xl" />
 									<ShareModal post={post} isOpen={isShareOpen} onClose={onShareClose} />
 								</div>
 								<div onClick={() => PostSave(_id)} className="inline-block">
@@ -138,7 +138,7 @@ const PostView = ({ post, ShowPosts, fetchData }) => {
 											className="cursor-pointer scale-105 h-14 w-14 p-3 transition-transform text-blue-500"
 										/>
 									) : (
-										<GrBookmark className="cursor-pointer h-14 w-14 p-3 transition-transform text-gray-300" />
+										<GrBookmark className="cursor-pointer h-14 w-14 p-3 transition-transform dark:text-white text-black " />
 									)}
 								</div>
 							</div>

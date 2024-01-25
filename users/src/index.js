@@ -11,7 +11,6 @@ const StartServer = async () => {
 	await expressApp(app, channel);
 	app.listen(PORT, () => console.log(`User is running on ${PORT}`)).on("error", (err) => {
 		console.log(err);
-		process.exit(1);
 	});
 };
 

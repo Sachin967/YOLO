@@ -59,7 +59,7 @@ const CommentModal = ({ onCloseCommentModal, isCommentModalOpen, PostUserdetails
 					<div className="flex items-center">
 						<Avatar name="Segun Adebayo" className="mb-10" src={PostUserdetails?.propic} />
 						<div className="flex flex-col ml-2">
-							<Heading className="dark:text-white text-black" size="sm">
+							<Heading className="text-white " size="sm">
 								{PostUserdetails?.name}
 							</Heading>
 							<Text className="text-gray-500">@{PostUserdetails?.username}</Text>
@@ -70,7 +70,7 @@ const CommentModal = ({ onCloseCommentModal, isCommentModalOpen, PostUserdetails
 				<ModalCloseButton />
 				<ModalBody>
 					<textarea
-						className="bg-transparent w-full border-none mb-4 rounded-2xl dark:text-white text-black resize-y overflow-hidden focus:outline-none"
+						className="bg-transparent w-full border-none mb-4 rounded-2xl text-white resize-y overflow-hidden focus:outline-none"
 						placeholder="Post your reply"
 						onChange={(e) => setText(e.target.value)}
 						type="text"

@@ -79,28 +79,23 @@ const UsersProfile = () => {
 			console.log(error);
 		}
 	};
-	const showUserProfile = () => {
+	const showUserProfile = async () => {
 		try {
-			users
-				.get(`/profile/${username}`)
-				.then((res) => {
-					if (res.data) {
-						setUser(res.data.user);
-						setIsPrivate(res.data.user.isPrivate);
-						setPosts(res.data.response.posts);
-						setLikedPost(res.data.response.likedposts);
-					}
-				})
-				.catch((error) => {
-					if (error.response && error.response.status === 403) {
-						// Handle 403 Forbidden error
-						Error403(error, showToast, dispatch, Navigate);
-					} else {
-						console.error("Error:", error);
-					}
-				});
+			const res = await users.get(`/profile/${username}`);
+			if (res.data._id) {
+				setUser(res.data);
+				setIsPrivate(res.data.isPrivate);
+				const post = await posts.get(`/likedAndUserPosts/${res.data._id}`);
+				setLikedPost(post?.data?.likedposts);
+				setPosts(post?.data?.posts);
+			}
 		} catch (error) {
-			console.log(error);
+			if (error.response && error.response.status === 403) {
+				// Handle 403 Forbidden error
+				Error403(error, showToast, dispatch, Navigate);
+			} else {
+				console.error("Error:", error);
+			}
 		}
 	};
 
@@ -113,20 +108,15 @@ const UsersProfile = () => {
 	};
 
 	const generatePostUserFunction = (postId) => {
-		console.log(postId);
 		return fetchUserByPostId(postId);
 	};
 
 	const fetchUserByPostId = async (postId) => {
-		console.log(postId);
-		return posts
-			.get(`/getusers/${postId}`)
-			.then((res) => {
-				if (res.data) {
-					return res.data[0];
-				}
-			})
-			.catch((error) => console.log(error));
+		const user = posts.get(`/getusers/${postId}`);
+		const userId = user?.data;
+		if (userId) {
+			return await users.get(`/getuser/${userId}`);
+		}
 	};
 
 	const FollowUsers = (userId) => {

@@ -39,7 +39,7 @@ export const SubscribeMessage = async (channel, service, io) => {
 		if (data.content) {
 			console.log("received data in notification");
 			console.log(data.content.toString());
-			service.SubscribeEvents(data.content.toString(), channel, io);
+			service.SubscribeEvents(data.content.toString(), io);
 			channel.ack(data);
 		}
 	});

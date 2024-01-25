@@ -6,12 +6,13 @@ import { notifications, posts, users } from "../config/axios";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { ChatState } from "../Context/ChatProvider";
-// import FullPost from "../Components/FullPost";
-const FullPost = lazy(() => import("../Components/FullPost"));
-import { SavePost, fetchLikedPost, fetchSavedPost, handleLike } from "../API/api";
+import FullPost from "../Components/FullPost";
+import { NotFollowers, SavePost, fetchLikedPost, fetchSavedPost, handleLike } from "../API/api";
 import useCustomToast from "../config/toast";
+import Suggesions from "../Components/Suggesions";
 
 const Notification = () => {
+	const { notfollowers, setNotfollowers } = ChatState();
 	const [like, setLiked] = useState(false);
 	const [likeCount, setLikeCount] = useState();
 	const { userdetails } = useSelector((state) => state.auth);
@@ -22,52 +23,61 @@ const Notification = () => {
 	const Navigate = useNavigate();
 	const showToast = useCustomToast();
 	const [loading, setLoading] = useState(true);
-	const [post, setPost] = useState([]);
-	const [user, setUser] = useState([]);
+	const [post, setPost] = useState({});
+	const [user, setUser] = useState({});
 	const dispatch = useDispatch();
 	useEffect(() => {
 		ShowNotifications();
+		NotFollowers(userdetails._id, setNotfollowers);
 	}, []);
 
-	const handleImageClick = (postId) => {
-		fetchPostDetail(postId);
-		if (user.length > 0) {
+	useEffect(() => {
+		if (!isEmpty(user) && !isEmpty(post)) {
 			onOpenPostModal();
 		}
+	}, [user, post, onOpenPostModal]);
+
+	const isEmpty = (obj) => {
+		return Object.keys(obj).length === 0;
+	};
+	const handleImageClick = (postId) => {
+		fetchPostDetail(postId);
 	};
 
-	const fetchPostDetail = (postId) => {
-		posts
-			.post("/postdetails", { postId })
-			.then((res) => {
-				if (res.data.status) {
-					console.log(res.data);
-					setPost(res.data.response);
-					console.log(res.data.response);
-					setUser(res.data.user);
-				}
-			})
-			.catch((error) => console.log(error));
+	const fetchPostDetail = async (postId) => {
+		try {
+			const response = await posts.post("/postdetails", { postId });
+			if (response.data.status) {
+				const { post } = response.data.response;
+				console.log(post);
+				const userId = post.userId;
+				const user = await users.get(`/getuser/${userId}`);
+				setPost(post);
+				setUser(user?.data);
+			}
+		} catch (error) {}
 	};
 
-	const ShowNotifications = () => {
-		notifications
-			.get(`/${userdetails._id}`)
-			.then((res) => {
-				console.log(res.data);
-				setLoading(false);
-				if (res.data) {
-					const { notification, response } = res.data;
+	const ShowNotifications = async () => {
+		const notif = await notifications.get(`/${userdetails._id}`);
+		if (notif.data) {
+			console.log(notif.data);
+			setLoading(false);
+			const { notification, senderId } = notif.data;
+			if (senderId.length > 0) {
+				const str = senderId.join(",");
+				const user = await users.get(`/getusers/${str}`);
+				if (user.data.length > 0) {
+					const usrs = user.data;
+					console.log(usrs);
 					const notificationWithUser = notification.map((notify) => {
-						const userDetail = response.find((user) => user._id === notify.senderId);
-						return { ...notify, userDetail };
+						const userDetail = usrs.filter((u) => u._id === notify.senderId);
+						return { ...notify, userDetail: userDetail[0] };
 					});
 					setNotify(notificationWithUser);
 				}
-			})
-			.catch((err) => {
-				console.log(err.message);
-			});
+			}
+		}
 	};
 
 	const likeFunction = (_id) => {
@@ -174,24 +184,19 @@ const Notification = () => {
 								className="cursor-pointer w-12 h-15 mr-2 sm:mr-5"
 								src={not?.Postimage}
 								alt=""
+							/>{" "}
+							<FullPost
+								postId={not?.entityID}
+								handleLike={likeFunction}
+								like={like}
+								onClosePostModal={onClosePostModal}
+								isPostModalOpen={isPostModalOpen}
+								likeCount={likeCount}
+								poster={post}
+								postuser={user}
+								savepost={savepost}
+								PostSave={PostSave}
 							/>
-							{post?.post && (
-								<Suspense fallback={<div>Loading...</div>}>
-									{" "}
-									<FullPost
-										postId={not?.entityID}
-										handleLike={likeFunction}
-										like={like}
-										onClosePostModal={onClosePostModal}
-										isPostModalOpen={isPostModalOpen}
-										likeCount={likeCount}
-										poster={post.post}
-										postuser={user[0]}
-										savepost={savepost}
-										PostSave={PostSave}
-									/>
-								</Suspense>
-							)}
 						</>
 					)}
 					{not?.notificationType === "follow" && (
@@ -254,24 +259,25 @@ const Notification = () => {
 									commented on your post
 								</h2>
 							</Link>
-							<img className="w-12 mr-5" src={not?.Postimage} alt="" />
-
-							{post?.post && (
-								<Suspense fallback={<div>Loading...</div>}>
-									<FullPost
-										postId={not?.entityID}
-										handleLike={likeFunction}
-										like={like}
-										onClosePostModal={onClosePostModal}
-										isPostModalOpen={isPostModalOpen}
-										likeCount={likeCount}
-										poster={post?.post}
-										postuser={user[0]}
-										savepost={savepost}
-										PostSave={PostSave}
-									/>
-								</Suspense>
-							)}
+							<img
+								onClick={() => handleImageClick(not?.entityID)}
+								className="w-12 mr-5"
+								src={not?.Postimage}
+								alt=""
+							/>
+							{console.log(post)}
+							<FullPost
+								postId={not?.entityID}
+								handleLike={likeFunction}
+								like={like}
+								onClosePostModal={onClosePostModal}
+								isPostModalOpen={isPostModalOpen}
+								likeCount={likeCount}
+								poster={post}
+								postuser={user}
+								savepost={savepost}
+								PostSave={PostSave}
+							/>
 						</>
 					)}
 
@@ -361,7 +367,7 @@ const Notification = () => {
 						)}
 					</div>
 				</div>
-				<div className="sm:block hidden w-[370px] border-l border-gray-700 bg-white dark:bg-black"></div>
+				<Suggesions notfollowers={notfollowers} />
 			</div>
 		</>
 	);

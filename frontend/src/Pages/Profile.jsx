@@ -47,25 +47,23 @@ const Profile = () => {
 	};
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const { isOpen: isCoverPicOpen, onOpen: onCoverPicOpen, onClose: onCoverPicClose } = useDisclosure();
-	const showUserProfile = () => {
-		users
-			.get(`/profile/${userdetails.username}`)
-			.then((res) => {
-				if (res.data) {
-					// console.log(res.data.user);
-					setUser(res.data.user);
-					setPosts(res.data.response.posts);
-					setLikedPost(res.data.response.likedposts);
-				}
-			})
-			.catch((error) => {
-				if (error.response && error.response.status === 403) {
-					// Handle 403 Forbidden error
-					Error403(error, showToast, dispatch, Navigate);
-				} else {
-					console.error("Error:", error);
-				}
-			});
+	const showUserProfile = async () => {
+		try {
+			const user = await users.get(`/profile/${userdetails.username}`);
+			if (user.data) {
+				const post = await posts.get(`/likedAndUserPosts/${user.data._id}`);
+				setPosts(post?.data?.likedposts);
+				setLikedPost(post?.data?.posts);
+				setUser(user.data);
+			}
+		} catch (error) {
+			if (error.response && error.response.status === 403) {
+				// Handle 403 Forbidden error
+				Error403(error, showToast, dispatch, Navigate);
+			} else {
+				console.error("Error:", error);
+			}
+		}
 	};
 
 	const HandleClick = (type) => {
@@ -99,14 +97,11 @@ const Profile = () => {
 	};
 
 	const fetchUserByPostId = async (postId) => {
-		return posts
-			.get(`/getusers/${postId}`)
-			.then((res) => {
-				if (res.data) {
-					return res.data[0];
-				}
-			})
-			.catch((error) => console.log(error));
+		const user = posts.get(`/getusers/${postId}`);
+		const userId = user?.data;
+		if (userId) {
+			return await users.get(`/getuser/${userId}`);
+		}
 	};
 	return (
 		<>

@@ -11,7 +11,7 @@ export const posts = (app, channel) => {
 	const service = new PostService();
 	RPCObserver("POST_RPC", service);
 
-	router.post("/addpost", upload.single("media"), async (req, res, next) => {
+	router.post("/addpost", UserAuth, upload.single("media"), async (req, res, next) => {
 		const media = req.file.location;
 		const { userId, location, privacy, textmedia } = req.body;
 		try {
@@ -21,6 +21,17 @@ export const posts = (app, channel) => {
 			console.log(error);
 		}
 	});
+
+	router.get("/likedAndUserPosts/:userId", UserAuth, async (req, res, next) => {
+		try {
+			const { userId } = req.params;
+			const response = await service.repositary.FindUserPostAndLikes(userId);
+			return res.json(response);
+		} catch (error) {
+			console.log(error);
+		}
+	});
+
 	router.get("/seeposts", UserAuth, async (req, res, next) => {
 		try {
 			const { page, limit } = req.query;
@@ -35,6 +46,7 @@ export const posts = (app, channel) => {
 			const { userId, postId } = req.body;
 			const { resp, payload } = await service.LikePost(userId, postId);
 			if (payload && Object.keys(payload).length !== 0) {
+				console.log(payload);
 				PublishMessage(channel, NOTIFICATION_BINDING_KEY, JSON.stringify(payload));
 			}
 			return res.json(resp);
@@ -72,10 +84,10 @@ export const posts = (app, channel) => {
 	});
 	router.post("/postdetails", UserAuth, async (req, res) => {
 		try {
+			console.log(req.body);
 			const { postId } = req.body;
 			const response = await service.FetchPostDetail(postId);
-			const user = await service.FetchUserFromPosts(postId);
-			res.json({ status: true, response, user });
+			res.json({ status: true, response });
 		} catch (error) {}
 	});
 
@@ -112,16 +124,27 @@ export const posts = (app, channel) => {
 
 	router.post("/commentreply", UserAuth, async (req, res) => {
 		try {
+			console.log(req.body);
 			const { username, replyText, commentId } = req.body;
 			const resp = await service.AddCommentReply({ username, replyText, commentId });
 			return res.json(resp);
 		} catch (error) {}
 	});
 
-	router.get("/getusers/:postId", async (req, res) => {
+	router.get("/getusers/:postId", UserAuth, async (req, res) => {
 		try {
 			const { postId } = req.params;
 			const user = await service.FetchUserFromPosts(postId);
+			return res.json(user);
+		} catch (error) {
+			console.log(error);
+		}
+	});
+
+	router.get("/getposts/:postIds", UserAuth, async (req, res) => {
+		try {
+			const postIds = req.params.postIds.split(",");
+			const user = await service.repositary.FetchSavedPosts(postIds);
 			return res.json(user);
 		} catch (error) {
 			console.log(error);

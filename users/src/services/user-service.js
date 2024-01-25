@@ -5,15 +5,11 @@ import {
 	GenerateSignature,
 	FormateData,
 	ValidatePassword,
-	ValidateSignature,
 	generateUsername,
-	generateOTP,
-	PublishMessage,
-	RPCRequest
+	generateOTP
 } from "../utils/index.js";
 import { APIError } from "../utils/app-error.js";
-import { ADMIN_BINDING_KEY, GMAIL, PASS } from "../config/index.js";
-import { user } from "../api/user.js";
+import { GMAIL, PASS } from "../config/index.js";
 import nodemailer from "nodemailer";
 class UserService {
 	constructor() {
@@ -39,7 +35,8 @@ class UserService {
 			});
 			const token = await GenerateSignature(res, {
 				email: email,
-				_id: existingUser._id
+				_id: existingUser._id,
+				isBlocked: existingUser.isBlocked
 			});
 			return FormateData({
 				status: true,
@@ -89,7 +86,6 @@ class UserService {
 						isPrivate: existingUser.isPrivate
 					});
 				} else {
-					console.log("ivide");
 					return { data: { status: false, msg: "Incorrect password" } };
 				}
 			}
@@ -163,12 +159,7 @@ class UserService {
 	async GetUserProfile({ username }) {
 		try {
 			const user = await this.repositary.FindByUsername({ username });
-
-			const response = await RPCRequest("POST_RPC", {
-				type: "USER_POSTS_LIKES",
-				data: user._id
-			});
-			return { user, response };
+			return user;
 		} catch (error) {
 			console.log(error);
 		}
@@ -358,63 +349,10 @@ class UserService {
 			return updatedUser;
 		} catch (error) {}
 	}
-
-	async FetchFollowing({ id }) {
-		try {
-			const following = await this.repositary.FindFollowing({ id });
-			return following;
-		} catch (error) {}
-	}
-
-	async FetchFollowers({ id }) {
-		try {
-			const followers = await this.repositary.FindFollowers({ id });
-			return followers;
-		} catch (error) {}
-	}
-
 	async FetchFollowersorFollowing(id) {
 		try {
 			const followers = await this.repositary.FindFollowersorFollowing(id);
 			return followers;
-		} catch (error) {}
-	}
-
-	async SavePost({ postId, userId }) {
-		try {
-			const post = await this.repositary.SavingPost({ userId, postId });
-			return post;
-		} catch (error) {}
-	}
-
-	async ReportUser({ userId, id, reason }) {
-		try {
-			const reportedUser = await this.repositary.ReportingUser({ userId, id, reason });
-			return reportedUser;
-		} catch (error) {
-			console.log(error);
-		}
-	}
-
-	async GetSavedPost({ id }) {
-		try {
-			const postIds = await this.repositary.fetchSavedPosts({ id });
-			const response = await RPCRequest("POST_RPC", {
-				type: "SAVED_POSTS",
-				data: postIds
-			});
-			const userIds = response.map((post) => {
-				return post.userId;
-			});
-			const users = await this.repositary.FindUsersById(userIds);
-			return { users, response };
-		} catch (error) {}
-	}
-
-	async ManagePrivateAndPublic({ isChecked, userId }) {
-		try {
-			const response = await this.repositary.MakePrivateOrPublic({ isChecked, userId });
-			return response;
 		} catch (error) {}
 	}
 
@@ -423,14 +361,6 @@ class UserService {
 		const { event, data } = payload;
 		try {
 			switch (event) {
-				case "LIST_USERS":
-					const users = await this.repositary.ListUsers();
-					const userData = JSON.stringify({ event: "USERS_FETCHED", data: users });
-					PublishMessage(channel, ADMIN_BINDING_KEY, userData);
-					break;
-				case "REPORT_USERPOST":
-					this.repositary.ReportUser(data);
-					break;
 				case "REQUEST_CONFIRMED":
 					this.repositary.ManageFollowRequest(data);
 					this.repositary.DeleteRequest(data);
@@ -447,11 +377,6 @@ class UserService {
 	async serveRPCRequest(payload) {
 		const { type, data } = payload;
 		switch (type) {
-			case "FETCH_USERS_BY_USERNAME":
-				return this.repositary.FindwithUserNames(data);
-			case "FETCH_USERS":
-				return this.repositary.fetchUsers(data);
-				break;
 			case "LIST_USERS":
 				return this.repositary.ListUsers();
 				break;
@@ -463,8 +388,6 @@ class UserService {
 				break;
 			case "CHECK_IS_BLOCKED":
 				return this.repositary.IsBlocked(data);
-			case "FETCH_USERS_BYID":
-				return this.repositary.FindUsersById(data);
 			case "COUNT_GENDERS":
 				return this.repositary.CountUserbyGender();
 			case "CATEGORIZE_BY_AGE":

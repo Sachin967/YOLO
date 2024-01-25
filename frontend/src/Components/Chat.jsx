@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { ChatState } from "../Context/ChatProvider";
-import { messaging } from "../config/axios";
+import { messaging, users } from "../config/axios";
 import useCustomToast from "../config/toast";
 import ScrollableChat from "./ScrollableChat";
 import { useSelector } from "react-redux";
@@ -14,7 +14,9 @@ import AlertLeaveGroup from "./Modals/AlertDialog";
 import EmojiPicker from "emoji-picker-react";
 import { CiVideoOn } from "react-icons/ci";
 import { PiPaperPlaneLight } from "react-icons/pi";
-const ENDPOINT = "http://localhost:8000";
+import { MESSENDPOINT } from "../constants/constant";
+// const ENDPOINT = "http://localhost:8000";
+// const ENDPOINT = 'https://yolo.sachinms.fyi/messaging'
 var socket, selectedChatCompare;
 const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 	const [messages, setMessage] = useState([]);
@@ -52,18 +54,12 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 	// 	setUpdatedName(newGroupName);
 	// };
 	const showToast = useCustomToast();
-	let otherUser;
-	for (const key in chatdata) {
-		if (chatdata[key]._id !== chatdata._id) {
-			otherUser = chatdata[key];
-			break;
-		}
-	}
+
 	const addEmoji = (selectedEmoji) => {
 		setNewMessage((prevText) => prevText + selectedEmoji.emoji);
 	};
 	useEffect(() => {
-		socket = io(ENDPOINT);
+		socket = io(MESSENDPOINT);
 		socket.emit("setup", userdetails);
 		socket.on("connected", () => setSocketConnected(true));
 		socket.on("typing", () => setisTyping(true));
@@ -74,8 +70,10 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 		fetchMessages();
 		selectedChatCompare = selectedUsers;
 	}, [selectedUsers]);
+
 	useEffect(() => {
 		socket.on("message received", (newMessageRecieved) => {
+			console.log(newMessageRecieved);
 			if (!selectedChatCompare || selectedChatCompare._id !== newMessageRecieved.chatId._id) {
 				if (!notification.includes(newMessageRecieved)) {
 					setNotification([newMessageRecieved, ...notification]);
@@ -90,18 +88,19 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 	const fetchMessages = async () => {
 		try {
 			if (!selectedUsers) return;
-			messaging
-				.get(`/message/${selectedUsers._id}`)
-				.then((res) => {
-					console.log(res.data.response);
-					setUser(res.data.response);
-					setMessage(res.data.message);
-					socket.emit("join chat", selectedUsers._id);
-				})
-				.catch((err) => {
-					console.log(err);
-				});
-		} catch (error) {}
+
+			const response = await messaging.get(`/message/${selectedUsers._id}`);
+			setMessage(response.data.message);
+			if (response.data.user.length > 0) {
+				const userIds = response.data.user;
+				const str = userIds.join(",");
+				const user = await users.get(`/getusers/${str}`);
+				setUser(user?.data);
+			}
+			socket.emit("join chat", selectedUsers._id);
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	const typingHandler = (e) => {
@@ -142,18 +141,6 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 		if (newMessage) {
 			socket.emit("stop typing", selectedUsers._id);
 			setNewMessage("");
-			// messaging
-			// 	.post("/message", { content: newMessage, chatId: selectedUsers._id })
-			// 	.then((res) => {
-			// 		if (res.data) {
-			// 			console.log(res.data.populatedMessage);
-			// 			socket.emit("new message", res.data.populatedMessage);
-			// 			setMessage([...messages, res.data.populatedMessage]);
-			// 		}
-			// 	})
-			// 	.catch((err) => {
-			// 		console.log(err);
-			// 	});
 			sendMessageToServer(newMessage, selectedUsers._id);
 		}
 	};
@@ -163,7 +150,6 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 			.then((res) => {
 				if (res.data) {
 					FetchChats();
-					console.log(res.data.populatedMessage);
 					socket.emit("new message", res.data.populatedMessage);
 					setMessage([...messages, res.data.populatedMessage]);
 				}
@@ -194,6 +180,7 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 						<>
 							{!showGroupInfo ? (
 								<>
+									{console.log(chatdata)}
 									<div onClick={handleShowGroupInfo} className="flex cursor-pointer">
 										<Avatar src={updatedImage || selectedUsers?.groupImage?.url}></Avatar>
 										<h2 className="text-2xl ms-3 w-full font-semibold text-black dark:text-white">
@@ -308,31 +295,29 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 						<>
 							{" "}
 							<div className="flex w-full lg:ml-0  ml-20 sm:ml-80">
-								<h2 className="text-2xl font-semibold text-black dark:text-white ">
-									{otherUser?.name}
-								</h2>
+								<h2 className="text-2xl font-semibold text-black dark:text-white ">{chatdata?.name}</h2>
 								<div
-									onClick={() => handleJoinRoom(otherUser._id)}
+									onClick={() => handleJoinRoom(chatdata._id)}
 									className="dark:text-white text-black ps-[20px] items-start">
 									<CiVideoOn className="w-8 h-8 cursor-pointer" />
 								</div>
 							</div>
 							<div className="overflow-y-auto">
-								<Link to={`/${otherUser?.username}`}>
+								<Link to={`/${chatdata?.username}`}>
 									<div className="h-[285px] mb-4 sm:ml-60 ml-0 lg:ml-0 hover:bg-zinc-900 border-gray-600 border-b">
 										<div className="mt-10">
 											<img
 												className="max-h-20 rounded-full mx-auto"
-												src={otherUser?.propic?.url}
+												src={chatdata?.propic?.url}
 												alt=""
 											/>
 											<h1 className="text-center text-black dark:text-white text-[22px] font-semibold ">
-												{chatdata?.user1?.name}
+												{chatdata?.name}
 											</h1>
-											<h2 className="text-center text-gray-500 pb-4">@{otherUser?.username}</h2>
-											<h1 className="text-center text-gray-500 pb-5">{otherUser?.bio}</h1>
+											<h2 className="text-center text-gray-500 pb-4">@{chatdata?.username}</h2>
+											<h1 className="text-center text-gray-500 pb-5">{chatdata?.bio}</h1>
 											<h1 className="text-center text-gray-500 pb-5">
-												{formatJoinDate(otherUser?.createdAt)}
+												{formatJoinDate(chatdata?.createdAt)}
 											</h1>
 										</div>
 										{isTyping ? (

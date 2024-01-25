@@ -16,7 +16,7 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const { selectedUsers, setSelectedUsers, chatdata, setChatData, updatedName, updatedImage } = ChatState();
 	const [selectedChatId, setSelectedChatId] = useState(null);
-	const handleChatSelection = (chat) => {
+	const handleChatSelection = async (chat) => {
 		setSelectedChatId(chat._id === selectedChatId ? null : chat._id);
 	};
 	useEffect(() => {
@@ -24,26 +24,26 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 			AccessChats(userId);
 		}
 		SearchUsers();
-		FetchChats();
+
 		searchGroupChat();
 	}, [fetchAgain]);
 
-	const AccessChats = (userId) => {
+	const AccessChats = async (userId) => {
 		try {
-			messaging
-				.post("/accesschat", { userId })
-				.then((res) => {
-					if (res.data) {
-						setSelectedUsers(res.data.chatData);
-						setChatData(res.data.response);
-					}
-				})
-				.catch((err) => {
-					console.log(err);
-				});
-		} catch (error) {}
+			const res = await messaging.post("/accesschat", { userId });
+			if (res.data) {
+				setSelectedUsers(res.data.chatData);
+				// setChatData(res.data.response);
+			}
+			const user = await users.get(`/getuser/${userId}`);
+			if (user.data) {
+				setChatData(user.data);
+			}
+		} catch (error) {
+			console.error(error);
+		}
 	};
-	const handleAccessChat = (chat) => {
+	const handleAccessChat = async (chat) => {
 		if (!chat.isGroupChat) {
 			const loggedInUserId = userdetails._id;
 			const User = chat.users.find((user) => user !== loggedInUserId);
@@ -53,6 +53,8 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 				console.log("No user ID found in the chat");
 			}
 		}
+		const readmessage = await messaging.post(`/readmessage/${chat._id}`);
+		console.log(readmessage?.data);
 	};
 	const SearchUsers = () => {
 		users
@@ -70,7 +72,7 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 			.get(`/searchchat/${userdetails._id}`)
 			.then((res) => {
 				if (res.data) {
-					setChat(res.data.chat);
+					setChat(res.data);
 				}
 			})
 			.catch((err) => console.log(err));
@@ -93,7 +95,6 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 		const hasChatName = user?.chatName && user.chatName.toLowerCase().includes(search.toLowerCase());
 		const hasName = user?.name && user.name.toLowerCase().includes(search.toLowerCase());
 		const hasUsername = user?.username && user.username.toLowerCase().includes(search.toLowerCase());
-
 		return hasChatName || hasName || hasUsername;
 	});
 
@@ -107,31 +108,70 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 						className={`flex w-full ${isSelected ? "dark:bg-neutral-800 bg-zinc-400" : ""}`}
 						key={chat._id}>
 						<Avatar className="m-5" src={updatedImage || chat?.groupImage?.url} />
-						<h2 className="mt-5 me-2 text-lg dark:text-white text-black font-bold">
-							{updatedName || chat?.chatName}
-						</h2>
+						<div>
+							<h2 className="mt-5 me-2 text-lg dark:text-white text-black font-bold">
+								{updatedName || chat?.chatName}
+							</h2>
+							{console.log(chat?.latestMessage)}
+							{typeof chat?.latestMessage?.content === "object" ? (
+								<h1
+									className={`dark:text-white  text-black ${chat?.latestMessage?.readBy.includes(userdetails._id) ? "font-light" : "font-semibold"}`}>
+									Send a photo
+								</h1>
+							) : (
+								<div className="flex items-center">
+									{chat?.latestMessage?.senderId === userdetails._id && (
+										<span className="text-light dark:text-white text-black me-1">You: </span>
+									)}
+									<h1
+										className={`dark:text-white text-black ${chat?.latestMessage?.readBy.includes(userdetails._id) ? "font-light" : chat?.latestMessage?.senderId === userdetails._id ? "font-light" : "font-semibold"}`}>
+										{chat?.latestMessage?.content}
+									</h1>
+								</div>
+							)}
+						</div>
 					</div>
-
-					{/* <h2 className="mt-5 me-2 text-xl">@{chat?.username}</h2> */}
 				</>
 			);
 		} else {
-			const otherUser = people?.find((user) => chat.users.includes(user._id) && user._id !== userdetails._id);
-			if (otherUser) {
-				return (
-					<>
-						<div
-							onClick={() => handleChatSelection(chat)}
-							className={`flex w-full ${isSelected ? "dark:bg-neutral-800 bg-zinc-400" : ""}`}
-							key={chat._id}>
-							<Avatar className="m-5" src={otherUser?.propic?.url} />
-							<h2 className="mt-5 me-2 text-lg dark:text-white text-black font-bold">
-								{otherUser?.name}
-							</h2>
-							<h2 className="mt-5 me-2 text-lg text-gray-400 font-normal">@{otherUser?.username}</h2>
-						</div>
-					</>
-				);
+			if (people.length > 0) {
+				const otherUser = people?.find((u) => chat.users.includes(u._id) && u._id !== userdetails._id);
+				if (otherUser) {
+					return (
+						<>
+							<div
+								onClick={() => handleChatSelection(chat)}
+								className={`flex w-full ${isSelected ? "dark:bg-neutral-800 bg-zinc-400" : ""}`}
+								key={chat._id}>
+								<Avatar className="m-5" src={otherUser?.propic?.url} />
+								<div>
+									<h2 className="mt-5 me-2 text-lg dark:text-white text-black font-bold">
+										{otherUser?.name}
+									</h2>
+									{typeof chat?.latestMessage?.content === "object" ? (
+										<h1
+											className={`dark:text-white text-black ${chat?.latestMessage?.readBy.includes(userdetails._id) ? "font-light" : "font-semibold"}`}>
+											Photo
+										</h1>
+									) : (
+										<div className="flex items-center">
+											{chat?.latestMessage?.senderId === userdetails._id && (
+												<span className="text-light dark:text-white text-black me-1">
+													You:{" "}
+												</span>
+											)}
+											<h1
+												className={`dark:text-white text-black ${chat?.latestMessage?.readBy.includes(userdetails._id) ? "font-light" : chat?.latestMessage?.senderId === userdetails._id ? "font-light" : "font-semibold"}`}>
+												{chat?.latestMessage?.content}
+											</h1>
+										</div>
+									)}
+								</div>
+								<h2 className="mt-5 me-2 text-lg text-gray-400 font-normal">@{otherUser?.username}</h2>
+							</div>
+						</>
+					);
+				}
 			}
 		}
 		return null;
@@ -139,48 +179,34 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 
 	const combinedComponents =
 		follow.followers &&
-		filteredUsers
-			.map((user) => {
-				if (user?.isGroupChat) {
-					return (
-						<div key={user._id} className="flex mt-3 hover:bg-zinc-300 dark:hover:bg-neutral-900">
-							<Avatar className="m-5" src={user?.propic?.url} />
-							<h2 className="mt-5 me-2 text-xl dark:text-white text-black font-bold">{user?.chatName}</h2>
-							{/* <h2 className="mt-5 me-2 text-xl">@{user?.username}</h2> */}
-						</div>
-					);
-				} else {
-					return (
-						<div
-							key={user._id}
-							className="flex mt-3 hover:bg-zinc-300 dark:hover:bg-neutral-900"
-							onClick={() => AccessChats(user._id)}>
-							<Avatar className="m-5" src={user?.propic?.url} />
-							<h2 className="mt-5 me-2 text-xl dark:text-white text-black font-bold">{user?.name}</h2>
-							<h2 className="mt-5 me-2 text-xl">@{user?.username}</h2>
-						</div>
-					);
-				}
-			})
-			.concat(
-				peopleMessaged?.map((chat) => (
-					<React.Fragment key={chat?._id}>
-						<div
-							onClick={() => {
-								setSelectedUsers(chat);
-								handleAccessChat(chat);
-							}}
-							className="flex hover:bg-zinc-300 dark:hover:bg-neutral-900">
-							{renderChatDetails(chat)}
-						</div>
-					</React.Fragment>
-				))
-			);
+		filteredUsers.map((user) => {
+			if (user?.isGroupChat) {
+				return (
+					<div key={user._id} className="flex mt-3 hover:bg-zinc-300 dark:hover:bg-neutral-900">
+						<Avatar className="m-5" src={user?.groupImage?.url} />
+						<h2 className="mt-5 me-2 text-xl dark:text-white text-black font-bold">{user?.chatName}</h2>
+						{/* <h2 className="mt-5 me-2 text-xl">@{user?.username}</h2> */}
+					</div>
+				);
+			} else {
+				return (
+					<div
+						key={user._id}
+						className="flex mt-3 hover:bg-zinc-300 dark:hover:bg-neutral-900"
+						onClick={() => AccessChats(user._id)}>
+						<Avatar className="m-5" src={user?.propic?.url} />
+						<h2 className="mt-5 me-2 text-xl dark:text-white text-black font-bold">{user?.name}</h2>
+						<h2 className="mt-5 me-2 text-xl">@{user?.username}</h2>
+					</div>
+				);
+			}
+		});
+
 	return (
 		<div
 			className={
 				setSelectedUsers
-					? "hidden lg:block lg:ml-[320px] overflow-y-auto dark:bg-black bg-white max-h-screen"
+					? "hidden lg:block lg:ml-[320px] overflow-y-auto dark:bg-black bg-white min-h-screen max-h-screen"
 					: " w-[694px] md:w-[1110px] lg:w-[440px]  min-h-screen sm:w-[980px] lg:ml-[320px] sm:ml-[105px] dark:bg-black bg-white overflow-y-auto max-h-screen"
 			}>
 			<div className="flex sm:ml-[270px] lg:ml-0  justify-between items-center">
@@ -230,7 +256,7 @@ const MyChats = ({ userId, fetchAgain, people, setpeople, peopleMessaged, setPeo
 					onClick={(e) => setShowSearch(true)}
 					type="text"
 					placeholder="Search"
-					className="w-[410px] h-14 bg-transparent ms-5 mt-5 text-black dark:text-white pl-14 rounded-full"
+					className="w-[400px] h-14 bg-transparent ms-5 mt-5 text-black dark:text-white mr-5 pl-14 rounded-full"
 					style={{ paddingRight: "2rem" }}
 				/>
 				<FontAwesomeIcon

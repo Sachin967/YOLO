@@ -15,10 +15,23 @@ export const UserisBlocked = async (req) => {
 	} catch (error) {}
 };
 
+// export const ValidateSignature = async (req) => {
+// 	try {
+// 		const signature = req.get("Authorization");
+// 		const payload = await jwt.verify(signature.split(" ")[1], APP_SECRET);
+// 		req.user = payload;
+// 		return true;
+// 	} catch (error) {
+// 		console.log(error);
+// 		return false;
+// 	}
+// };
+
 export const ValidateSignature = async (req) => {
 	try {
-		const signature = req.get("Authorization");
-		const payload = await jwt.verify(signature.split(" ")[1], APP_SECRET);
+		console.log(req.cookies);
+		const accessToken = req.cookies.userJwt;
+		const payload = await jwt.verify(accessToken, APP_SECRET);
 		req.user = payload;
 		return true;
 	} catch (error) {

@@ -50,7 +50,7 @@ const AccountPrivacy = ({}) => {
 					<h1 className="dark:text-white text-black text-lg ">Private Account</h1>
 					<Switch className="ml-80" size="lg" isChecked={isChecked} onChange={handleSwitchChange} />
 				</div>
-				<div className="mt-10">
+				<div className="mt-10 dark:text-gray-600">
 					<h1 className="">
 						{" "}
 						When your account is public, your profile and posts can be seen by anyone, on or off Instagram,

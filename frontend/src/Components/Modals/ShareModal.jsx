@@ -12,7 +12,7 @@ import {
 import { ChatState } from "../../Context/ChatProvider";
 import io from "socket.io-client";
 import { useSelector } from "react-redux";
-import { ENDPOINT } from "../../constants/constant";
+import { MESSENDPOINT } from "../../constants/constant";
 import { useEffect, useState } from "react";
 import { messaging } from "../../config/axios";
 var socket, selectedChatCompare;
@@ -25,7 +25,7 @@ const ShareModal = ({ onClose, isOpen, post }) => {
 	const [selectedChatId, setSelectedChatId] = useState(null);
 	useEffect(() => {
 		setNewMessage(post);
-		socket = io(ENDPOINT);
+		socket = io(MESSENDPOINT);
 		socket.emit("setup", userdetails);
 		socket.on("connected");
 	}, []);
