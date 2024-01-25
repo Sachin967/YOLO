@@ -12,6 +12,7 @@ class UserRepositary {
 				password,
 				salt,
 				username,
+				isBlocked: false,
 				Otp,
 				dateOfBirth: dob,
 				gender
