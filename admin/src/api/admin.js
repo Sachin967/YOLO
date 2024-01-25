@@ -1,10 +1,5 @@
-import { USER_BINDING_KEY } from "../config/index.js";
 import AdminService from "../services/admin-service.js";
-import {
-  PublishMessage,
-  RPCRequest,
-  SubscribeMessage,
-} from "../utils/index.js";
+import { RPCRequest, SubscribeMessage } from "../utils/index.js";
 import express from "express";
 export const admin = (app, channel) => {
   const router = express.Router();

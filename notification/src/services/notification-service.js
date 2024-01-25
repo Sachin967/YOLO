@@ -1,6 +1,4 @@
-import { USER_BINDING_KEY } from "../config/index.js";
 import NotificationRepository from "../database/repositary/notification-repositary.js";
-import { PublishMessage, RPCRequest } from "../utils/index.js";
 
 class NotificationService {
 	constructor() {
@@ -55,42 +53,6 @@ class NotificationService {
 		}
 	}
 
-	// async SubscribeEvents(payload, channel, io) {
-	// 	payload = JSON.parse(payload);
-	// 	const { event, data } = payload;
-	// 	const { recipient, senderId, notificationType, entityType, entityId, image } = data;
-	// 	switch (event) {
-	// 		case "POSTS_LIKED":
-	// 			this.repository.CreateNotification({ recipient, senderId, notificationType, entityId, entityType, image }, io);
-	// 			break;
-	// 		case "USER_FOLLOWED":
-	// 			this.repository.CreateNotification({ recipient, senderId, notificationType, entityId, entityType, image }, io);
-	// 			break;
-	// 		case "USER_UNFOLLOWED":
-	// 			this.repository.DeleteNotification({
-	// 				recipient,
-	// 				senderId,
-	// 				notificationType
-	// 			});
-	// 			break;
-	// 		case "FOLLOW_REQUESTED":
-	// 			this.repository.CreateNotification({ recipient, senderId, notificationType, entityId, entityType, image }, io);
-	// 			break;
-	// 		case "FOLLOW_REMOVED":
-	// 			this.repository.CreateNotification({ recipient, senderId, notificationType, entityId, entityType, image });
-	// 			break;
-	// 		case "POSTS_COMMENTED":
-	// 			this.repository.CreateNotification({ recipient, senderId, notificationType, entityId, entityType, image }, io);
-	// 		case "POSTS_UNLIKED":
-	// 			this.repository.DeleteNotification({
-	// 				recipient,
-	// 				senderId,
-	// 				notificationType
-	// 			});
-	// 		default:
-	// 			break;
-	// 	}
-	// }
 	async SubscribeEvents(payload, io) {
 		payload = JSON.parse(payload);
 		const { event, data } = payload;

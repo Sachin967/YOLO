@@ -10,31 +10,6 @@ export const FormateData = async (data) => {
 	}
 };
 
-export const UserisBlocked = async (req) => {
-	try {
-		const { userJwt } = req.cookies;
-		const decoded = jwt.verify(userJwt, APP_SECRET);
-		const { _id } = decoded;
-		const isBlocked = await RPCRequest("USER_RPC", {
-			type: "CHECK_IS_BLOCKED",
-			data: _id
-		});
-		return isBlocked;
-	} catch (error) {}
-};
-
-// export const ValidateSignature = async (req) => {
-// 	try {
-// 		const signature = req.get("Authorization");
-// 		const payload = await jwt.verify(signature.split(" ")[1], APP_SECRET);
-// 		req.user = payload;
-// 		return true;
-// 	} catch (error) {
-// 		console.log(error);
-// 		return false;
-// 	}
-// };
-
 export const ValidateSignature = async (req) => {
 	try {
 		const accessToken = req.cookies.userJwt;

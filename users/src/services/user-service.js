@@ -58,6 +58,9 @@ class UserService {
 			if (existingUser.isBlocked) {
 				res.status(401).json("You are blocked");
 			}
+			if (existingUser && existingUser.isVerified === false) {
+				res.status(403).json("You are not verified");
+			}
 			if (existingUser) {
 				const validPassword = await ValidatePassword(password, existingUser.salt, existingUser.password);
 				if (validPassword) {
@@ -101,10 +104,7 @@ class UserService {
 		try {
 			let existingUser = await this.repositary.FindUser(email);
 			if (existingUser && existingUser.isBlocked) {
-				res.status(401).json("You are blocked");
-			}
-			if (existingUser && existingUser.isVerified === false) {
-				res.status(401).json("You are not verified");
+				res.status(403).json("You are blocked");
 			}
 			if (!existingUser) {
 				const username = generateUsername(name);
@@ -386,8 +386,6 @@ class UserService {
 			case "UNBLOCK_USER":
 				return this.repositary.unBlockuser(data);
 				break;
-			case "CHECK_IS_BLOCKED":
-				return this.repositary.IsBlocked(data);
 			case "COUNT_GENDERS":
 				return this.repositary.CountUserbyGender();
 			case "CATEGORIZE_BY_AGE":
