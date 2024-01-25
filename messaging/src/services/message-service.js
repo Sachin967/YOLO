@@ -1,5 +1,4 @@
 import MessageRepository from "../database/repository/message-repository.js";
-import { RPCRequest } from "../utils/index.js";
 
 class MessageService {
 	constructor() {
