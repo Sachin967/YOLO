@@ -9,7 +9,7 @@ export const message = (app, server) => {
 		pingTimeout: 60000,
 		cors: {
 			origin: ["*"],
-			credentials: true,
+			credentials: true
 		}
 	});
 

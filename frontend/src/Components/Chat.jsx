@@ -59,7 +59,7 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 		setNewMessage((prevText) => prevText + selectedEmoji.emoji);
 	};
 	useEffect(() => {
-		socket = io(MESSENDPOINT);
+		socket = io("https://yolo.sachinms.fyi/messaging");
 		socket.emit("setup", userdetails);
 		socket.on("connected", () => setSocketConnected(true));
 		socket.on("typing", () => setisTyping(true));
