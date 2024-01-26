@@ -18,6 +18,13 @@ const expressApp = async (app, server) => {
 	);
 	app.use(cookieParser());
 	message(app, server);
+	app.use((err, req, res, next) => {
+		console.error(err.stack);
+		// res.status(500).send('Something went wrong!');
+	});
+	app.all('*', (req, res) => {
+		res.status(404).send('Not Found');
+	});
 	app.use(ErrorHandler);
 };
 export default expressApp;

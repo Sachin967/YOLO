@@ -13,7 +13,13 @@ const expressApp = async (app, channel, server) => {
 			exposedHeaders: ["Custom-Header"]
 		})
 	);
-
 	notification(app, channel, server);
+	app.use((err, req, res, next) => {
+		console.error(err.stack);
+		// res.status(500).send('Something went wrong!');
+	});
+	app.all('*', (req, res) => {
+		res.status(404).send('Not Found');
+	});
 };
 export default expressApp;
