@@ -77,9 +77,9 @@ const AddCoverPicModal = ({ isOpen, onClose, username, showUserProfile, isCoverP
 
 	return (
 		<>
-			<Modal onClose={onClose} size="full" isOpen={isOpen}>
+			<Modal onClose={onClose} size="xl" isOpen={isOpen}>
 				<ModalOverlay />
-				<ModalContent style={{ height: "700px", width: "600px", position: "relative" }}>
+				<ModalContent style={{ height: '600px' }}>
 					<ModalHeader className="text-center text-black dark:text-white">Edit Cover Pic</ModalHeader>
 					<ModalCloseButton className="absolute top-0 left-0" />
 					<button onClick={uploadPic} className="absolute text-white top-2 right-5">
@@ -107,25 +107,18 @@ const AddCoverPicModal = ({ isOpen, onClose, username, showUserProfile, isCoverP
 							<span className="sr-only">Loading...</span>
 						</div>
 					)}
+					<ModalBody className="bg-zinc-800 flex items-center justify-center ">
+						<div className="">
+							<div className="w-full me-6 p-4">
+								<img ref={imageRef}  className="max-w-[250px] max-h-[350px]" />
+							</div>
+						</div>
 
-					<ModalBody className="bg-zinc-800 w-auto h-auto relative flex">
-						<div className="w-1/2 h-auto me-6 p-4">
-							<img ref={imageRef} alt="Crop" className="max-w-full" />
-							<input type="file" accept="image/*" onChange={onSelectFile} className="mb-4" />
-						</div>
-						<div className="w-1/2 ">
-							{croppedCoverImage ? (
-								<div>
-									<img src={croppedCoverImage} alt="Cropped" className="max-w-full" />
-								</div>
-							) : (
-								<div>
-									<img src={croppedProfileImage} alt="Cropped" className="max-w-full" />
-								</div>
-							)}
-						</div>
 					</ModalBody>
-					<ModalFooter></ModalFooter>
+					<ModalFooter>
+						<input type="file" accept="image/*" onChange={onSelectFile} className="" />
+
+					</ModalFooter>
 				</ModalContent>
 			</Modal>
 		</>

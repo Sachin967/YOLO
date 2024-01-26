@@ -115,13 +115,13 @@ const Profile = () => {
 						<div className="bg-white">
 							<img
 								onClick={() => HandleClick("cover")}
-								className="w-full object-cover md:w-[1100px] sm:w-[1000px] lg:w-screen max-h-full"
+								className="w-full object-cover md:w-[1100px] sm:w-[1000px] lg:w-screen h-[300px]"
 								src={
 									!user?.coverpic?.url || user?.coverpic?.url === ""
-										? "https://pbs.twimg.com/profile_banners/1483554293168975872/1696101628/1500x500" // Replace this with your placeholder image URL
+										? "https://flowbite.com/docs/images/examples/image-1@2x.jpg" 
 										: user?.coverpic?.url
 								}
-								alt=""
+								alt="Click to add images"
 							/>
 						</div>
 
