@@ -8,8 +8,8 @@ export const message = (app, server) => {
 	const io = new Server(server, {
 		pingTimeout: 60000,
 		cors: {
-			origin: ["http://localhost:4000", "https://yolomedia.sachinms.fyi"]
-			// credentials: true,
+			origin: ["*"],
+			credentials: true,
 		}
 	});
 

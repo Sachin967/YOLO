@@ -9,9 +9,9 @@ export const notification = (app, channel, server) => {
 	const io = new Server(server, {
 		pingTimeout: 60000,
 		cors: {
-			origin: ["http://localhost:4000", "https://yolomedia.sachinms.fyi"],
-			methods: ["GET", "POST"],
-			allowedHeaders: ["Content-Type", "Authorization"],
+			origin: ["*"],
+			// methods: ["GET", "POST"],
+			// allowedHeaders: ["Content-Type", "Authorization"],
 			credentials: true // If you're using cookies or authorization headers
 		}
 	});
