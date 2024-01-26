@@ -180,7 +180,7 @@ class UserService {
 				from: "your-email@gmail.com",
 				to: email,
 				subject: "[YOLO] Password Reset E-mail",
-				text: `You're receiving this e-mail because you or someone else has requested a password reset for your user account at .Click the link below to reset your password: http://localhost:3000/reset-password/${token.reset_token}/${token.user_id}
+				text: `You're receiving this e-mail because you or someone else has requested a password reset for your user account at .Click the link below to reset your password: https://yolomedia.sachinms.fyi/reset-password/${token.reset_token}/${token.user_id}
 				If you did not request a password reset you can safely ignore this email.`
 			};
 
