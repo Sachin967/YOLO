@@ -79,7 +79,7 @@ const AddCoverPicModal = ({ isOpen, onClose, username, showUserProfile, isCoverP
 		<>
 			<Modal onClose={onClose} size="xl" isOpen={isOpen}>
 				<ModalOverlay />
-				<ModalContent style={{ height: '600px' }}>
+				<ModalContent style={{ height: "600px" }}>
 					<ModalHeader className="text-center text-black dark:text-white">Edit Cover Pic</ModalHeader>
 					<ModalCloseButton className="absolute top-0 left-0" />
 					<button onClick={uploadPic} className="absolute text-white top-2 right-5">
@@ -110,14 +110,12 @@ const AddCoverPicModal = ({ isOpen, onClose, username, showUserProfile, isCoverP
 					<ModalBody className="bg-zinc-800 flex items-center justify-center ">
 						<div className="">
 							<div className="w-full me-6 p-4">
-								<img ref={imageRef}  className="max-w-[250px] max-h-[350px]" />
+								<img ref={imageRef} className="max-w-[250px] max-h-[350px]" />
 							</div>
 						</div>
-
 					</ModalBody>
 					<ModalFooter>
 						<input type="file" accept="image/*" onChange={onSelectFile} className="" />
-
 					</ModalFooter>
 				</ModalContent>
 			</Modal>

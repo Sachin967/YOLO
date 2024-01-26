@@ -118,7 +118,7 @@ const Profile = () => {
 								className="w-full object-cover md:w-[1100px] sm:w-[1000px] lg:w-screen h-[300px]"
 								src={
 									!user?.coverpic?.url || user?.coverpic?.url === ""
-										? "https://flowbite.com/docs/images/examples/image-1@2x.jpg" 
+										? "https://flowbite.com/docs/images/examples/image-1@2x.jpg"
 										: user?.coverpic?.url
 								}
 								alt="Click to add images"

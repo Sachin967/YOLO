@@ -55,10 +55,10 @@ class UserService {
 		const { query, password } = userInputs;
 		try {
 			const existingUser = await this.repositary.FindUser(query);
-			if (existingUser.isBlocked) {
+			if (existingUser?.isBlocked) {
 				res.status(401).json("You are blocked");
 			}
-			if (existingUser && existingUser.isVerified === false) {
+			if (existingUser && existingUser?.isVerified === false) {
 				res.status(403).json("You are not verified");
 			}
 			if (existingUser) {
