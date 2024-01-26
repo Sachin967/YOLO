@@ -33,7 +33,8 @@ class UserRepositary {
 			return existingCustomer;
 		} catch (err) {
 			console.log(err);
-			throw new APIError("API Error", STATUS_CODES.INTERNAL_ERROR, "Unable to Find Customer");
+			// throw new APIError("API Error", STATUS_CODES.INTERNAL_ERROR, "Unable to Find Customer");
+			return;
 		}
 	}
 	async FindUserById(id) {

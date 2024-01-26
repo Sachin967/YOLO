@@ -38,6 +38,7 @@ const CommentModal = ({ onCloseCommentModal, isCommentModalOpen, PostUserdetails
 				if (res.data.status) {
 					showToast("success", "Comment added");
 					onCloseCommentModal();
+					setText("");
 					// FetchLikedPost()
 					ShowPosts();
 					fetchData();

@@ -62,3 +62,4 @@
 {"level":"error","message":"Wed Jan 10 2024 11:28:26 GMT+0530 (India Standard Time)-{\"name\":\"Data Not found\",\"statusCode\":{\"name\":\"API Error\",\"statusCode\":500,\"isOperational\":true},\"isOperational\":true}","private":true}
 {"level":"error","message":"Sat Jan 13 2024 14:12:49 GMT+0530 (India Standard Time)-{\"message\":\"request entity too large\",\"expected\":2416234,\"length\":2416234,\"limit\":1048576,\"type\":\"entity.too.large\"}","private":true}
 {"level":"error","message":"Tue Jan 16 2024 15:24:51 GMT+0530 (India Standard Time)-{\"code\":\"EAUTH\",\"command\":\"API\"}","private":true}
+{"level":"error","message":"Thu Jan 25 2024 20:57:22 GMT+0530 (India Standard Time)-{\"name\":\"Data Not found\",\"statusCode\":{},\"isOperational\":true}","private":true}

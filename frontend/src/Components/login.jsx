@@ -51,8 +51,10 @@ const Login = () => {
 					if (res.data.status === true) {
 						Dispatch(AuthActions.Userlogin(res.data));
 						Navigate("/");
-					} else {
+					} else if (res.data.state === true) {
+						showToast("warning", res.data.msg);
 						console.log(res);
+					} else {
 						showToast("error", res.data.msg);
 					}
 				})

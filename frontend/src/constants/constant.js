@@ -18,9 +18,9 @@ const reportUser = [
 ];
 
 export const MESSENDPOINT = "https://yolo.sachinms.fyi/messaging";
-// export const MESSENDPOINT = 'http://localhost:8000'
+// export const MESSENDPOINT = 'http://localhost:8000/messaging'
 
-// export const NOTENDPOINT = "http://localhost:9000";
+// export const NOTENDPOINT = "http://localhost:9000/notification";
 export const NOTENDPOINT = "https://yolo.sachinms.fyi/notification";
 
 export const dayOptions = Array.from({ length: 31 }, (_, i) => i + 1);
@@ -42,8 +42,8 @@ export const monthOptions = [
 
 export const genderOptions = ["Male", "Female", "Other"];
 
-const currentYear = new Date().getFullYear();
-export const yearOptions = Array.from({ length: currentYear - 1900 + 1 }, (_, i) => currentYear - i);
+const currentYear = new Date().getFullYear() - 10;
+export const yearOptions = Array.from({ length: currentYear - 1930 + 1 }, (_, i) => currentYear - i);
 
 export { reportingReasons, reportUser };
 

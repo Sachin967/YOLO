@@ -15,13 +15,21 @@ export const notification = (app, channel, server) => {
 			credentials: true // If you're using cookies or authorization headers
 		}
 	});
-	io.on("connection", (socket) => {
-		console.log("connected to socket.io");
+	const notificationNamespace = io.of("/notification");
+	notificationNamespace.on("connection", (socket) => {
+		console.log("connected to notification namespace");
 		socket.on("suitup", (userData) => {
 			socket.join(userData._id);
 			socket.emit("connected");
 		});
 	});
+	// io.on("connection", (socket) => {
+	// 	console.log("connected to socket.io");
+	// 	socket.on("suitup", (userData) => {
+	// 		socket.join(userData._id);
+	// 		socket.emit("connected");
+	// 	});
+	// });
 	SubscribeMessage(channel, service, io);
 	router.get("/:id", async (req, res, next) => {
 		try {

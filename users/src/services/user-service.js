@@ -92,10 +92,11 @@ class UserService {
 					return { data: { status: false, msg: "Incorrect password" } };
 				}
 			}
-			return FormateData(null);
+			return FormateData({ state: true, msg: "Register first" });
 		} catch (err) {
 			console.log(err);
-			throw new APIError("Data Not found", err);
+			return FormateData({ state: true, msg: "Register first" });
+			// throw new APIError("Data Not found", err);
 		}
 	}
 

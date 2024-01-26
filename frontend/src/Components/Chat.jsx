@@ -304,7 +304,7 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 							</div>
 							<div className="overflow-y-auto">
 								<Link to={`/${chatdata?.username}`}>
-									<div className="h-[285px] mb-4 sm:ml-60 ml-0 lg:ml-0 hover:bg-zinc-900 border-gray-600 border-b">
+									<div className="h-[285px] mb-4 sm:ml-60 ml-0 lg:ml-0 hover:bg-zinc-400 dark:hover:bg-zinc-900 border-gray-600 border-b">
 										<div className="mt-10">
 											<img
 												className="max-h-20 rounded-full mx-auto"

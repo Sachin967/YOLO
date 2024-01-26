@@ -6,9 +6,10 @@ export const UserAuth = async (req, res, next) => {
 	console.log(req.cookies);
 	const isAuthorized = await ValidateSignature(req);
 	const { refreshToken } = req.cookies;
+	const decoded = await jwt.verify(refreshToken, REFRESH_SECRET);
 	if (isAuthorized) {
 		// const isBlocked = await axios.get(`http://127.0.0.1:7100/users/checkisblocked/${req.user._id}`)
-		const isBlocked = await axios.get(`https://yolo.sachinms.fyi/users/checkisblocked/${req.user._id}`);
+		const isBlocked = await axios.get(`https://yolo.sachinms.fyi/users/checkisblocked/${decoded._id}`);
 		if (isBlocked.data.status === false) {
 			return next();
 		} else {

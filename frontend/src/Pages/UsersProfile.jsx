@@ -327,8 +327,8 @@ const UsersProfile = () => {
 										<img src={p?.media} alt={`p-${p._id}`} className="w-full" />
 										{/* {/* Overlay for Like and Comment counts  */}
 										{hoveredPostId === p._id && (
-											<div className="absolute inset-0 flex items-center justify-center  dark:bg-black bg-w bg-opacity-75 dark:bg-opacity-50 text-white px-2 py-1 rounded">
-												<span className="pr-8">
+											<div className="absolute inset-0 flex items-center justify-center  dark:bg-black bg-white bg-opacity-30 dark:bg-opacity-30 text-white px-2 py-1 rounded">
+												<span className="pr-8 dark:text-white text-black">
 													{" "}
 													<FontAwesomeIcon className="pr-2" icon={faHeart} />
 													{p?.likes?.length}
@@ -345,7 +345,7 @@ const UsersProfile = () => {
 													savepost={savepost}
 													PostSave={PostSave}
 												/>
-												<span>
+												<span className="dark:text-white text-black">
 													{" "}
 													<FontAwesomeIcon className="pr-2" icon={faComment} />
 													{p?.comments?.length}
@@ -369,8 +369,8 @@ const UsersProfile = () => {
 											<img src={post?.media} alt={`post-${post?._id}`} className="w-full" />
 											{/* {/* Overlay for Like and Comment counts   */}
 											{hoveredPostId === post?._id && (
-												<div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-black bg-opacity-75 text-white px-2 py-1 rounded">
-													<span className="pr-8">
+												<div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-black dark:bg-opacity-30 bg-opacity-30 text-white px-2 py-1 rounded">
+													<span className="pr-8 dark:text-white text-black">
 														{" "}
 														<FontAwesomeIcon className="pr-2" icon={faHeart} />
 														{post?.likes?.length}
@@ -387,7 +387,7 @@ const UsersProfile = () => {
 														savepost={savepost}
 														PostSave={PostSave}
 													/>
-													<span>
+													<span className="dark:text-white text-black">
 														{" "}
 														<FontAwesomeIcon className="pr-2" icon={faComment} />
 														{post?.comments?.length}

@@ -208,47 +208,6 @@ const Profile = () => {
 					<TabPanels>
 						<TabPanel>
 							<div className="flex flex-wrap ">
-								{Posts.map((post) => (
-									<div
-										onClick={onOpenPostModal}
-										key={post._id} // Assuming 'postId' is a unique identifier for each post
-										className="w-full sm:w-1/2 md:w-1/3 lg:w-1/3 px-2 mb-4 relative"
-										onMouseEnter={() => debouncedSetHoveredPostId(post._id)}
-										onMouseLeave={() => setHoveredPostId(null)}>
-										<img src={post?.media} alt={`post-${post._id}`} className="w-full" />
-										{/* Overlay for Like and Comment counts */}
-										{hoveredPostId === post._id && (
-											<div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-black bg-opacity-75 text-white px-2 py-1 rounded">
-												<span className="pr-8">
-													{" "}
-													<FontAwesomeIcon className="pr-2" icon={faHeart} />
-													{post?.likes?.length}
-												</span>
-												<FullPost
-													postId={post?._id}
-													handleLike={likeFunction}
-													like={like}
-													isPostModalOpen={isPostModalOpen}
-													onClosePostModal={onClosePostModal}
-													likeCount={likeCount}
-													poster={post}
-													postuser={userdetails}
-													savepost={savepost}
-													PostSave={PostSave}
-												/>
-												<span>
-													{" "}
-													<FontAwesomeIcon className="pr-2" icon={faComment} />
-													{post?.comments?.length}
-												</span>
-											</div>
-										)}
-									</div>
-								))}
-							</div>
-						</TabPanel>
-						<TabPanel>
-							<div className="flex flex-wrap ">
 								{likedPost.length > 0 &&
 									likedPost.map((post) => (
 										<div
@@ -260,8 +219,8 @@ const Profile = () => {
 											<img src={post?.media} alt={`post-${post?._id}`} className="w-full" />
 											{/* {/* Overlay for Like and Comment counts  */}
 											{hoveredPostId === post?._id && (
-												<div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-black bg-opacity-75 text-white px-2 py-1 rounded">
-													<span className="pr-8">
+												<div className="absolute inset-0 flex items-center justify-center  dark:bg-black bg-opacity-30 dark:bg-opacity-30 text-white px-2 py-1 rounded">
+													<span className="pr-8 dark:text-white text-black">
 														{" "}
 														<FontAwesomeIcon className="pr-2" icon={faHeart} />
 														{post?.likes?.length}
@@ -278,7 +237,7 @@ const Profile = () => {
 														savepost={savepost}
 														PostSave={PostSave}
 													/>
-													<span>
+													<span className="dark:text-white text-black">
 														{" "}
 														<FontAwesomeIcon className="pr-2" icon={faComment} />
 														{post?.comments?.length}
@@ -287,6 +246,47 @@ const Profile = () => {
 											)}
 										</div>
 									))}
+							</div>
+						</TabPanel>
+						<TabPanel>
+							<div className="flex flex-wrap ">
+								{Posts.map((post) => (
+									<div
+										onClick={onOpenPostModal}
+										key={post._id} // Assuming 'postId' is a unique identifier for each post
+										className="w-full sm:w-1/2 md:w-1/3 lg:w-1/3 px-2 mb-4 relative"
+										onMouseEnter={() => debouncedSetHoveredPostId(post._id)}
+										onMouseLeave={() => setHoveredPostId(null)}>
+										<img src={post?.media} alt={`post-${post._id}`} className="w-full" />
+										{/* Overlay for Like and Comment counts */}
+										{hoveredPostId === post._id && (
+											<div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-black bg-opacity-30 dark:bg-opacity-30 text-white px-2 py-1 rounded">
+												<span className="pr-8 dark:text-white text-black">
+													{" "}
+													<FontAwesomeIcon className="pr-2" icon={faHeart} />
+													{post?.likes?.length}
+												</span>
+												<FullPost
+													postId={post?._id}
+													handleLike={likeFunction}
+													like={like}
+													isPostModalOpen={isPostModalOpen}
+													onClosePostModal={onClosePostModal}
+													likeCount={likeCount}
+													poster={post}
+													postuser={userdetails}
+													savepost={savepost}
+													PostSave={PostSave}
+												/>
+												<span className="dark:text-white text-black">
+													{" "}
+													<FontAwesomeIcon className="pr-2" icon={faComment} />
+													{post?.comments?.length}
+												</span>
+											</div>
+										)}
+									</div>
+								))}
 							</div>
 						</TabPanel>
 					</TabPanels>

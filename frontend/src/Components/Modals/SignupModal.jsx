@@ -82,7 +82,7 @@ const SignupModal = ({ onClose, isOpen, handleChange, formstate, showToast }) =>
 				<ModalBody>
 					{" "}
 					<select
-						className="w-full text-white bg-gray-700 rounded-lg mb-5"
+						className="w-full text-white bg-gray-700 rounded-lg my-2"
 						id="dropdown"
 						name="gender"
 						// value={selectedOption}
@@ -97,18 +97,7 @@ const SignupModal = ({ onClose, isOpen, handleChange, formstate, showToast }) =>
 						))}
 					</select>
 					<div className="mb-5">
-						<select
-							className="bg-gray-700 text-white rounded-lg me-12 "
-							// value={day}
-							name="day"
-							onChange={(e) => handleChange(e)}>
-							<option value="">Day</option>
-							{dayOptions.map((option) => (
-								<option className="" key={option} value={option}>
-									{option}
-								</option>
-							))}
-						</select>
+						<h1 className="text-white text-start text-xl my-3">Date of birth</h1>
 						<select
 							className="bg-gray-700 text-white me-12 rounded-lg"
 							// value={month}
@@ -121,6 +110,19 @@ const SignupModal = ({ onClose, isOpen, handleChange, formstate, showToast }) =>
 								</option>
 							))}
 						</select>
+						<select
+							className="bg-gray-700 text-white rounded-lg me-12 "
+							// value={day}
+							name="day"
+							onChange={(e) => handleChange(e)}>
+							<option value="">Day</option>
+							{dayOptions.map((option) => (
+								<option className="" key={option} value={option}>
+									{option}
+								</option>
+							))}
+						</select>
+
 						<select
 							className="bg-gray-700 text-white rounded-lg"
 							// value={year}
