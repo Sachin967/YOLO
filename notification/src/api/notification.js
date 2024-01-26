@@ -68,7 +68,6 @@ export const notification = (app, channel, server) => {
 			return res.json(isRead);
 		} catch (error) {}
 	});
-
 	router.get("/unreadnotification/:userId", async (req, res) => {
 		try {
 			const { userId } = req.params;
@@ -76,5 +75,6 @@ export const notification = (app, channel, server) => {
 			return res.json(count);
 		} catch (error) {}
 	});
+
 	app.use("/api/notification", router);
 };

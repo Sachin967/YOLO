@@ -8,7 +8,7 @@ export const UserAuth = async (req, res, next) => {
 	const { refreshToken } = req.cookies;
 	const decoded = await jwt.verify(refreshToken, REFRESH_SECRET);
 	if (isAuthorized) {
-		// const isBlocked = await axios.get(`http://127.0.0.1:7100/api/users/checkisblocked/${req.user._id}`);
+		// const isBlocked = await axios.get(`http://127.0.0.1:7100/api/users/checkisblocked/${decoded._id}`);
 		const isBlocked = await axios.get(`https://yolo.sachinms.fyi/api/users/checkisblocked/${decoded._id}`);
 		if (isBlocked.data.status === false) {
 			return next();
