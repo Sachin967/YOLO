@@ -18,9 +18,9 @@ const reportUser = [
 ];
 
 export const MESSENDPOINT = "https://yolo.sachinms.fyi";
-// export const MESSENDPOINT = 'http://localhost:8000/m'
+// export const MESSENDPOINT = 'http://localhost:8000/'
 
-// export const NOTENDPOINT = "http://localhost:9000/n";
+// export const NOTENDPOINT = "http://localhost:9000/";
 export const NOTENDPOINT = "https://yolo.sachinms.fyi";
 
 export const dayOptions = Array.from({ length: 31 }, (_, i) => i + 1);

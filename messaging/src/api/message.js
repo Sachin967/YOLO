@@ -13,7 +13,7 @@ export const message = (app, server) => {
 		}
 	});
 
-	const messagingNamespace = io.of("/m");
+	const messagingNamespace = io.of("/");
 	messagingNamespace.on("connection", (socket) => {
 		console.log("Connected to messaging namespace");
 
