@@ -143,5 +143,5 @@ export const admin = (app, channel) => {
       }
     } catch (error) {}
   });
-  app.use("/admin", router);
+  app.use("/api/admin", router);
 };

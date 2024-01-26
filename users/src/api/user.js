@@ -309,5 +309,5 @@ export const user = (app, channel) => {
 		} catch (error) {}
 	});
 
-	app.use("/users", router);
+	app.use("/api/users", router);
 };

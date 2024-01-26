@@ -150,5 +150,5 @@ export const posts = (app, channel) => {
 			console.log(error);
 		}
 	});
-	app.use("/posts", router);
+	app.use("/api/posts", router);
 };

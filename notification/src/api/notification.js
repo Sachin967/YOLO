@@ -13,7 +13,7 @@ export const notification = (app, channel, server) => {
 			credentials: true
 		}
 	});
-	const notificationNamespace = io.of("/");
+	const notificationNamespace = io.of("/notification");
 	notificationNamespace.on("connection", (socket) => {
 		console.log("connected to notification namespace");
 		socket.on("suitup", (userData) => {
@@ -76,5 +76,5 @@ export const notification = (app, channel, server) => {
 			return res.json(count);
 		} catch (error) {}
 	});
-	app.use("/notification", router);
+	app.use("/api/notification", router);
 };
