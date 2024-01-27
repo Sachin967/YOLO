@@ -34,7 +34,7 @@ const Search = () => {
 	};
 	const fetchAllUsers = () => {
 		users
-			.get(`/usersearch/${search}`)
+			.get(`/userssearch/${search}`)
 			.then((res) => {
 				if (res.data) {
 					setUser(res.data);
@@ -55,14 +55,14 @@ const Search = () => {
 	return (
 		<div className="h-screen flex">
 			<div className="ml-20 w-[694px] relative md:w-[1110px] lg:w-[750px] min-h-screen max-h-full sm:w-[980px] lg:ml-[320px] sm:ml-[55px] bg-white dark:bg-black">
-				<div className="w-full border-b border-gray-700">
+				<div className="w-full border-b dark:border-gray-700 border-gray-500">
 					<h1 className="dark:text-white text-black font-bold text-2xl px-7 py-3">Search</h1>
 					<input
 						value={search}
 						onChange={handleInputChange}
 						style={{ backgroundColor: "#363434" }}
 						type="text"
-						className="w-[700px] rounded-3xl pl-12 h-[52px] focus:outline-none focus:border-purple-500 mb-8 text-black dark:text-white mx-6  mt-3 placeholder-white" // Adjusted padding
+						className="w-[700px] rounded-3xl pl-12 h-[52px] focus:outline-none focus:border-purple-500 mb-8 text-white mx-6  mt-3 placeholder-white" // Adjusted padding
 						placeholder="Search"
 					/>
 					<svg
