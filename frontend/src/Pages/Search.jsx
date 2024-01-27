@@ -17,7 +17,7 @@ const Search = () => {
 		setSearch(e.target.value);
 		if (e.target.value === "") {
 			// Show recent searches when the input is empty
-			setRecentSearches([...recentSearches]);
+			setRecentSearches([]);
 		} else {
 			fetchAllUsers();
 		}
