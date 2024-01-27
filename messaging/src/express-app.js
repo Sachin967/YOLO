@@ -22,8 +22,8 @@ const expressApp = async (app, server) => {
 		console.error(err.stack);
 		// res.status(500).send('Something went wrong!');
 	});
-	app.all('*', (req, res) => {
-		res.status(404).send('Not Found');
+	app.all("*", (req, res) => {
+		res.status(404).send("Not Found");
 	});
 	app.use(ErrorHandler);
 };
