@@ -26,7 +26,7 @@ const Navbar = () => {
 	};
 
 	const menuItems = [
-		{ icon: <MdDashboard size={25} className="mr-4" />, text: "Dashboard", link: "/admin/" },
+		// { icon: <MdDashboard size={25} className="mr-4" />, text: "Dashboard", link: "/admin/" },
 		{ icon: <TbTruckDelivery size={25} className="mr-4" />, text: "Users", link: "/admin/users" },
 		{ icon: <MdFavorite size={25} className="mr-4" />, text: "Flagged Posts", link: "/admin/posts" },
 		{ icon: <FaWallet size={25} className="mr-4" />, text: "Problems" }

@@ -14,7 +14,7 @@ const AdminLogin = () => {
 	const Navigate = useNavigate();
 	useEffect(() => {
 		if (adminLoggedIn) {
-			Navigate("/admin");
+			Navigate("/admin/users");
 		}
 	}, [adminLoggedIn]);
 	const handleChange = (e) => {
