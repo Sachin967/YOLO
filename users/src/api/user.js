@@ -221,7 +221,7 @@ export const user = (app, channel) => {
 		} catch (error) {}
 	});
 
-	router.get("/users/:search", UserAuth, async (req, res, next) => {
+	router.get("/usersearch/:search", UserAuth, async (req, res, next) => {
 		try {
 			const keyword = req.params.search;
 			const user = await service.FindUser({ keyword }, req);

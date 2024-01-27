@@ -34,7 +34,7 @@ const Search = () => {
 	};
 	const fetchAllUsers = () => {
 		users
-			.get(`/users/${search}`)
+			.get(`/usersearch/${search}`)
 			.then((res) => {
 				if (res.data) {
 					setUser(res.data);

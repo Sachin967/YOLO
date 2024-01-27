@@ -110,7 +110,7 @@ class UserRepositary {
 			const users = await User.find({
 				$or: [{ name: { $regex: keyword, $options: "i" } }, { username: { $regex: keyword, $options: "i" } }]
 			});
-			console.log('==========================',users)
+			console.log("==========================", users);
 			return users;
 		} catch (error) {}
 	}
