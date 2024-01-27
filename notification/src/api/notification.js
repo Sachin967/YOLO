@@ -13,8 +13,8 @@ export const notification = (app, channel, server) => {
 			credentials: true
 		}
 	});
-	const notificationNamespace = io.of("/notification/socket.io");
-	notificationNamespace.on("connection", (socket) => {
+	// const notificationNamespace = io.of("/");
+	io.on("connection", (socket) => {
 		console.log("connected to notification namespace");
 		socket.on("suitup", (userData) => {
 			socket.join(userData._id);

@@ -13,8 +13,8 @@ export const message = (app, server) => {
 		}
 	});
 
-	const messagingNamespace = io.of("/messaging/socket.io");
-	messagingNamespace.on("connection", (socket) => {
+	// const messagingNamespace = io.of("/messaging/socket.io");
+	io.on("connection", (socket) => {
 		console.log("Connected to messaging namespace");
 
 		socket.on("setup", (userData) => {
