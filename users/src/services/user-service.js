@@ -226,7 +226,7 @@ class UserService {
 			const m = dob.getMonth() + 1;
 			const d = dob.getDate();
 			return {
-				id: editedUser._id,
+				_id: editedUser._id,
 				email: editedUser.email,
 				propic: editedUser.propic,
 				coverpic: editedUser.coverpic,
@@ -338,6 +338,7 @@ class UserService {
 	async FindUser({ keyword }, req) {
 		try {
 			const users = await this.repositary.FindUsersbyRegex(keyword);
+			console.log('service',users)
 			const filteredUsers = users.filter((user) => user._id.toString() !== req.user._id.toString());
 			return filteredUsers;
 		} catch (error) {}

@@ -33,18 +33,39 @@ export const createChannel = async () => {
 	}
 };
 
+// export const SubscribeMessage = async (channel, service) => {
+// 	const appQueue = await channel.assertQueue(QUEUE_NAME);
+
+// 	channel.bindQueue(appQueue.queue, EXCHANGE_NAME, POST_BINDING_KEY);
+
+// 	channel.consume(appQueue.queue, (data) => {
+// 		if (data.content) {
+// 			console.log("received data in Shopping");
+// 			service.SubscribeEvents(data.content.toString());
+// 			channel.ack(data);
+// 		}
+// 	});
+// };
 export const SubscribeMessage = async (channel, service) => {
-	const appQueue = await channel.assertQueue(QUEUE_NAME);
+	await channel.assertExchange(EXCHANGE_NAME, "direct", { durable: true });
+	const q = await channel.assertQueue("", { exclusive: true });
+	console.log(` Waiting for messages in queue: ${q.queue}`);
 
-	channel.bindQueue(appQueue.queue, EXCHANGE_NAME, POST_BINDING_KEY);
+	channel.bindQueue(q.queue, EXCHANGE_NAME, NOTIFICATION_BINDING_KEY);
 
-	channel.consume(appQueue.queue, (data) => {
-		if (data.content) {
-			console.log("received data in Shopping");
-			service.SubscribeEvents(data.content.toString());
-			channel.ack(data);
+	channel.consume(
+		q.queue,
+		(msg) => {
+			if (msg.content) {
+				console.log("the message is:", msg.content.toString());
+				service.SubscribeEvents(msg.content.toString());
+			}
+			console.log("[X] received");
+		},
+		{
+			noAck: true,
 		}
-	});
+	);
 };
 
 export const PublishMessage = async (channel, binding_key, message) => {

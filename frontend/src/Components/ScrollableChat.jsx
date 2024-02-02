@@ -57,7 +57,7 @@ const ScrollableChat = ({ messages, user }) => {
 														<img
 															onClick={onOpenPostModal}
 															className="rounded-xl"
-															src={message.content?.media}
+															src={message?.content?.media}
 															alt=""
 														/>
 														<FullPost
@@ -111,10 +111,11 @@ const ScrollableChat = ({ messages, user }) => {
 											{isSharedPost ? (
 												<>
 													<div className="relative w-[300px] mr-[300px] h-[350px]">
+														
 														<img
 															onClick={onOpenPostModal}
 															className="rounded-xl"
-															src={message.content?.media}
+															src={message?.content?.media}
 															alt=""
 														/>
 														<FullPost
@@ -175,7 +176,7 @@ const ScrollableChat = ({ messages, user }) => {
 														<img
 															onClick={onOpenPostModal}
 															className="rounded-xl"
-															src={message.content?.media?.url}
+															src={message.content?.media}
 															alt=""
 														/>
 														<FullPost
@@ -243,7 +244,7 @@ const ScrollableChat = ({ messages, user }) => {
 																<img
 																	onClick={onOpenPostModal}
 																	className="rounded-xl"
-																	src={message.content?.media?.url}
+																	src={message.content?.media}
 																	alt=""
 																/>
 																<FullPost

@@ -76,14 +76,14 @@ class UserRepositary {
 
 			// Token is valid and associated with the correct user
 			return { status: true, resetEntry };
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async updatePassword(userId, password, salt) {
 		try {
 			const user = await User.findByIdAndUpdate(userId, { password: password, salt: salt }, { new: true });
 			return { status: true, message: "Password Updated" };
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async FindByUsername({ username }) {
@@ -110,20 +110,19 @@ class UserRepositary {
 			const users = await User.find({
 				$or: [{ name: { $regex: keyword, $options: "i" } }, { username: { $regex: keyword, $options: "i" } }]
 			});
-			console.log("==========================", users);
 			return users;
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async IsBlocked(id) {
 		try {
 			const user = await User.findById(id);
 			if (user.isBlocked) {
-				return { status: true };
+				return true
 			} else {
-				return { status: false };
+				return false
 			}
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async updateUserVerification(id) {
@@ -158,7 +157,7 @@ class UserRepositary {
 				_id: { $nin: [...user.following, userId] }
 			}).limit(5);
 			return userNotFollowing;
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async FindUsersById(data) {
@@ -180,16 +179,42 @@ class UserRepositary {
 		return updatedUser;
 	}
 
+
+	// async updateUser({ id, name, bio, location, day, month, year }) {
+	// 	try {
+	// 		const dob = new Date(year, month - 1, day);
+	// 		const user = await User.findByIdAndUpdate({ _id: id }, { name, bio, location, dateOfBirth: dob }, { new: true });
+	// 		return user;
+	// 	} catch (error) {
+	// 		console.log(error);
+	// 		// throw error; // Consider throwing the error for better handling in the calling function
+	// 	}
+	// }
+
 	async updateUser({ id, name, bio, location, day, month, year }) {
 		try {
+			console.log('======',id)
 			const dob = new Date(year, month - 1, day);
-			const user = await User.findByIdAndUpdate({ _id: id }, { name, bio, location, dateOfBirth: dob }, { new: true });
-			return user;
+			const updatedUser = await User.findByIdAndUpdate(
+				id,
+				{
+					$set: {
+						name,
+						bio,
+						location,
+						dateOfBirth: dob,
+					},
+				},
+				{ new: true, upsert: true }
+			);
+			return updatedUser;
 		} catch (error) {
 			console.log(error);
-			// throw error; // Consider throwing the error for better handling in the calling function
+			// Handle the error or rethrow it for better handling in the calling function
+			throw error;
 		}
 	}
+
 
 	async AddCoverImage({ username, croppedImage }) {
 		try {
@@ -219,7 +244,7 @@ class UserRepositary {
 			);
 			await user.save();
 			return { status: "uploaded" };
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async AddProImage({ username, croppedImage }) {
@@ -250,7 +275,7 @@ class UserRepositary {
 			);
 			await user.save();
 			return { status: "uploaded" };
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async ListUsers() {
@@ -357,7 +382,7 @@ class UserRepositary {
 				await user.save();
 				return { status: "removed" };
 			}
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async MakePrivateOrPublic({ isChecked, userId }) {
@@ -373,7 +398,7 @@ class UserRepositary {
 				await User.findByIdAndUpdate(userId, { isPrivate: true }, { new: true });
 				return { isPrivate: true };
 			}
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async ReportingUser({ userId, id, reason }) {
@@ -387,21 +412,21 @@ class UserRepositary {
 			}
 			const user = await User.findOneAndUpdate({ _id: userId }, { $addToSet: { reports: { reporterId: id, reason } } });
 			return { message: "Report added successfully" };
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async FindFollowing({ id }) {
 		try {
 			const user = await User.findById(id).populate("following", "_id username name propic");
 			return user;
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async FindFollowers({ id }) {
 		try {
 			const user = await User.findById(id).populate("followers", "_id username name propic");
 			return user;
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async SavingPost({ userId, postId }) {
@@ -417,7 +442,7 @@ class UserRepositary {
 				const savedpost = await user.save();
 				return { status: "removed", savedpost };
 			}
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async fetchSavedPosts({ id }) {
@@ -425,7 +450,7 @@ class UserRepositary {
 			const post = await User.findOne({ _id: id });
 			const postIds = post.bookmarks;
 			return postIds;
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async FindFollowersorFollowing(id) {
@@ -439,7 +464,7 @@ class UserRepositary {
 				console.log("User not found");
 				return null;
 			}
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async CountUserbyGender() {
@@ -450,7 +475,7 @@ class UserRepositary {
 			const otherCount = await User.find({ gender: "Other" }).countDocuments();
 			console.log(maleCount);
 			return { maleCount, femaleCount, otherCount };
-		} catch (error) {}
+		} catch (error) { }
 	}
 
 	async CountUserbyAge() {
@@ -483,7 +508,7 @@ class UserRepositary {
 				}
 			}).countDocuments();
 			return { between15and20, between20and25, between25and30 };
-		} catch (error) {}
+		} catch (error) { }
 	}
 }
 

@@ -43,16 +43,6 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 	const { isOpen: isAlertOpen, onOpen: onAlertOpen, onClose: onAlertClose } = useDisclosure();
 	const [isLink, setLink] = useState();
 	const [userId, setUserId] = useState();
-
-	// const handleImageUpdate = (newImage) => {
-	// 	console.log(newImage);
-	// 	setUpdatedImage(newImage);
-	// };
-
-	// const handleGroupNameUpdate = (newGroupName) => {
-	// 	console.log(newGroupName);
-	// 	setUpdatedName(newGroupName);
-	// };
 	const showToast = useCustomToast();
 
 	const addEmoji = (selectedEmoji) => {

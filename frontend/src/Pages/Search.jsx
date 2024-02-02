@@ -17,7 +17,7 @@ const Search = () => {
 		setSearch(e.target.value);
 		if (e.target.value === "") {
 			// Show recent searches when the input is empty
-			setRecentSearches([]);
+			setRecentSearches([...recentSearches]);
 		} else {
 			fetchAllUsers();
 		}
@@ -34,7 +34,7 @@ const Search = () => {
 	};
 	const fetchAllUsers = () => {
 		users
-			.get(`/userssearch/${search}`)
+			.get(`/usersearch/${search}`)
 			.then((res) => {
 				if (res.data) {
 					setUser(res.data);
@@ -114,7 +114,7 @@ const Search = () => {
 							<div
 								key={u?._id}
 								onClick={() => handleUserClick(u)}
-								className="flex items-center space-x-4 mx-5 mt-3 pb-2 hover:bg-zinc-800">
+								className="flex items-center space-x-4 mx-5 mt-3 pb-2 hover:rounded-xl hover:bg-zinc-800">
 								<Avatar className="pl-3" src={u?.propic?.url}></Avatar>
 								<div className="flex-1">
 									<h1 className="text-lg dark:text-white text-black font-semibold">{u?.name}</h1>
@@ -140,7 +140,7 @@ const Search = () => {
 										<div
 											key={recentUser?._id}
 											onClick={() => handleUserClick(recentUser)}
-											className="flex items-center space-x-4 mx-5 pb-2 hover:bg-zinc-800 cursor-pointer">
+											className="flex items-center space-x-4 mx-5 p-2 hover:rounded-xl hover:bg-zinc-800 cursor-pointer">
 											<Avatar className="" src={recentUser?.propic?.url}></Avatar>
 											<div className="flex-1">
 												<h1 className="text-lg dark:text-white text-black font-semibold">

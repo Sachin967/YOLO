@@ -103,7 +103,6 @@ const ShareModal = ({ onClose, isOpen, post }) => {
 						);
 					})}
 				</ModalBody>
-				{console.log(peopleMessaged)}
 				<ModalFooter>
 					<Button className="w-full" onClick={SendMessage}>
 						Send

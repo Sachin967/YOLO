@@ -48,6 +48,7 @@ function EditProfileDrawer({ isOpen, onClose, showUserProfile }) {
 	useEffect(() => {
 		if (userdetails) {
 			setUpdatedUser({
+				_id: userdetails._id,
 				name: userdetails?.name || "",
 				bio: userdetails?.bio || "",
 				location: userdetails?.location || "",
@@ -58,6 +59,7 @@ function EditProfileDrawer({ isOpen, onClose, showUserProfile }) {
 		}
 	}, [userdetails]);
 	const handleEditUserProfile = () => {
+
 		users
 			.put(`/editprofile/${userdetails._id}`, { updatedUser })
 			.then((res) => {

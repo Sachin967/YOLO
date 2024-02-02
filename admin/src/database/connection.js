@@ -6,9 +6,11 @@ const dBConnection = async () => {
     await mongoose.connect(MONGODB_URL);
     console.log("Connected to MongoDB");
   } catch (error) {
-    console.log(error);
+    console.error("MongoDB connection error:", error.message);
+    console.error("Stack trace:", error.stack);
     process.exit(1);
   }
 };
 
 export { dBConnection };
+

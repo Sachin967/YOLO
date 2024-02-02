@@ -13,22 +13,18 @@ export const message = (app, server) => {
 		}
 	});
 
- io.of("/api/messaging/socket.io").on("connection", (socket) => {
+	io.on("connection", (socket) => {
 		console.log("Connected to messaging namespace");
-
 		socket.on("setup", (userData) => {
 			socket.join(userData._id);
 			socket.emit("connected");
 		});
-
 		socket.on("join chat", (room) => {
 			socket.join(room);
 			console.log("User joined room:" + room);
 		});
-
 		socket.on("typing", (room) => socket.in(room).emit("typing"));
 		socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
-
 		socket.on("new message", (newMessageReceived) => {
 			var chat = newMessageReceived.chatId;
 			if (!chat.users) return console.log("chat.users not defined");
@@ -37,37 +33,11 @@ export const message = (app, server) => {
 				socket.in(user).emit("message received", newMessageReceived);
 			});
 		});
-
 		socket.on("disconnect", () => {
 			console.log("User disconnected from messaging namespace");
 		});
 	});
 
-	// io.on("connection", (socket) => {
-	// 	console.log("connected to socket.io");
-	// 	socket.on("setup", (userData) => {
-	// 		socket.join(userData._id);
-	// 		socket.emit("connected");
-	// 	});
-	// 	socket.on("join chat", (room) => {
-	// 		socket.join(room);
-	// 		console.log("user joined room:" + room);
-	// 	});
-	// 	socket.on("typing", (room) => socket.in(room).emit("typing"));
-	// 	socket.on("stop typing", (room) => socket.in(room).emit("stop typing"));
-	// 	socket.on("new message", (newMessageReceived) => {
-	// 		var chat = newMessageReceived.chatId;
-	// 		if (!chat.users) return console.log("chat.users not defined");
-	// 		chat.users.forEach((user) => {
-	// 			if (user == newMessageReceived.senderId) return;
-	// 			socket.in(user).emit("message received", newMessageReceived);
-	// 		});
-	// 	});
-	// 	socket.off("setup", () => {
-	// 		console.log("USER DISCONNECTED");
-	// 		socket.leave(userData._id);
-	// 	});
-	// });
 	router.get("/fetchchat/:id", async (req, res, next) => {
 		try {
 			const { id } = req.params;
@@ -96,7 +66,6 @@ export const message = (app, server) => {
 	});
 	router.put("/renamegroup/:chatId", async (req, res, next) => {
 		try {
-			console.log(req.params);
 			const { chatId } = req.params;
 			const { groupimage, chatname } = req.body;
 			const renamedchat = await service.RenameChat({ chatId, chatname, groupimage });
@@ -106,9 +75,7 @@ export const message = (app, server) => {
 	router.put("/groupadd", async (req, res, next) => {
 		try {
 			const users = JSON.parse(req.body.users);
-			console.log(users);
 			const userIds = users.map((u) => u._id);
-			console.log(userIds);
 			const { chatId } = req.body;
 			const addtogroup = await service.AddUsertoGroup({ chatId, userIds });
 			return res.json(addtogroup);
@@ -125,7 +92,6 @@ export const message = (app, server) => {
 	router.post("/message", UserAuth, async (req, res, next) => {
 		try {
 			const { content, chatId } = req.body;
-			console.log(req.body);
 			const userId = req.user._id;
 			const savemessage = await service.SendMessage({ content, chatId, userId });
 			res.json(savemessage);

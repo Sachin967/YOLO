@@ -201,21 +201,21 @@ const UsersProfile = () => {
 						alt=""
 					/>
 
-					<div className="absolute top-[320px] left-[150px] transform -translate-x-1/2">
+					<div className="absolute top-[330px] left-[150px] transform -translate-x-1/2">
 						<Avatar size={"2xl"} src={user?.propic?.url} />
 					</div>
 				</div>
-				<div className="absolute top-[310px] left-[290px] flex flex-col items-start ">
-					<div className="flex items-center space-x-10 mb-5">
+				<div className="absolute top-[320px] left-[290px] flex flex-col  items-start ">
+					<div className="flex items-center justify-between space-x-80 mb-5">
 						<div>
-							<Text className=" dark:text-white text-black text-2xl font-bold py-1">{user?.name}</Text>
-							<Link to={`/${user?.username}`}>
-								<Text className=" text-gray-400 text-xl rounded-full bg-neutral-700 font-thin">
+							<Text className="dark:text-white text-black text-2xl font-bold py-1">{user?.name}</Text>
+							<Link className="dark:text-gray-500 text-lg font-thin" to={`/${user?.username}`}>
+								<Text className="hover:bg-gray-500 hover:rounded-xl">
 									@{user?.username}
 								</Text>
 							</Link>
 						</div>
-						{isPrivate && !follow ? (
+						<div className="space-x-16">	{isPrivate && !follow ? (
 							<button
 								onClick={() => SendFollowRequest(user._id)}
 								className={
@@ -237,19 +237,20 @@ const UsersProfile = () => {
 							</button>
 						)}
 
-						{follow && (
-							<button
-								onClick={() => HandleMessageClick(user._id)}
-								className=" dark:text-white text-black h-9 w-24 bg-zinc-700 hover:bg-zinc-800  rounded-3xl">
-								Message
-							</button>
-						)}
-						<FontAwesomeIcon
-							onClick={onOptionOpen}
-							className="cursor-pointer p-1 dark:text-white text-black rounded-full"
-							icon={faEllipsis}
-							size="2xl"
-						/>
+							{follow && (
+								<button
+									onClick={() => HandleMessageClick(user._id)}
+									className="text-white h-9 w-24 bg-zinc-700 hover:bg-zinc-800  rounded-3xl ml-auto">
+									Message
+								</button>
+							)}
+							<FontAwesomeIcon
+								onClick={onOptionOpen}
+								className="cursor-pointer p-1 dark:text-white text-black rounded-full ml-auto"
+								icon={faEllipsis}
+								size="2xl"
+							/>
+						</div>
 					</div>
 					<div className="flex my-2">
 						<Text className="text-gray-600  text-lg font-poppins hover:underline ">
@@ -281,6 +282,8 @@ const UsersProfile = () => {
 						isFollowingOpen={isFollowingOpen}
 					/>
 				</div>
+
+
 			</div>
 
 			{isPrivate && !follow ? (
@@ -417,12 +420,12 @@ const UsersProfile = () => {
 								onReportOpen();
 								onOptionClose();
 							}}
-							className="hover:bg-zinc-700 dark:text-white text-black text-lg hover:rounded-xl">
+							className="hover:bg-zinc-700 text-white  text-lg hover:rounded-xl">
 							Report
 						</button>
 						<button
 							onClick={onOptionClose}
-							className="hover:bg-zinc-700 dark:text-white text-black text-lg hover:rounded-xl">
+							className="hover:bg-zinc-700 text-white text-lg hover:rounded-xl">
 							Cancel
 						</button>
 					</>

@@ -14,10 +14,8 @@ class MessageRepository {
 	}
 
 	async UpdateMessages({ chatId, userId }) {
-		console.log("hhhhhhhhhh", chatId);
 		await Message.updateMany({ chatId: chatId, readBy: { $ne: userId } }, { $addToSet: { readBy: userId } });
 		const updatedMessages = await Message.find({ chatId: chatId });
-		console.log(updatedMessages);
 		return updatedMessages;
 	}
 
@@ -37,7 +35,6 @@ class MessageRepository {
 			const chats = await Chat.find({ users: { $elemMatch: { $eq: userId } } })
 				.populate("latestMessage")
 				.sort({ updatedAt: -1 });
-			console.log(chats[0]);
 			return chats;
 		} catch (error) {
 			console.log(error);
@@ -76,7 +73,6 @@ class MessageRepository {
 				return chat;
 			} else {
 				const chat = await Chat.findByIdAndUpdate(chatId, { chatName: chatname }, { new: true });
-				console.log(chat);
 				return chat;
 			}
 		} catch (error) {
@@ -119,7 +115,6 @@ class MessageRepository {
 
 	async FindMessages(chatId) {
 		try {
-			console.log("chatId", chatId);
 			const chat = await Chat.findOne({ _id: chatId });
 			const message = await Message.find({ chatId: chatId }).populate("chatId");
 

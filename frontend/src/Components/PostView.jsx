@@ -60,7 +60,7 @@ const PostView = ({ post, ShowPosts, fetchData }) => {
 	};
 	return (
 		<>
-			<div className="pl-[72px]  border-b border-gray-700 sm:ml-80 lg:ml-0 dark:border-gray-700 max-w-[750px] ">
+			<div key={post._id} className="pl-[72px]  border-b border-gray-700 sm:ml-80 lg:ml-0 dark:border-gray-700 max-w-[750px] ">
 				<div className="flex items-center justify-center h-[550px]  sm:h-[750px]  rounded bg-white dark:bg-black ">
 					<Flex className="flex-0 sm:flex-1" gap="4" alignItems="center" flexWrap="wrap">
 						<Link className="h-1 sm:h-[720px]" to={`/${username}`}>

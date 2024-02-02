@@ -63,9 +63,7 @@ const FullPost = ({
 			const response = await posts.post("/postdetails", { postId });
 			const { post, usernames } = response.data.response;
 			const username = usernames.join(",");
-			console.log(username);
 			const user = await users.get(`/usersget/${username}`);
-			console.log(user);
 			const userData = user.data.map((u) => {
 				const { _id, ...datawithoutid } = u;
 				return datawithoutid;
@@ -76,7 +74,6 @@ const FullPost = ({
 					const userDetail = userData.find((user) => {
 						return user?.username.toLowerCase() === comment?.username.toLowerCase();
 					});
-					console.log(userDetail);
 					return { ...comment, ...userDetail };
 				})
 			);
@@ -262,7 +259,6 @@ const FullPost = ({
 										{specificPost?.textmedia || poster?.textmedia}
 									</Text>
 								</div>
-								{console.log(comments)}
 								{/* Iterate through comments */}
 								{comments.length > 0 &&
 									comments?.map((comment) => (
@@ -295,7 +291,6 @@ const FullPost = ({
 													<PopoverContent style={{ backgroundColor: "#262626" }}>
 														<PopoverArrow />
 														<PopoverCloseButton />
-														{console.log(comment)}
 														<textarea
 															value={
 																replyText.startsWith(`@${comment?.username}`)

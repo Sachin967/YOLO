@@ -74,7 +74,7 @@ const Profile = () => {
 				setCoverPic(false);
 			}
 			onCoverPicOpen();
-		} catch (error) {}
+		} catch (error) { }
 	};
 
 	useEffect(() => {
@@ -106,12 +106,8 @@ const Profile = () => {
 	return (
 		<>
 			<div className="dark:bg-black bg-white max-h-full min-h-screen">
-				{/* <Heading className="text-white ml-[360px] py-2 " size={"md"}>
-					{userdetails?.name}
-				</Heading> */}
-				{/* <Text className="text-gray-400 text-lg ml-[360px]">{posts?.length} Posts</Text> */}
-				<div className="flex md:w-[1110px] lg:w-[1090px] pb-16  sm:w-[980px] lg:ml-[320px] sm:ml-[55px] bg-white dark:bg-black relative">
-					<div className="flex items-start  h-[450px] rounded dark:bg-black bg-white ">
+				<div className=" md:w-[1110px] lg:w-[1090px]   sm:w-[980px] lg:ml-[320px] sm:ml-[55px] bg-white dark:bg-black relative">
+					<div className=" rounded dark:bg-black bg-white ">
 						<div className="bg-white">
 							<img
 								onClick={() => HandleClick("cover")}
@@ -125,54 +121,50 @@ const Profile = () => {
 							/>
 						</div>
 
-						<div className="absolute top-[335px] left-[150px] transform -translate-x-1/2">
-							<Avatar onClick={() => HandleClick("pro")} size={"2xl"} src={user?.propic?.url} />
-							{/* <Text className="pl-1 pt-5 text-white text-2xl font-bold">{userdetails.name}</Text>
-							<Text className="pl-1 text-gray-400 text-2xl font-thin">@{user.username}</Text>
-							<Text className="p-1 pt-4 text-white text-lg ">{userdetails?.bio}</Text> */}
-						</div>
 					</div>
 
-					<div className="absolute top-[315px]  left-[290px] flex flex-col items-center space-y-2">
-						{/* Edit Profile button */}
-						<div className="flex items-center space-x-10 mb-4">
+					<div className="flex items-center space-y-5">
+						<div className="flex items-center">
+							<div className="p-8">
+								<Avatar onClick={() => HandleClick("pro")} size={"2xl"} src={user?.propic?.url} />
+						</div>
 							<div>
-								<Text className=" dark:text-white text-black text-2xl font-bold py-1">
+								<Text className="dark:text-white text-black text-2xl font-bold py-1">
 									{user?.name}
 								</Text>
 								<Link to={`/${user?.username}`}>
 									{" "}
-									<Text className=" text-gray-400 text-xl rounded-full bg-neutral-700 font-thin">
+									<Text className="text-gray-500 text-lg w-auto rounded-full hover:bg-neutral-700 font-thin">
 										@{user?.username}
 									</Text>
 								</Link>
+								<div className="flex">
+									<button
+										onClick={() => onFollowersOpen()}
+										className="text-gray-500 my-3 text-lg me-10 font-poppins hover:underline">
+										<span className="dark:text-white text-black">{user?.followers?.length}</span> Followers
+									</button>
+									{/* Following button */}
+									<button
+										onClick={() => onFollowingOpen()}
+										className="text-gray-500 text-lg font-poppins hover:underline">
+										<span className="dark:text-white text-black">{user?.following?.length}</span> Following
+									</button>
+								</div>
+								<Text className="text-xl  mt-5 dark:text-white text-black font-thin">
+									{user?.bio}
+								</Text>
 							</div>
+						</div>
+						<div className="ml-[400px]">
 							<button
-								className=" dark:text-white text-black h-9 w-24 bg-zinc-700 hover:bg-zinc-800  rounded-3xl"
-								// leftIcon={<AddIcon />}
-								colorScheme="teal"
+								className="text-white h-9 w-24 bg-zinc-700 hover:bg-zinc-800 rounded-3xl"
 								onClick={onOpen}>
 								Edit Profile
 							</button>
 						</div>
-						<div className="flex  space-x-8 ">
-							{/* Followers button */}
-							<button
-								onClick={() => onFollowersOpen()}
-								className=" text-gray-500 my-3 text-lg font-poppins hover:underline">
-								<span className="dark:text-white text-black">{user?.followers?.length}</span> Followers
-							</button>
-							{/* Following button */}
-							<button
-								onClick={() => onFollowingOpen()}
-								className=" text-gray-500  text-lg font-poppins hover:underline ">
-								<span className="dark:text-white text-black">{user?.following?.length}</span> Following
-							</button>
-						</div>
-						<Text className="pr-36  text-xl rounded-full dark:text-white text-black font-thin">
-							{user?.bio}
-						</Text>
 					</div>
+			
 				</div>
 				<FollowersModal
 					userId={userdetails._id}
@@ -184,7 +176,7 @@ const Profile = () => {
 					onFollowingClose={onFollowingClose}
 					isFollowingOpen={isFollowingOpen}
 				/>
-				<Tabs className="ml-[320px] bg-white dark:bg-black h-auto" isFitted>
+				<Tabs className="ml-[320px] mt-8 bg-white dark:bg-black h-auto" isFitted>
 					<TabList mb="1em">
 						<Tab
 							className="text-lg"

@@ -29,6 +29,27 @@ export const PublishMessage = async (channel, binding_key, message) => {
 };
 
 // subscribe messages
+
+// export const SubscribeMessage = async (channel, service,io) => {
+// 	await channel.assertExchange(EXCHANGE_NAME, "direct", { durable: true });
+// 	const q = await channel.assertQueue("", { exclusive: true });
+// 	console.log(` Waiting for messages in queue: ${q.queue}`);
+
+// 	channel.bindQueue(q.queue, EXCHANGE_NAME, NOTIFICATION_BINDING_KEY);
+// 	channel.consume(
+// 		q.queue,
+// 		(msg) => {
+// 			if (msg.content) {
+// 				console.log("the message is:", msg.content.toString());
+// 				service.SubscribeEvents(msg.content.toString(),io);
+// 			}
+// 			console.log("[X] received");
+// 		},
+// 		{
+// 			noAck: true,
+// 		}
+// 	);
+// };
 export const SubscribeMessage = async (channel, service, io) => {
 	const appQueue = await channel.assertQueue(QUEUE_NAME);
 

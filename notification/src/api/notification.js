@@ -13,6 +13,7 @@ export const notification = (app, channel, server) => {
 			credentials: true
 		}
 	});
+	SubscribeMessage(channel, service, io);
 	io.on("connection", (socket) => {
 		console.log("connected to notification namespace");
 		socket.on("suitup", (userData) => {
@@ -20,10 +21,9 @@ export const notification = (app, channel, server) => {
 			socket.emit("connected");
 		});
 	});
-	SubscribeMessage(channel, service, io);
+
 	router.get("/:id", async (req, res, next) => {
 		try {
-			console.log(req.params);
 			const { id } = req.params;
 			const resp = await service.FetchNotification({ id });
 			return res.json(resp);

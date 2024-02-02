@@ -3,14 +3,13 @@ import axios from "axios";
 import jwt from "jsonwebtoken";
 import { REFRESH_SECRET } from "../../config/index.js";
 export const UserAuth = async (req, res, next) => {
-	console.log(req.cookies);
 	const isAuthorized = await ValidateSignature(req);
 	const { refreshToken } = req.cookies;
 	const decoded = await jwt.verify(refreshToken, REFRESH_SECRET);
 	if (isAuthorized) {
 		const isBlocked = await axios.get(`https://yolo.sachinms.fyi/api/users/checkisblocked/${decoded._id}`);
 		// const isBlocked = await axios.get(`http://127.0.0.1:7100/api/users/checkisblocked/${decoded._id}`);
-		if (isBlocked.data.status === false) {
+		if (isBlocked.data === false) {
 			return next();
 		} else {
 			return res.status(403).json({ message: "Not Authorized" });

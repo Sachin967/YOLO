@@ -17,11 +17,11 @@ const reportUser = [
 	{ value: 3, label: "It maybe under the age of 13" }
 ];
 
-export const MESSENDPOINT = "https://yolo.sachinms.fyi/api/messaging";
-// export const MESSENDPOINT = "http://localhost:8000/messaging";
+export const MESSENDPOINT = "https://yolo.sachinms.fyi:8000";
+// export const MESSENDPOINT = "http://localhost:8000";
 
-// export const NOTENDPOINT = "http://localhost:9000/notification";
-export const NOTENDPOINT = "https://yolo.sachinms.fyi/api/notification";
+// export const NOTENDPOINT = "http://localhost:9000";
+export const NOTENDPOINT = "https://yolo.sachinms.fyi:9000";
 
 export const dayOptions = Array.from({ length: 31 }, (_, i) => i + 1);
 
