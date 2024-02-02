@@ -13,7 +13,7 @@ export const message = (app, server) => {
 		}
 	});
 
-	io.of('/socket.io').on("connection", (socket) => {
+	io.of("/messaging").on("connection", (socket) => {
 		console.log("Connected to messaging namespace");
 		socket.on("setup", (userData) => {
 			socket.join(userData._id);

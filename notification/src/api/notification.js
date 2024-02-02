@@ -14,7 +14,7 @@ export const notification = (app, channel, server) => {
 		}
 	});
 	SubscribeMessage(channel, service, io);
-	io.of('/socket.io').on("connection", (socket) => {
+	io.of("/notification").on("connection", (socket) => {
 		console.log("connected to notification namespace");
 		socket.on("suitup", (userData) => {
 			socket.join(userData._id);
