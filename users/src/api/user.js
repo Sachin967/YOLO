@@ -175,7 +175,7 @@ export const user = (app, channel) => {
 
 	router.put("/editprofile/:id", async (req, res, next) => {
 		try {
-			console.log(req.params)
+			console.log(req.params);
 			const { id } = req.params;
 			const { name, bio, location, day, month, year } = req.body.updatedUser;
 			const editedUser = await service.EditUser({ id, name, bio, location, day, month, year });
@@ -221,12 +221,12 @@ export const user = (app, channel) => {
 		} catch (error) {}
 	});
 
-	router.get("/usersearch/:search",UserAuth, async (req, res, next) => {
-		console.log(req.params)
+	router.get("/usersearch/:search", UserAuth, async (req, res, next) => {
+		console.log(req.params);
 		try {
 			const keyword = req.params.search;
 			const user = await service.FindUser({ keyword }, req);
-			console.log("user",user)
+			console.log("user", user);
 			res.json(user);
 		} catch (error) {}
 	});

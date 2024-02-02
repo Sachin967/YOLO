@@ -14,7 +14,7 @@ class NotificationRepository {
 
 			// Emit Socket.io event for new notification to connected clients
 			if (io) {
-				console.log('send')
+				console.log("send");
 				io.to(recipient).emit("newNotification");
 			}
 		} catch (error) {

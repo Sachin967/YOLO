@@ -311,7 +311,7 @@ const Notification = () => {
 										fill="currentFill"
 									/>
 								</svg>
-								<span class="sr-only">Loading...</span>
+								<span className="sr-only">Loading...</span>
 							</div>
 						)}
 						{!loading && notify.length < 1 && (

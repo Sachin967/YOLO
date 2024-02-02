@@ -59,7 +59,6 @@ function EditProfileDrawer({ isOpen, onClose, showUserProfile }) {
 		}
 	}, [userdetails]);
 	const handleEditUserProfile = () => {
-
 		users
 			.put(`/editprofile/${userdetails._id}`, { updatedUser })
 			.then((res) => {

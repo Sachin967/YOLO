@@ -58,13 +58,13 @@ const SideBar = ({ userinfo }) => {
 	};
 	useEffect(() => {
 		socket.emit("suitup", userdetails);
-		socket.on("connected")
+		socket.on("connected");
 		fetchunReadNotification();
 	}, []);
 
 	socket.on("newNotification", () => {
 		try {
-			console.log('newNotification');
+			console.log("newNotification");
 			setNotificationCount(notificationCount + 1);
 		} catch (error) {
 			console.error("Error handling newNotification:", error);
@@ -73,12 +73,11 @@ const SideBar = ({ userinfo }) => {
 
 	socket.on("deletedNotification", () => {
 		try {
-			console.log('deletedNotification')
+			console.log("deletedNotification");
 			setNotificationCount(notificationCount - 1);
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 		}
-	
 	});
 	return (
 		<>

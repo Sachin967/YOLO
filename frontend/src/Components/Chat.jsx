@@ -78,7 +78,6 @@ const Chat = ({ fetchAgain, setFetchAgain, FetchChats }) => {
 	const fetchMessages = async () => {
 		try {
 			if (!selectedUsers) return;
-
 			const response = await messaging.get(`/message/${selectedUsers._id}`);
 			setMessage(response.data.message);
 			if (response.data.user.length > 0) {

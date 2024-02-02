@@ -63,7 +63,7 @@ export const SubscribeMessage = async (channel, service) => {
 			console.log("[X] received");
 		},
 		{
-			noAck: true,
+			noAck: true
 		}
 	);
 };

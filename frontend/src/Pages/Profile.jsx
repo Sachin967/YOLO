@@ -74,7 +74,7 @@ const Profile = () => {
 				setCoverPic(false);
 			}
 			onCoverPicOpen();
-		} catch (error) { }
+		} catch (error) {}
 	};
 
 	useEffect(() => {
@@ -120,18 +120,15 @@ const Profile = () => {
 								alt="Click to add images"
 							/>
 						</div>
-
 					</div>
 
 					<div className="flex items-center space-y-5">
 						<div className="flex items-center">
 							<div className="p-8">
 								<Avatar onClick={() => HandleClick("pro")} size={"2xl"} src={user?.propic?.url} />
-						</div>
+							</div>
 							<div>
-								<Text className="dark:text-white text-black text-2xl font-bold py-1">
-									{user?.name}
-								</Text>
+								<Text className="dark:text-white text-black text-2xl font-bold py-1">{user?.name}</Text>
 								<Link to={`/${user?.username}`}>
 									{" "}
 									<Text className="text-gray-500 text-lg w-auto rounded-full hover:bg-neutral-700 font-thin">
@@ -142,18 +139,18 @@ const Profile = () => {
 									<button
 										onClick={() => onFollowersOpen()}
 										className="text-gray-500 my-3 text-lg me-10 font-poppins hover:underline">
-										<span className="dark:text-white text-black">{user?.followers?.length}</span> Followers
+										<span className="dark:text-white text-black">{user?.followers?.length}</span>{" "}
+										Followers
 									</button>
 									{/* Following button */}
 									<button
 										onClick={() => onFollowingOpen()}
 										className="text-gray-500 text-lg font-poppins hover:underline">
-										<span className="dark:text-white text-black">{user?.following?.length}</span> Following
+										<span className="dark:text-white text-black">{user?.following?.length}</span>{" "}
+										Following
 									</button>
 								</div>
-								<Text className="text-xl  mt-5 dark:text-white text-black font-thin">
-									{user?.bio}
-								</Text>
+								<Text className="text-xl  mt-5 dark:text-white text-black font-thin">{user?.bio}</Text>
 							</div>
 						</div>
 						<div className="ml-[400px]">
@@ -164,7 +161,6 @@ const Profile = () => {
 							</button>
 						</div>
 					</div>
-			
 				</div>
 				<FollowersModal
 					userId={userdetails._id}

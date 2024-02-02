@@ -210,33 +210,32 @@ const UsersProfile = () => {
 						<div>
 							<Text className="dark:text-white text-black text-2xl font-bold py-1">{user?.name}</Text>
 							<Link className="dark:text-gray-500 text-lg font-thin" to={`/${user?.username}`}>
-								<Text className="hover:bg-gray-500 hover:rounded-xl">
-									@{user?.username}
-								</Text>
+								<Text className="hover:bg-gray-500 hover:rounded-xl">@{user?.username}</Text>
 							</Link>
 						</div>
-						<div className="space-x-16">	{isPrivate && !follow ? (
-							<button
-								onClick={() => SendFollowRequest(user._id)}
-								className={
-									reqested
-										? "text-gray-600 border border-gray-600 h-9 w-24 bg-white dark:bg-black rounded-3xl"
-										: "text-green-600 border border-green-600 h-9 w-24 bg-white dark:bg-black rounded-3xl"
-								}>
-								{reqested ? "Requested" : "Follow"}
-							</button>
-						) : (
-							<button
-								onClick={() => FollowUsers(user._id)}
-								className={
-									follow
-										? "text-red-600 border border-red-600 h-9 w-24 bg-white dark:bg-black rounded-3xl"
-										: "text-green-600 border border-green-600 h-9 w-24 bg-white dark:bg-black rounded-3xl"
-								}>
-								{follow ? "Unfollow" : "Follow"}
-							</button>
-						)}
-
+						<div className="space-x-16">
+							{" "}
+							{isPrivate && !follow ? (
+								<button
+									onClick={() => SendFollowRequest(user._id)}
+									className={
+										reqested
+											? "text-gray-600 border border-gray-600 h-9 w-24 bg-white dark:bg-black rounded-3xl"
+											: "text-green-600 border border-green-600 h-9 w-24 bg-white dark:bg-black rounded-3xl"
+									}>
+									{reqested ? "Requested" : "Follow"}
+								</button>
+							) : (
+								<button
+									onClick={() => FollowUsers(user._id)}
+									className={
+										follow
+											? "text-red-600 border border-red-600 h-9 w-24 bg-white dark:bg-black rounded-3xl"
+											: "text-green-600 border border-green-600 h-9 w-24 bg-white dark:bg-black rounded-3xl"
+									}>
+									{follow ? "Unfollow" : "Follow"}
+								</button>
+							)}
 							{follow && (
 								<button
 									onClick={() => HandleMessageClick(user._id)}
@@ -282,8 +281,6 @@ const UsersProfile = () => {
 						isFollowingOpen={isFollowingOpen}
 					/>
 				</div>
-
-
 			</div>
 
 			{isPrivate && !follow ? (

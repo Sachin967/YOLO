@@ -111,7 +111,6 @@ const ScrollableChat = ({ messages, user }) => {
 											{isSharedPost ? (
 												<>
 													<div className="relative w-[300px] mr-[300px] h-[350px]">
-														
 														<img
 															onClick={onOpenPostModal}
 															className="rounded-xl"

@@ -13,4 +13,3 @@ const dBConnection = async () => {
 };
 
 export { dBConnection };
-

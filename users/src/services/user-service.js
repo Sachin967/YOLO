@@ -338,7 +338,7 @@ class UserService {
 	async FindUser({ keyword }, req) {
 		try {
 			const users = await this.repositary.FindUsersbyRegex(keyword);
-			console.log('service',users)
+			console.log("service", users);
 			const filteredUsers = users.filter((user) => user._id.toString() !== req.user._id.toString());
 			return filteredUsers;
 		} catch (error) {}
