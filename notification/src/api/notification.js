@@ -13,7 +13,7 @@ export const notification = (app, channel, server) => {
 			credentials: true
 		}
 	});
-	SubscribeMessage(channel, service, io);
+
 	io.of("/notification").on("connection", (socket) => {
 		console.log("connected to notification namespace");
 		socket.on("suitup", (userData) => {
@@ -21,7 +21,7 @@ export const notification = (app, channel, server) => {
 			socket.emit("connected");
 		});
 	});
-
+	SubscribeMessage(channel, service, io);
 	router.get("/:id", async (req, res, next) => {
 		try {
 			const { id } = req.params;
