@@ -34,7 +34,7 @@ export const posts = (app, channel) => {
 
 	router.get("/seeposts", UserAuth, async (req, res, next) => {
 		try {
-			console.log(req.query)
+			console.log(req.query);
 			const { page, limit } = req.query;
 			const response = await service.ShowPosts({ page, limit });
 			return res.json(response);

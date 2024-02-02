@@ -13,7 +13,7 @@ export const FormateData = async (data) => {
 export const ValidateSignature = async (req) => {
 	try {
 		const accessToken = req.cookies.userJwt;
-		console.log("=====",req.cookies)
+		console.log("=====", req.cookies);
 		const payload = await jwt.verify(accessToken, APP_SECRET);
 		req.user = payload;
 		return true;
